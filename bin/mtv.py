@@ -3,11 +3,6 @@ from random import randint
 from random import sample
 from math import log
 
-# Deciaml rounding issues
-# https://docs.python.org/2/library/decimal.html
-# from decimal import *
-# getcontext().prec = 30
-
 D = set([
         'abc',
         'abh',
