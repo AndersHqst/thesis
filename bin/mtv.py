@@ -4,11 +4,6 @@ from random import sample
 from math import log
 from itertools import combinations
 
-# Deciaml rounding issues
-# https://docs.python.org/2/library/decimal.html
-# from decimal import *
-# getcontext().prec = 30
-
 # Set of singletons
 I = set()
 #D = set()
