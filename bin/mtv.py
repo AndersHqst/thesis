@@ -2,42 +2,51 @@ from charitems import to_binary, to_chars
 from random import randint
 from random import sample
 from math import log
+from itertools import combinations
 
 # Deciaml rounding issues
 # https://docs.python.org/2/library/decimal.html
 # from decimal import *
 # getcontext().prec = 30
 
-D = set([
-        'abc',
-        'abh',
-        'abcdefgh',
-        'abd',
-        'abdf',
-        'de',
-        'def',
-        'h',
-        'gh',
-        'e'
-    ])
+# Set of singletons
+I = set()
+#D = set()
+D = list()
+# Summary:
+C = set()
 
-# create D samples
+# Set of all attributes:
 A = 'abcdefghijklmnopqrstu'
+
+
+def create_patterns(attributes, patterns, size):       
+    """Creates all patterns of a given size and add them to patterns"""
+    comb = combinations(A,size)
+    for c in comb:
+        pattern = to_binary(''.join(c))
+        patterns.add(pattern)
+
+patterns = set()
+#add all itemsets of size 2 and 3 to patterns:
+create_patterns(A, patterns, 2) 
+create_patterns(A, patterns, 3)
+
+#Add all singletons to sumary:
+create_patterns(A,C, 1)
+
+
 print 'legth of A:', len(A)
 while len(D) != 200:
     _sample = sample(A, randint(0, len(A)))
-    D.add(''.join(sorted(_sample)))
-
-D = list(D)
+    D.append(''.join(sorted(_sample)))
 
 for index, x in enumerate(D):
     D[index] = to_binary(x)
 T  = 2 ** len(A)
 # Dict for values u_x
 U = {} 
-C = set()
-u0 = 2 ** -len(A)
-print 'initial u0:', u0
+
 # summary
 ab = to_binary('ab')
 gh = to_binary('gh')
@@ -47,15 +56,6 @@ fg = to_binary('abcdef')
 _sample = sample(A, randint(0, len(A)))
 _sample = ''.join(sorted(_sample))
 _def = to_binary(_sample)
-
-C.union(set())
-C.add(ab)
-C.add(gh)
-C.add(de)
-C.add(fg)
-# C.add(hijk)
-for c in C:
-    U[c] = 1.0
 
 
 def contains(a, b):
@@ -89,9 +89,13 @@ def printU(U):
     for k in U:
         print to_chars(k) + ':' + str(U[k])
 
-def iterative_scaling():
-    global u0
+def iterative_scaling(C):
+    U = {}
+    u0 = 2 ** -len(A)
+    print 'initial u0:', u0    
     biggest_diff = -1
+    for c in C:
+        U[c] = 1.0
     converge_iterations = 0
     iterations = 0
     while iterations < 10: #((biggest_diff > 0.00000001 or biggest_diff == -1) and iterations < 100): # converge
@@ -108,13 +112,30 @@ def iterative_scaling():
             if diff > biggest_diff:
                 biggest_diff = diff
                 # print 'biggest_diff:%f fx:%f p:%f' % (biggest_diff, fr(x), p)
+
     print 'Converge iterations:%d biggest_diff:%f ' % (converge_iterations, biggest_diff)
+    return U , u0
 
 def run():
     """ Query all x in C subject to U """
     for x in C:
         print to_chars(x) + ':', query(x)
 
+def find_best_itemset():
+    """Returns a pattern that potentially will be included in the summary."""
+    return pattern.pop()
+
+def MTV():
+    """ """
+    u0, U = iterative_scaling(C)
+    while len(patterns) > 0: 
+        X = find_best_itemset() 
+        _C = C.union(X)
+        _u0, _U = iterative_scaling(_C) 
+        if s(_C, _u0, _U) < s(C, u0, U):
+            C = _C
+            u0 = _u0
+            U = _U
 
 def running_example():
     # Summary from running example
@@ -147,8 +168,7 @@ def running_example():
     run()
 
 
-def s(C):
-    global u0
+def s(C, u0, U):
     return -1 * (len(D) * (log(u0) +  sum([fr(x) * log(U[x]) for x in C]))) + 0.5 * len(C) * log(len(D))
 
 # print 'frequency of %s: %f ' % (to_chars(ab), fr(ab))
@@ -173,5 +193,4 @@ cdf = to_binary('c')
 print 'prop for no seen %s:%f' % (to_chars(cdf), query(cdf))
 # for xi in X:
 #     print '%s contains ab %d' % (to_chars(xi), contains(xi, ab))
-
 
