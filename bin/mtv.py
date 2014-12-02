@@ -12,7 +12,8 @@ D = list()
 C = set()
 
 # Set of all attributes:
-A = 'abcdef'
+A = 'abcdefghi'
+print 'Attributes: ', A
 
 def create_patterns(attributes, patterns, size):       
     """Creates all patterns of a given size and add them to patterns"""
@@ -31,13 +32,14 @@ create_patterns(A,C, 1)
 
 
 print 'legth of A:', len(A)
-while len(D) != 50:
+while len(D) != 100:
     _sample = sample(A, randint(1, len(A)))
     D.append(''.join(sorted(_sample)))
+print 'D: ', D
 
 for index, x in enumerate(D):
     D[index] = to_binary(x)
-print 'D: ', D
+
 T  = 2 ** len(A)
 # Dict for values u_x
 U = {} 
@@ -76,7 +78,6 @@ def printU(U):
 def iterative_scaling(C):
     U = {}
     u0 = 2 ** -len(A)
-    print 'initial u0:', u0    
     biggest_diff = -1
     for c in C:
         U[c] = 1.0
@@ -97,7 +98,7 @@ def iterative_scaling(C):
                 biggest_diff = diff
                 # print 'biggest_diff:%f fx:%f p:%f' % (biggest_diff, fr(x), p)
 
-    print 'Converge iterations:%d biggest_diff:%f ' % (converge_iterations, biggest_diff)
+    # print 'Converge iterations:%d biggest_diff:%f ' % (converge_iterations, biggest_diff)
     return u0, U
 
 def run():
@@ -117,10 +118,6 @@ def MTV():
         X = find_best_itemset() 
         _C = C.union([X])
         _u0, _U = iterative_scaling(_C) 
-        print '_u0', _u0
-        print '_U', _U
-        print 'u0', u0
-        print 'U', U
         if s(_C, _u0, _U) < s(C, u0, U):
             C = _C
             u0 = _u0
