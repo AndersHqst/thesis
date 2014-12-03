@@ -4,6 +4,19 @@ from random import sample
 from math import log
 from itertools import combinations
 import copy
+from time import time
+
+def memoise(f):
+    """ Memoization decorator for functions taking one or more arguments. """
+    class memodict(dict):
+        def __init__(self, f):
+            self.f = f
+        def __call__(self, *args):
+            return self[args]
+        def __missing__(self, key):
+            ret = self[key] = self.f(*key)
+            return ret
+    return memodict(f)
 
 # Set of singletons
 I = set()
@@ -13,7 +26,7 @@ D = list()
 C = set()
 
 # Set of all attributes:
-A = 'abcdefg'
+A = 'abcdef'
 print 'Attributes: ', A
 
 def create_patterns(attributes, patterns, size):       
@@ -33,7 +46,7 @@ create_patterns(A, C, 1)
 
 
 print 'legth of A:', len(A)
-while len(D) != 100:
+while len(D) != 300:
     _sample = sample(A, randint(1, len(A)))
     D.append(''.join(sorted(_sample)))
 print 'D: ', D
@@ -68,6 +81,7 @@ def query(x, _C, _u0, _U):
             p += model(t, _C, _u0, _U)
     return p
 
+@memoise
 def fr(x):
     p = 0.0
     for xi in D:
@@ -89,8 +103,7 @@ def iterative_scaling(_C):
         _U[c] = 1.0
     converge_iterations = 0
     iterations = 0
-    print 'iterative scale for _C: ', _C
-    while iterations < 50: #((biggest_diff > 0.00000001 or biggest_diff == -1) and iterations < 100): # converge
+    while iterations < 20: #((biggest_diff > 0.00000001 or biggest_diff == -1) and iterations < 100): # converge
         converge_iterations += 1
         biggest_diff = -1
         iterations += 1
@@ -135,7 +148,9 @@ def MTV():
 def s(C, u0, U):
     return -1 * (len(D) * (log(u0) +  sum([fr(x) * log(U[x]) for x in C]))) + 0.5 * len(C) * log(len(D))
 
+start = time()
 MTV()
+print 'MTV run time: ', time() - start
 print 'Final summary: '
 for x in C:
     print to_chars(x)
@@ -148,6 +163,24 @@ print 'u0: ', u0
 # print 'query not in set %s with fr %f query %f ' % (to_chars(_def), fr(_def), query(_def))
 # print 'C', C
 # print 'u0', u0
+
+def is_in_sumamry(y, _C):
+    for x in C:
+        if y == x:
+            return True
+    return False
+
+def query_unknowns(amount):
+    unknowns = 0
+    for t in range(T):
+        y = randint(0, T)
+        if not is_in_sumamry(y, C):
+            unknowns += 1
+            print 'Unknown itemset: query %s with fr %f query %f' % (to_chars(y), fr(y), query(y, C, u0, U))
+        if unknowns == amount:
+            return
+
+query_unknowns(10)
 
 def total_probability():
     total_prob = 0.0
