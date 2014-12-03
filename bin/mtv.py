@@ -3,7 +3,6 @@ from random import randint
 from random import sample
 from math import log
 from itertools import combinations
-import copy
 from time import time
 from memoisation import memoise
 
@@ -56,10 +55,8 @@ def contains(a, b):
     return a & b == b
 
 def model(t, C, u0, U):
-    # t = abc
     res = 1.0
     for x in C:
-        # x = ab
         if contains(t, x):
             res = res * U[x]
     return u0 * res
