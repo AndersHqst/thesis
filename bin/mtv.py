@@ -35,7 +35,7 @@ create_patterns(A, patterns, 3)
 create_patterns(A, C, 1)
 
 # Generate random sample D
-while len(D) != 300:
+while len(D) != 100:
     _sample = sample(A, randint(1, len(A)))
     D.append(''.join(sorted(_sample)))
 print 'D (%d): %s' % (len(D), D)
@@ -191,6 +191,36 @@ def total_probability():
     assert abs(total_prob - 1.0) < 0.001
     print 'total prob: ', total_prob
 total_probability()
+
+def merge_itemsets(itemsets):
+    """Union of items in itemsets"""
+    result = 0
+    for c in itemsets:
+        result = c | result
+    return result
+
+class Block(object):
+    """docstring for Block"""
+    def __init__(self):
+        super(Block, self).__init__()
+        self.union_of_itemsets = 0
+        self.itemsets = tuple()
+    def __str__(self):
+        return to_chars(self.union_of_itemsets)
+        
+def compute_blocks(_C):
+    """Compute the set of blocks that C infer"""
+    # compute all itemsets that is a combination of itemsets in _C
+    T_c = set()
+    for i in range(len(_C)):
+        choose = i+1
+        for comb in combinations(_C,choose):
+            T = Block()
+            T.union_of_itemsets = merge_itemsets(comb)
+            T.itemsets = comb
+            T_c.add(T)
+    return T_c
+print 'compute blocks' , compute_blocks(C)
 
 # def running_example():
 #     # Summary from running example from Mampey et. al
