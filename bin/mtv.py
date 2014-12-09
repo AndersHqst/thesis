@@ -19,7 +19,7 @@ C = set()
 k = 6
 
 # Set of all attributes:
-A = 'abcdefg'
+A = 'abcde'
 print 'Attributes (%d): %s' % (len(A), A)
 
 def create_patterns(attributes, patterns, size):       
@@ -197,7 +197,7 @@ def total_probability():
     print 'total prob: ', total_prob
 total_probability()
 
-def merge_itemsets(itemsets):
+def union_of_itemsets(itemsets):
     """Union of items in itemsets"""
     result = 0
     for c in itemsets:
@@ -209,9 +209,12 @@ class Block(object):
     def __init__(self):
         super(Block, self).__init__()
         self.union_of_itemsets = 0
-        self.itemsets = tuple()
+        self.itemsets = set()
+        self.block_size = 0
+        self.cummulative_block_size = 0
+
     def __str__(self):
-        return to_chars(self.union_of_itemsets)
+        return to_chars(self.union_of_itemsets) + ' blocksize: ' + str(self.block_size)
 
     def __key(self):
         return self.union_of_itemsets
@@ -221,24 +224,43 @@ class Block(object):
 
     def __hash__(self):
         return hash(self.__key())
+
+    def __lt__(self, other):
+        """Less-than to make class sortable
+            Defined has the partial order on blocks,
+            sets(T_1, C) < sets(T_2, C)
+        """
+        return self.itemsets < other.itemsets
         
 def compute_blocks(_C):
     """Compute the set of blocks that C infer"""
-    # T_c is a set of blocks, we use a list
-    # to preserve a descending order of union sizes
     T_c = set()
-    # iteratet the combinations in reverse
+    # iterate the combination sizes in reverse
     for i in range(len(_C))[::-1]:
         choose = i+1
         for comb in combinations(_C, choose):
-            union = merge_itemsets(comb)
+            union = union_of_itemsets(comb)
             T = Block()
             T.union_of_itemsets = union
-            T.itemsets = comb
+            T.itemsets = set(comb)
             T_c.add(T)
     return T_c
 
+def compute_block_sizes(T_c):
+    for T in T_c:
+        T.cummulative_block_size = 2 ** (len(A) - len(to_chars(T.union_of_itemsets)))
+    # Reversed sorted set of blocks is (obviously) also a list
+    T_c = sorted(T_c)[::-1]
+    for i, Ti in enumerate(T_c):
+        Ti.block_size = Ti.cummulative_block_size
+        for Tj in T_c[:i]:
+            if Ti < Tj:
+                Ti.block_size = Ti.block_size - Tj.block_size
+    return T_c
+
 T_c = compute_blocks(C)
+T_c = compute_block_sizes(T_c)
+
 print 'compute blocks (%d): print union and itemsets' % len(T_c)
 print 'Transactions: ', T - 1
 print 'summary: ', [to_chars(itemset) for itemset in C]
