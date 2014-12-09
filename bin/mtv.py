@@ -228,11 +228,7 @@ def compute_blocks(_C):
     # to preserve a descending order of union sizes
     T_c = set()
     # iteratet the combinations in reverse
-
-    C_singletons = filter(lambda x: len(x) == 1, _C)
-
-
-    for i in range(len())[::-1]:
+    for i in range(len(_C))[::-1]:
         choose = i+1
         for comb in combinations(_C, choose):
             union = merge_itemsets(comb)
