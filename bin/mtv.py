@@ -239,33 +239,3 @@ print 'Transactions: ', T - 1
 print 'summary: ', [to_chars(itemset) for itemset in C]
 for T in T_c:
     print T, [to_chars(itemset) for itemset in T.itemsets]
-
-# def running_example():
-#     # Summary from running example from Mampey et. al
-#     abc  = to_binary('abc') # 00000111
-#     cd   = to_binary('cd')  # 00001100
-#     _def = to_binary('def') # 00111000
-
-#     C.add(abc)
-#     C.add(cd)
-#     C.add(_def)
-
-#     # Initial computed values from running example in Mampey
-#     u0 = 2 ** -8
-#     u1 = u2 = u3 = 1
-#     U[abc] = u1
-#     U[cd] = u2
-#     U[_def] = u3
-#     print '\nInitial where abc=0.125'
-#     run()
-
-#     # Query with converged values
-#     u0 = 3 * 10 ** -4
-#     u1 = 28.5
-#     u2 = 0.12
-#     u3 = 85.4
-#     U[abc] = u1
-#     U[cd] = u2
-#     U[_def] = u3
-#     print '\nConverged:'
-#     run()
