@@ -15,8 +15,11 @@ D = list()
 # Summary:
 C = set()
 
+#Maximum description length
+k = 6
+
 # Set of all attributes:
-A = 'abcd'
+A = 'abcdefg'
 print 'Attributes (%d): %s' % (len(A), A)
 
 def create_patterns(attributes, patterns, size):       
@@ -35,7 +38,7 @@ create_patterns(A, patterns, 3)
 create_patterns(A, C, 1)
 
 # Generate random sample D
-while len(D) != 20:
+while len(D) != 200:
     _sample = sample(A, randint(1, len(A)))
     D.append(''.join(sorted(_sample)))
 print 'D (%d): %s' % (len(D), D)
@@ -106,9 +109,11 @@ def iterative_scaling(C):
     # print 'Converge iterations:%d biggest_diff:%f ' % (converge_iterations, biggest_diff)
     return u0, U
 
+sorted_patterns = list(patterns)[::-1]
+sorted_pattern = filter(lambda x: fr(x) >= 1, sorted_patterns)
 def find_best_itemset():
     """Returns a pattern that potentially will be included in the summary."""
-    return patterns.pop()
+    return sorted_patterns.pop()
 
 def MTV():
     """ """
@@ -123,7 +128,7 @@ def MTV():
     cur_score = s(C, u0, U)
 
     # Brute force all patterns
-    while len(patterns) > 0: 
+    while len(sorted_patterns) > 0: 
 
         # Possible best itemset to include in the summary
         X = find_best_itemset()
@@ -207,30 +212,42 @@ class Block(object):
         self.itemsets = tuple()
     def __str__(self):
         return to_chars(self.union_of_itemsets)
+
+    def __key(self):
+        return self.union_of_itemsets
+
+    def __eq__(x, y):
+        return x.__key() == y.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
         
 def compute_blocks(_C):
     """Compute the set of blocks that C infer"""
     # T_c is a set of blocks, we use a list
     # to preserve a descending order of union sizes
-    T_c = []
-    unions = set()
+    T_c = set()
     # iteratet the combinations in reverse
-    for i in range(len(_C))[::-1]:
+
+    C_singletons = filter(lambda x: len(x) == 1, _C)
+
+
+    for i in range(len())[::-1]:
         choose = i+1
         for comb in combinations(_C, choose):
             union = merge_itemsets(comb)
-            if not union in unions:
-                unions.add(union)
-                T = Block()
-                T.union_of_itemsets = union
-                T.itemsets = comb
-                T_c.append(T)
+            T = Block()
+            T.union_of_itemsets = union
+            T.itemsets = comb
+            T_c.add(T)
     return T_c
 
-print 'compute blocks: print union and itemsets'
+T_c = compute_blocks(C)
+print 'compute blocks (%d): print union and itemsets' % len(T_c)
+print 'Transactions: ', T - 1
 print 'summary: ', [to_chars(itemset) for itemset in C]
-for c in compute_blocks(C):
-    print c, [to_chars(itemset) for itemset in c.itemsets]
+for T in T_c:
+    print T, [to_chars(itemset) for itemset in T.itemsets]
 
 # def running_example():
 #     # Summary from running example from Mampey et. al
