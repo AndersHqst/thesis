@@ -2,6 +2,8 @@
     Helper scripts to work with char itemsets represented in binary
 """
 
+from math import ceil, log
+
 def to_binary(string):
     """
     Converts anchar itemset string to a binary representation e.g.
@@ -32,11 +34,34 @@ def to_binary(string):
 
 
 def to_chars(binary):
-    """ Converts binary representations of an char itemset to a string """
+    """ Converts binary representations of a char itemset to a string """
+
     string = ""
-    for t in range(100):
-        bit = 2 ** t
+
+    # ex bin(4) = 0b100, -2 to remove the binary prefix
+    bits = len(bin(binary)) - 2
+
+    for position in range(bits):
+        bit = 2 ** position
         if binary & bit == bit:
-            char_val = t + 97
+            char_val = position + 97
             string += str(unichr(char_val))
     return string
+
+def test_to_binary():
+    assert to_binary('a') == 1
+    assert to_binary('ab') == 3
+    assert to_binary('b') == 2
+    assert to_binary('') == 0
+    assert to_binary('ad') == 9
+    assert to_binary('da') == 9
+
+def test_to_chars():
+    assert to_chars(0) == ''
+    assert to_chars(1) == 'a'
+    assert to_chars(2) == 'b'
+    assert to_chars(3) == 'ab'
+    assert to_chars(9) == 'ad'
+
+test_to_binary()
+test_to_chars()
