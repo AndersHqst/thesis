@@ -5,7 +5,6 @@ from math import log
 from itertools import combinations
 from time import time
 from memoisation import memoise
-from Block import Block
 
 # Set of singletons
 I = set()
@@ -36,7 +35,8 @@ create_patterns(A, patterns, 2)
 create_patterns(A, patterns, 3)
 
 #Add all singletons to sumary:
-create_patterns(A, C, 1)
+#create_patterns(A, C, 1)
+
 
 # Generate random sample D
 while len(D) != 200:
@@ -58,18 +58,18 @@ def contains(a, b):
     """ True if a contains b """
     return a & b == b
 
-def model(t, C, u0, U):
+def model(Ti, C, u0, U, T_c):
     res = 1.0
     for x in C:
-        if contains(t, x):
-            res = res * U[x]
+        if  contains(Ti.union_of_itemsets, x):
+            res = res * Ti.block_size * U[x]
     return u0 * res
 
-def query(x, C, u0, U):
+def query(x, C, u0, U, T_c):
     p = 0.0
-    for t in range(T):
-        if contains(t, x):
-            p += model(t, C, u0, U)
+    for i, Ti in enumerate(T_c):
+        if  contains(Ti.union_of_itemsets, x):
+            p += model(Ti, C, u0, U, T_c)
     return p
 
 # Memoise: The function will cache previous results with the argument
@@ -83,12 +83,84 @@ def fr(x):
     p = p / float(len(D))
     assert p <= 1.0
     return p
+def union_of_itemsets(itemsets):
+    """Union of items in itemsets"""
+    result = 0
+    for c in itemsets:
+        result = c | result
+    return result
 
-def iterative_scaling(C):
+class Block(object):
+    """Block for itemsets in C"""
+    def __init__(self):
+        super(Block, self).__init__()
+        self.union_of_itemsets = 0
+        self.itemsets = set()
+        self.block_size = 0
+        self.cummulative_block_size = 0
+
+    def __str__(self):
+        return to_chars(self.union_of_itemsets) + ' blocksize: ' + str(self.block_size)
+
+    def __key(self):
+        return self.union_of_itemsets
+
+    def __eq__(x, y):
+        return x.__key() == y.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __lt__(self, other):
+        """Less-than to make class sortable
+            Defined has the partial order on blocks,
+            sets(T_1, C) < sets(T_2, C)
+        """
+        return self.itemsets < other.itemsets
+        
+def compute_blocks(_C):
+    """Compute the set of blocks that C infer"""
+    T_c = set()
+    # iterate the combination sizes in reverse
+    for i in range(len(_C))[::-1]:
+        choose = i+1
+        for comb in combinations(_C, choose):
+            union = union_of_itemsets(comb)
+            Ti = Block()
+            Ti.union_of_itemsets = union
+            Ti.itemsets = set(comb)
+            T_c.add(Ti)
+    return T_c
+
+def compute_block_sizes(_C):
+    T_c = compute_blocks(_C)
+    for T in T_c:
+        T.cummulative_block_size = 2 ** (len(A) - len(to_chars(T.union_of_itemsets)))
+    # Reversed sorted set of blocks is (obviously) also a list
+    T_c = sorted(T_c)[::-1]
+    for i, Ti in enumerate(T_c):
+        Ti.block_size = Ti.cummulative_block_size
+        for Tj in T_c[:i]:
+            if Ti < Tj:
+                #if Ti.union_of_itemsets.contains(Tj.union_of_itemsets):
+                Ti.block_size = Ti.block_size - Tj.block_size
+    return T_c
+
+#T_c = compute_blocks(C)
+T_c = compute_block_sizes(C)
+
+print 'compute blocks (%d): print union and itemsets' % len(T_c)
+print 'Transactions: ', T - 1
+print 'summary: ', [to_chars(itemset) for itemset in C]
+for Ti in T_c:
+    print Ti, [to_chars(itemset) for itemset in Ti.itemsets]
+
+def iterative_scaling(_C):
+    T_c = compute_block_sizes(_C)
     U = {}
     u0 = 2 ** -len(A)
     biggestdiff = -1
-    for c in C:
+    for c in _C:
         U[c] = 1.0
     converge_iterations = 0
     iterations = 0
@@ -96,13 +168,13 @@ def iterative_scaling(C):
         converge_iterations += 1
         biggest_diff = -1
         iterations += 1
-        for x in C:
+        for x in _C:
 
-            p = query(x, C, u0, U)
+            p = query(x, _C, u0, U, T_c)
             U[x] = U[x] * (fr(x) / p) * ((1 - p) / (1 - fr(x)))
             u0 = u0 * (1 - fr(x)) / (1 -  p)
 
-            diff = abs(fr(x) - query(x, C, u0, U))
+            diff = abs(fr(x) - p)
             if diff > biggest_diff:
                 biggest_diff = diff
                 # print 'biggest_diff:%f fx:%f p:%f' % (biggest_diff, fr(x), p)
@@ -112,6 +184,7 @@ def iterative_scaling(C):
 
 sorted_patterns = list(patterns)[::-1]
 sorted_pattern = filter(lambda x: fr(x) >= 1, sorted_patterns)
+
 def find_best_itemset():
     """Returns a pattern that potentially will be included in the summary."""
     return sorted_patterns.pop()
@@ -162,8 +235,9 @@ print 'Final summary: '
 for x in C:
     print to_chars(x)
 
+#T_c = compute_block_sizes(C)
 for c in C:
-    print 'query %s with fr %f query %f uX: %f' % (to_chars(c), fr(c), query(c, C, u0, U), U[c])
+    print 'query %s with fr %f query %f uX: %f' % (to_chars(c), fr(c), query(c, C, u0, U, T_c), U[c])
 print 'u0: ', u0
 
 def is_in_sumamry(y, C):
@@ -172,7 +246,7 @@ def is_in_sumamry(y, C):
             return True
     return False
 
-def query_unknowns(amount):
+def query_unknowns(amount, _T_c):
     """Attempts to create an amount of itemsets not in the summary, and
         print their frequency and estimated frequency
         amount: Amount of itemsets not in C to attempt to find
@@ -182,60 +256,58 @@ def query_unknowns(amount):
         y = randint(0, T)
         if not is_in_sumamry(y, C):
             unknowns += 1
-            print 'Unknown itemset: query %s with fr %f query %f' % (to_chars(y), fr(y), query(y, C, u0, U))
+            print 'Unknown itemset: query %s with fr %f query %f' % (to_chars(y), fr(y), query(y, C, u0, U, _T_c))
         if unknowns == amount:
             return
 
-query_unknowns(10)
+query_unknowns(10, T_c)
+#print 'Empty transaction: Query the probability of the empty transaction: frequency in sample: %f , probability estimate: %f' % (fr(0), model(0, C, u0, U, T_c))
+print 'compute blocks (%d): print union and itemsets' % len(T_c)
+print 'Transactions: ', T - 1
+print 'summary: ', [to_chars(itemset) for itemset in C]
+for Ti in T_c:
+    print Ti, [to_chars(itemset) for itemset in Ti.itemsets]
 
 def total_probability():
     """ Assert and print the total probability of the model """
     total_prob = 0.0
     for t in range(T):
-        p = model(t, C, u0, U)
+        p = model(t, C, u0, U, T_c)
         total_prob += p
     assert abs(total_prob - 1.0) < 0.001
     print 'total prob: ', total_prob
 total_probability()
 
-def union_of_itemsets(itemsets):
-    """Union of items in itemsets"""
-    result = 0
-    for c in itemsets:
-        result = c | result
-    return result
-        
-def compute_blocks(_C):
-    """Compute the set of blocks that C infer"""
-    T_c = set()
-    # iterate the combination sizes in reverse
-    for i in range(len(_C))[::-1]:
-        choose = i+1
-        for comb in combinations(_C, choose):
-            union = union_of_itemsets(comb)
-            T = Block()
-            T.union_of_itemsets = union
-            T.itemsets = set(comb)
-            T_c.add(T)
-    return T_c
 
-def compute_block_sizes(T_c):
-    for T in T_c:
-        T.cummulative_block_size = 2 ** (len(A) - len(to_chars(T.union_of_itemsets)))
-    # Reversed sorted set of blocks is (obviously) also a list
-    T_c = sorted(T_c)[::-1]
-    for i, Ti in enumerate(T_c):
-        Ti.block_size = Ti.cummulative_block_size
-        for Tj in T_c[:i]:
-            if Ti < Tj:
-                Ti.block_size = Ti.block_size - Tj.block_size
-    return T_c
 
-T_c = compute_blocks(C)
-T_c = compute_block_sizes(T_c)
+# def running_example():
+#     # Summary from running example from Mampey et. al
+#     abc  = to_binary('abc') # 00000111
+#     cd   = to_binary('cd')  # 00001100
+#     _def = to_binary('def') # 00111000
 
-print 'compute blocks (%d): print union and itemsets' % len(T_c)
-print 'Transactions: ', T - 1
-print 'summary: ', [to_chars(itemset) for itemset in C]
-for T in T_c:
-    print T, [to_chars(itemset) for itemset in T.itemsets]
+#     C.add(abc)
+#     C.add(cd)
+#     C.add(_def)
+
+#     # Initial computed values from running example in Mampey
+#     u0 = 2 ** -8
+#     u1 = u2 = u3 = 1
+#     U[abc] = u1
+#     U[cd] = u2
+#     U[_def] = u3
+#     print '\nInitial where abc=0.125'
+#     run()
+
+#     # Query with converged values
+#     u0 = 3 * 10 ** -4
+#     u1 = 28.5
+#     u2 = 0.12
+#     u3 = 85.4
+#     U[abc] = u1
+#     U[cd] = u2
+#     U[_def] = u3
+#     print '\nConverged:'
+#     run()
+
+
