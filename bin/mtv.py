@@ -21,7 +21,7 @@ k = 6
 
 # Set of all attributes:
 A = 'abcde'
-print 'Attributes (%d): %s' % (len(A), A)
+# print 'Attributes (%d): %s' % (len(A), A)
 
 def create_patterns(attributes, patterns, size):       
     """Creates all patterns of a given size and add them to patterns"""
@@ -32,14 +32,14 @@ def create_patterns(attributes, patterns, size):
 
 patterns = set()
 #add all itemsets of size 2 and 3 to patterns:
-create_patterns(A, patterns, 2) 
+create_patterns(A, patterns, 2)
 create_patterns(A, patterns, 3)
 
-#Add all singletons to sumary:
+# #Add all singletons to sumary:
 create_patterns(A, C, 1)
 
 # Generate random sample D
-while len(D) != 200:
+while len(D) != 50:
     _sample = sample(A, randint(1, len(A)))
     D.append(''.join(sorted(_sample)))
 print 'D (%d): %s' % (len(D), D)
@@ -129,7 +129,7 @@ def MTV():
     cur_score = s(C, u0, U)
 
     # Brute force all patterns
-    while len(sorted_patterns) > 0: 
+    while len(sorted_patterns) > 0 and len(C) < k: 
 
         # Possible best itemset to include in the summary
         X = find_best_itemset()
@@ -206,24 +206,27 @@ def union_of_itemsets(itemsets):
     return result
         
 def compute_blocks(_C):
-    """Compute the set of blocks that C infer"""
-    T_c = set()
+    """Compute the set of blocks that C infer
+        return: Topologically sorted blocks T_C
+    """
+    T_c = list()
+    T_unions = set()
     # iterate the combination sizes in reverse
     for i in range(len(_C))[::-1]:
         choose = i+1
         for comb in combinations(_C, choose):
             union = union_of_itemsets(comb)
-            T = Block()
-            T.union_of_itemsets = union
-            T.itemsets = set(comb)
-            T_c.add(T)
+            if not union in T_unions:
+                T_unions.add(union)
+                T = Block()
+                T.union_of_itemsets = union
+                T.itemsets = set(comb)
+                T_c.append(T)
     return T_c
 
 def compute_block_sizes(T_c):
     for T in T_c:
         T.cummulative_block_size = 2 ** (len(A) - len(to_chars(T.union_of_itemsets)))
-    # Reversed sorted set of blocks is (obviously) also a list
-    T_c = sorted(T_c)[::-1]
     for i, Ti in enumerate(T_c):
         Ti.block_size = Ti.cummulative_block_size
         for Tj in T_c[:i]:
@@ -239,3 +242,4 @@ print 'Transactions: ', T - 1
 print 'summary: ', [to_chars(itemset) for itemset in C]
 for T in T_c:
     print T, [to_chars(itemset) for itemset in T.itemsets]
+
