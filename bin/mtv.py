@@ -7,9 +7,6 @@ from time import time
 from memoisation import memoise
 from Block import Block
 
-# Set of singletons
-I = set()
-
 # Sample
 D = list()
 
@@ -17,11 +14,16 @@ D = list()
 C = set()
 
 #Maximum description length
-k = 6
+k = 7
 
 # Set of all attributes:
-A = 'abcde'
+A = 'abcdefghijlkmnopqrstuvxyz'
 # print 'Attributes (%d): %s' % (len(A), A)
+
+# Set of singletons
+I = set()
+for a in A:
+    I.add(to_binary(a))
 
 def create_patterns(attributes, patterns, size):       
     """Creates all patterns of a given size and add them to patterns"""
@@ -36,7 +38,7 @@ create_patterns(A, patterns, 2)
 create_patterns(A, patterns, 3)
 
 # #Add all singletons to sumary:
-create_patterns(A, C, 1)
+# create_patterns(A, C, 1)
 
 # Generate random sample D
 while len(D) != 50:
@@ -58,18 +60,30 @@ def contains(a, b):
     """ True if a contains b """
     return a & b == b
 
-def model(t, C, u0, U):
+def union_of_itemsets(itemsets):
+    """Union of items in itemsets"""
+    result = 0
+    for c in itemsets:
+        result = c | result
+    return result
+
+def model(T, C, u0, U):
     res = 1.0
     for x in C:
-        if contains(t, x):
+        if contains(T.union_of_itemsets, x):
             res = res * U[x]
-    return u0 * res
+    return u0 * res * T.block_weight
 
 def query(x, C, u0, U):
+    
+    # Compute blocks
+    T_c = compute_blocks(C.union([x]))
+    compute_block_weights(T_c, U)
+    
     p = 0.0
-    for t in range(T):
-        if contains(t, x):
-            p += model(t, C, u0, U)
+    for T in T_c:
+        if contains(T.union_of_itemsets, x):
+            p += model(T, C, u0, U)
     return p
 
 # Memoise: The function will cache previous results with the argument
@@ -84,11 +98,56 @@ def fr(x):
     assert p <= 1.0
     return p
 
+def compute_blocks(_C):
+    """Compute the set of blocks that C infer
+        return: Topologically sorted blocks T_C
+    """
+    T_c = list()
+    T_unions = set()
+
+    # iterate the combination sizes in reverse
+    for i in range(len(_C))[::-1]:
+        choose = i+1
+        for comb in combinations(_C, choose):
+            union = union_of_itemsets(comb)
+            if not union in T_unions:
+                T_unions.add(union)
+                T = Block()
+                T.union_of_itemsets = union
+                T.itemsets = set(comb)
+                T_c.append(T)
+    return T_c
+
+def compute_block_sizes(T_c):
+    for T in T_c:
+        T.cummulative_block_size = 2 ** (len(A) - len(to_chars(T.union_of_itemsets)))
+    for i, Ti in enumerate(T_c):
+        Ti.block_size = Ti.cummulative_block_size
+        for Tj in T_c[:i]:
+            if Ti < Tj:
+                Ti.block_size = Ti.block_size - Tj.block_size
+    return T_c
+
+def compute_block_weights(T_c, U):
+    for T in T_c:
+        T.cummulative_block_weight = 1
+        # Iterate all I
+        for i in I:
+            if contains(T.union_of_itemsets, i):
+                T.cummulative_block_weight *= U[i]
+            else:
+                T.cummulative_block_weight *= (1 + U[i])
+    for i, Ti in enumerate(T_c):
+        Ti.block_weight = Ti.cummulative_block_weight
+        for Tj in T_c[:i]:
+            if Ti < Tj:
+                Ti.block_weight = Ti.block_weight - Tj.block_weight
+
 def iterative_scaling(C):
     U = {}
     u0 = 2 ** -len(A)
     biggestdiff = -1
-    for c in C:
+    for c in C.union(I):
         U[c] = 1.0
     converge_iterations = 0
     iterations = 0
@@ -96,7 +155,7 @@ def iterative_scaling(C):
         converge_iterations += 1
         biggest_diff = -1
         iterations += 1
-        for x in C:
+        for x in C.union(I):
 
             p = query(x, C, u0, U)
             U[x] = U[x] * (fr(x) / p) * ((1 - p) / (1 - fr(x)))
@@ -123,6 +182,8 @@ def MTV():
     global U
 
     # Compute our initial, current best, model
+    X = find_best_itemset()
+    C = C.union([X])
     u0, U = iterative_scaling(C)
 
     # This is the current best score
@@ -180,9 +241,9 @@ def query_unknowns(amount):
     unknowns = 0
     for t in range(T):
         y = randint(0, T)
-        if not is_in_sumamry(y, C):
+        if not is_in_sumamry(y, C) and len(to_chars(y)) <= 3:
             unknowns += 1
-            print 'Unknown itemset: query %s with fr %f query %f' % (to_chars(y), fr(y), query(y, C, u0, U))
+            print 'Unknown itemset: %s with fr %f query %f' % (to_chars(y), fr(y), query(y, C, u0, U))
         if unknowns == amount:
             return
 
@@ -196,50 +257,13 @@ def total_probability():
         total_prob += p
     assert abs(total_prob - 1.0) < 0.001
     print 'total prob: ', total_prob
-total_probability()
-
-def union_of_itemsets(itemsets):
-    """Union of items in itemsets"""
-    result = 0
-    for c in itemsets:
-        result = c | result
-    return result
-        
-def compute_blocks(_C):
-    """Compute the set of blocks that C infer
-        return: Topologically sorted blocks T_C
-    """
-    T_c = list()
-    T_unions = set()
-    # iterate the combination sizes in reverse
-    for i in range(len(_C))[::-1]:
-        choose = i+1
-        for comb in combinations(_C, choose):
-            union = union_of_itemsets(comb)
-            if not union in T_unions:
-                T_unions.add(union)
-                T = Block()
-                T.union_of_itemsets = union
-                T.itemsets = set(comb)
-                T_c.append(T)
-    return T_c
-
-def compute_block_sizes(T_c):
-    for T in T_c:
-        T.cummulative_block_size = 2 ** (len(A) - len(to_chars(T.union_of_itemsets)))
-    for i, Ti in enumerate(T_c):
-        Ti.block_size = Ti.cummulative_block_size
-        for Tj in T_c[:i]:
-            if Ti < Tj:
-                Ti.block_size = Ti.block_size - Tj.block_size
-    return T_c
-
-T_c = compute_blocks(C)
-T_c = compute_block_sizes(T_c)
+# total_probability()
 
 print 'compute blocks (%d): print union and itemsets' % len(T_c)
 print 'Transactions: ', T - 1
 print 'summary: ', [to_chars(itemset) for itemset in C]
+T_c = compute_blocks(C)
+compute_block_weights(T_c, U)
 for T in T_c:
     print T, [to_chars(itemset) for itemset in T.itemsets]
 
