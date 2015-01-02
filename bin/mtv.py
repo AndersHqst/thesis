@@ -14,10 +14,10 @@ D = list()
 C = set()
 
 #Maximum description length
-k = 7
+k = 6
 
 # Set of all attributes:
-A = 'abcdefghijlkmnopqrstuvxyz'
+A = 'abcdefg'
 # print 'Attributes (%d): %s' % (len(A), A)
 
 # Set of singletons
@@ -34,8 +34,9 @@ def create_patterns(attributes, patterns, size):
 
 patterns = set()
 #add all itemsets of size 2 and 3 to patterns:
-create_patterns(A, patterns, 2)
-create_patterns(A, patterns, 3)
+# create_patterns(A, patterns, 2)
+create_patterns(A, patterns, 5)
+create_patterns(A, patterns, 4)
 
 # #Add all singletons to sumary:
 # create_patterns(A, C, 1)
@@ -56,6 +57,16 @@ T  = 2 ** len(A)
 U = {} 
 u0 = 2 ** -len(A)
 
+
+def total_probability(T_c):
+    """ Assert and print the total probability of the model """
+    total_prob = 0.0
+    for T in T_c:
+        p = model(T, C, u0, U)
+        total_prob += p
+    # assert abs(total_prob - 1.0) < 0.001, "Total probability was: %f " % total_prob
+    print 'total prob: ', total_prob
+
 def contains(a, b):
     """ True if a contains b """
     return a & b == b
@@ -75,11 +86,11 @@ def model(T, C, u0, U):
     return u0 * res * T.block_weight
 
 def query(x, C, u0, U):
-    
+
     # Compute blocks
     T_c = compute_blocks(C.union([x]))
     compute_block_weights(T_c, U)
-    
+
     p = 0.0
     for T in T_c:
         if contains(T.union_of_itemsets, x):
@@ -98,7 +109,12 @@ def fr(x):
     assert p <= 1.0
     return p
 
+# @memoise_set
+block_cache = {}
 def compute_blocks(_C):
+    key = tuple(sorted(_C))
+    if key in block_cache:
+        return block_cache[key]
     """Compute the set of blocks that C infer
         return: Topologically sorted blocks T_C
     """
@@ -106,8 +122,8 @@ def compute_blocks(_C):
     T_unions = set()
 
     # iterate the combination sizes in reverse
-    for i in range(len(_C))[::-1]:
-        choose = i+1
+    for i in range(len(_C)+1)[::-1]:
+        choose = i
         for comb in combinations(_C, choose):
             union = union_of_itemsets(comb)
             if not union in T_unions:
@@ -116,6 +132,9 @@ def compute_blocks(_C):
                 T.union_of_itemsets = union
                 T.itemsets = set(comb)
                 T_c.append(T)
+
+
+    block_cache[key] = T_c
     return T_c
 
 def compute_block_sizes(T_c):
@@ -186,6 +205,7 @@ def MTV():
     C = C.union([X])
     u0, U = iterative_scaling(C)
 
+
     # This is the current best score
     cur_score = s(C, u0, U)
 
@@ -249,20 +269,15 @@ def query_unknowns(amount):
 
 query_unknowns(10)
 
-def total_probability():
-    """ Assert and print the total probability of the model """
-    total_prob = 0.0
-    for t in range(T):
-        p = model(t, C, u0, U)
-        total_prob += p
-    assert abs(total_prob - 1.0) < 0.001
-    print 'total prob: ', total_prob
-# total_probability()
+T_c = compute_blocks(C)
+compute_block_weights(T_c, U)
+
+total_probability(T_c)
+
 
 print 'compute blocks (%d): print union and itemsets' % len(T_c)
 print 'Transactions: ', T - 1
 print 'summary: ', [to_chars(itemset) for itemset in C]
-T_c = compute_blocks(C)
 compute_block_weights(T_c, U)
 for T in T_c:
     print T, [to_chars(itemset) for itemset in T.itemsets]
