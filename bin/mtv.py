@@ -6,6 +6,7 @@ from itertools import combinations
 from time import time
 from memoisation import memoise
 from Block import Block
+from time import time
 
 # Sample
 D = list()
@@ -14,10 +15,10 @@ D = list()
 C = set()
 
 #Maximum description length
-k = 6
+k = 20
 
 # Set of all attributes:
-A = 'abcdefg'
+A = 'abcdefghijkl'
 # print 'Attributes (%d): %s' % (len(A), A)
 
 # Set of singletons
@@ -35,14 +36,14 @@ def create_patterns(attributes, patterns, size):
 patterns = set()
 #add all itemsets of size 2 and 3 to patterns:
 # create_patterns(A, patterns, 2)
-create_patterns(A, patterns, 5)
-create_patterns(A, patterns, 4)
+create_patterns(A, patterns, 2)
+create_patterns(A, patterns, 3)
 
 # #Add all singletons to sumary:
 # create_patterns(A, C, 1)
 
 # Generate random sample D
-while len(D) != 50:
+while len(D) != 500:
     _sample = sample(A, randint(1, len(A)))
     D.append(''.join(sorted(_sample)))
 print 'D (%d): %s' % (len(D), D)
@@ -54,9 +55,7 @@ for index, x in enumerate(D):
 T  = 2 ** len(A)
 
 # Dict for values U_x
-U = {} 
-u0 = 2 ** -len(A)
-
+U = {}
 
 def total_probability(T_c):
     """ Assert and print the total probability of the model """
@@ -66,6 +65,7 @@ def total_probability(T_c):
         total_prob += p
     # assert abs(total_prob - 1.0) < 0.001, "Total probability was: %f " % total_prob
     print 'total prob: ', total_prob
+
 
 def contains(a, b):
     """ True if a contains b """
@@ -86,7 +86,6 @@ def model(T, C, u0, U):
     return u0 * res * T.block_weight
 
 def query(x, C, u0, U):
-
     # Compute blocks
     T_c = compute_blocks(C.union([x]))
     compute_block_weights(T_c, U)
@@ -95,6 +94,7 @@ def query(x, C, u0, U):
     for T in T_c:
         if contains(T.union_of_itemsets, x):
             p += model(T, C, u0, U)
+
     return p
 
 # Memoise: The function will cache previous results with the argument
@@ -108,6 +108,45 @@ def fr(x):
     p = p / float(len(D))
     assert p <= 1.0
     return p
+
+def h(x, y):
+    """
+    Heurestic for scoring an itemset
+    :param x:
+    :param y:
+    :return:
+    """
+    return x * log(x / y) + (1 - x) * log( (1-x) / (1-y))
+
+
+def find_best_itemset_mampey(X, Y, Z):
+    """
+    TODO: How to use this? It is not clear from Mampey how to initialize
+    where X and Z are initially empty
+    :param X: itemset
+    :param Y: remaining itemsets
+    :param Z: currently best itemset
+    :return:
+    """
+    fr_X = fr(X)
+    p_X = query(X)
+    fr_Z = fr(Z)
+    p_Z = query(Z)
+    h_X = h(fr_X, p_X)
+    h_Z = h(fr_Z, p_Z)
+    if h_X > h_Z:
+        Z = X
+    XY = union_of_itemsets([X, Y])
+    fr_XY = fr(XY)
+    p_XY = query(XY)
+    b = max(h(fr_X, p_XY), h(fr_XY, p_X))
+    if b > h_Z:
+        Y_iterable = Y.copy()
+        for y in Y_iterable:
+            Y = Y - set([y])
+            Z = find_best_itemset(X.union(y), Y, Z)
+    return Z
+
 
 # @memoise_set
 block_cache = {}
@@ -170,6 +209,8 @@ def iterative_scaling(C):
         U[c] = 1.0
     converge_iterations = 0
     iterations = 0
+    print 'iterative scaling with len of C ', len(C.union(I))
+    start = time()
     while iterations < 20: #((biggest_diff > 0.00000001 or biggest_diff == -1) and iterations < 100): # converge
         converge_iterations += 1
         biggest_diff = -1
@@ -180,19 +221,35 @@ def iterative_scaling(C):
             U[x] = U[x] * (fr(x) / p) * ((1 - p) / (1 - fr(x)))
             u0 = u0 * (1 - fr(x)) / (1 -  p)
 
-            diff = abs(fr(x) - query(x, C, u0, U))
-            if diff > biggest_diff:
-                biggest_diff = diff
+            # diff = abs(fr(x) - p)
+            # if diff > biggest_diff:
+                # biggest_diff = diff
                 # print 'biggest_diff:%f fx:%f p:%f' % (biggest_diff, fr(x), p)
 
     # print 'Converge iterations:%d biggest_diff:%f ' % (converge_iterations, biggest_diff)
+    print 'iterative scaling running time: ', time() - start
     return u0, U
 
-sorted_patterns = list(patterns)[::-1]
-sorted_pattern = filter(lambda x: fr(x) >= 1, sorted_patterns)
-def find_best_itemset():
+# sorted_patterns = list(patterns)[::-1]
+# sorted_pattern = filter(lambda x: fr(x) >= 1, sorted_patterns)
+def find_best_itemset(C, u0, U):
     """Returns a pattern that potentially will be included in the summary."""
-    return sorted_patterns.pop()
+    Z = None
+    best = -1
+    for X in patterns:
+        fr_X = fr(X)
+        p_X = query(X, C, u0, U)
+        h_X = h(fr_X, p_X)
+        if h_X > best:
+            best = h_X
+            Z = X
+        if h_X <= 0:
+            print "heurestic of zero remove? h:", h_X
+        if fr_X == p_X:
+            print "Itemset already predicted exactly, remove!"
+
+    patterns.remove(Z)
+    return Z
 
 def MTV():
     """ """
@@ -200,8 +257,12 @@ def MTV():
     global u0
     global U
 
+    u0 = 2 ** -len(A)
+    for c in C.union(I):
+        U[c] = 1.0
+
     # Compute our initial, current best, model
-    X = find_best_itemset()
+    X = find_best_itemset(C, u0, U)
     C = C.union([X])
     u0, U = iterative_scaling(C)
 
@@ -210,16 +271,20 @@ def MTV():
     cur_score = s(C, u0, U)
 
     # Brute force all patterns
-    while len(sorted_patterns) > 0 and len(C) < k: 
+    while len(patterns) > 0 and len(C) < k:
 
         # Possible best itemset to include in the summary
-        X = find_best_itemset()
+        start = time()
+        X = find_best_itemset(C, u0, U)
+        print 'Found best itemset: ', time() - start
 
         # Candidate summary 
         _C = C.union([X])
         
         # Candidate model
-        _u0, _U = iterative_scaling(_C) 
+        start = time()
+        _u0, _U = iterative_scaling(_C)
+        print 'iterative scaling: ', time() - start
         
         # Candidate score
         temp_score = s(_C, _u0, _U)
@@ -232,6 +297,9 @@ def MTV():
             C = _C
             u0 = _u0
             U = _U
+        else:
+            print "score did not decrease, break"
+            break
 
 def s(C, u0, U):
     return -1 * (len(D) * (log(u0) +  sum([fr(x) * log(U[x]) for x in C]))) + 0.5 * len(C) * log(len(D))
