@@ -15,7 +15,7 @@ D = list()
 C = set()
 
 #Maximum description length
-k = 8
+k = 4
 
 # Set of all attributes:
 A = 'abcdefghijkl'
@@ -142,7 +142,7 @@ def h(x, y):
     :return:
     """
     b = 0
-    if y == 0.0 or y == 1.0 or x == 1.0:
+    if y == 0.0 or y >= 1.0 or x >= 1.0:
         b = 0
     else:
         b = (1 - x) * log( (1-x) / (1-y))
@@ -155,7 +155,7 @@ def h(x, y):
 def find_best_itemset_mampey(X, Y, Z, C, u0, U):
     """
     TODO: How to use this? It is not clear from Mampey how to initialize
-    where X and Z are initially empty
+    when X and Z are initially empty?
     :param X: itemset
     :param Y: remaining itemsets
     :param Z: currently best itemset
