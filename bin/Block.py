@@ -28,4 +28,4 @@ class Block(object):
             Defined has the partial order on blocks,
             sets(T_1, C) < sets(T_2, C)
         """
-        return self.itemsets < other.itemsets
+        return self.union_of_itemsets & other.union_of_itemsets == self.union_of_itemsets
