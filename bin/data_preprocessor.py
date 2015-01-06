@@ -27,10 +27,16 @@ def data_to_binary(matrix):
     '''The funktions turn a matrix into a list of strings that represent the binary representation
     together with the number of attributes'''
     binary_list = []
+
+    fd = open('data.dat', 'a')
     for row in range(1,len(matrix)):
         cur_binary_string =''
         cur_binary = 0
         binary_position = 0
+
+        # For data format used byt Mampey's mtv implementation
+        position_list = []
+
         # Attribute indeces minus trailing new line character
         for column in range(3,len(matrix[0]) - 1):
             try:
@@ -42,7 +48,10 @@ def data_to_binary(matrix):
                 pass
             else :
                 cur_binary = cur_binary | 2**binary_position
+                # Position should start at position 1
+                position_list.append(binary_position + 1)
             binary_position+=1
+        fd.write(' '.join([str(x) for x in position_list]) + '\n')
         binary_list.append(cur_binary)
     return binary_list
 
