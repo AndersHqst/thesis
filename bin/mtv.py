@@ -15,10 +15,10 @@ D = list()
 C = set()
 
 #Maximum description length
-k = 4
+k = 8
 
 # Set of all attributes:
-A = 'abcdefghijkl'
+A = 'abcdefghijklmnopqrstu'
 # print 'Attributes (%d): %s' % (len(A), A)
 
 # Set of singletons
@@ -107,6 +107,7 @@ def query(x, C, u0, U):
     start = time()
     # Compute blocks
     T_c = compute_blocks(C.union([x]))
+
     build_blocks_time_a += time() - start
     start = time()
 
@@ -151,35 +152,86 @@ def h(x, y):
         a = x * log(x / y)
     return  a + b
 
+branches_pruned = 0
+min_sup_pruned = 0
+query_cache = {}
+def find_best_itemset_with_max_size(Y, C, u0, U, m):
+    global query_cache
+    global branches_pruned
+    global min_sup_pruned
+    query_cache = {}
+    branches_pruned = 0
+    min_sup_pruned = 0
+    # Iterate all combinations up to size m -> will be the Y for heurestic
+    Zs = set()
+    Z = 0
+    for comb in combinations(I, m):
+        Z = find_best_itemset_mampey(0, set(comb), Z, C, u0, U, 0.35)
+        Zs.add(Z)
+    print 'Best itemsets', Zs, [to_chars(x) for x in Zs]
+    print 'Best itemset', Z, to_chars(Z)
+    print 'branches pruned: ', branches_pruned
+    print 'min sup pruned: ', min_sup_pruned
+    return Z
 
-def find_best_itemset_mampey(X, Y, Z, C, u0, U):
+
+def find_best_itemset_mampey(X, Y, Z, C, u0, U, s):
+    global branches_pruned
+    global min_sup_pruned
     """
     TODO: How to use this? It is not clear from Mampey how to initialize
     when X and Z are initially empty?
     :param X: itemset
     :param Y: remaining itemsets
     :param Z: currently best itemset
+    :param m: max itemset size
     :return:
     """
+
+    #
+
     fr_X = fr(X)
-    p_X = query(X, C, u0, U)
+    if fr_X < s:
+        min_sup_pruned += 1
+        return Z
+
+    p_X = 0
+    if X in query_cache:
+        p_X = query_cache[X]
+    else:
+        p_X = query(X, C, u0, U)
+        query_cache[X] = p_X
+
     fr_Z = fr(Z)
-    p_Z = query(Z, C, u0, U)
+    p_Z = 0
+    if Z in query_cache:
+        p_Z = query_cache[Z]
+    else:
+        p_Z = query(Z, C, u0, U)
+        query_cache[Z] = p_Z
+
     h_X = h(fr_X, p_X)
     h_Z = h(fr_Z, p_Z)
     if h_X > h_Z:
         Z = X
     XY = union_of_itemsets([X, union_of_itemsets(Y)])
     fr_XY = fr(XY)
-    p_XY = query(XY, C, u0, U)
+
+    p_XY = 0
+    if XY in query_cache:
+        p_XY = query_cache[XY]
+    else:
+        p_XY = query(XY, C, u0, U)
+        query_cache[XY] = p_XY
+
     b = max(h(fr_X, p_XY), h(fr_XY, p_X))
-    if b > h_Z and len(to_chars(X)) <= 3:
+    if b > h_Z:
         Y_iterable = Y.copy()
         for y in Y_iterable:
             Y = Y - set([y])
-            Z = find_best_itemset_mampey(union_of_itemsets([X, y]), Y, Z, C, u0, U)
-    # else:
-        # print 'pruned branch'
+            Z = find_best_itemset_mampey(union_of_itemsets([X, y]), Y, Z, C, u0, U, s)
+    else:
+        branches_pruned += 1
     return Z
 
 
@@ -310,7 +362,7 @@ def MTV():
 
     # Compute our initial, current best, model
     # X = find_best_itemset(C, u0, U)
-    X = find_best_itemset_mampey(0, I, 0, C, u0, U)
+    X = find_best_itemset_with_max_size(I, C, u0, U, 3)
     C = C.union([X])
     u0, U = iterative_scaling(C)
 
@@ -324,7 +376,7 @@ def MTV():
         # Possible best itemset to include in the summary
         start = time()
         # X = find_best_itemset(C, u0, U)
-        X = find_best_itemset_mampey(0, I, 0, C, u0, U)
+        X = find_best_itemset_with_max_size(I, C, u0, U, 3)
         print 'Found best itemset: ', time() - start
 
         # Candidate summary 
