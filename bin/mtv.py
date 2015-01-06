@@ -15,7 +15,7 @@ D = list()
 C = set()
 
 #Maximum description length
-k = 8
+k = 5
 
 # Set of all attributes:
 A = 'abcdefghijklmnopqrstu'
@@ -179,16 +179,12 @@ def find_best_itemset_mampey(X, Y, Z, C, u0, U, s):
     global branches_pruned
     global min_sup_pruned
     """
-    TODO: How to use this? It is not clear from Mampey how to initialize
-    when X and Z are initially empty?
     :param X: itemset
     :param Y: remaining itemsets
     :param Z: currently best itemset
     :param m: max itemset size
     :return:
     """
-
-    #
 
     fr_X = fr(X)
     if fr_X < s:
@@ -226,9 +222,8 @@ def find_best_itemset_mampey(X, Y, Z, C, u0, U, s):
 
     b = max(h(fr_X, p_XY), h(fr_XY, p_X))
     if b > h_Z:
-        Y_iterable = Y.copy()
-        for y in Y_iterable:
-            Y = Y - set([y])
+        while 0 < len(Y):
+            y = Y.pop()
             Z = find_best_itemset_mampey(union_of_itemsets([X, y]), Y, Z, C, u0, U, s)
     else:
         branches_pruned += 1
