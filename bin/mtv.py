@@ -26,20 +26,20 @@ I = set()
 for a in A:
     I.add(to_binary(a))
 
-def create_patterns(attributes, patterns, size):       
-    """Creates all patterns of a given size and add them to patterns"""
-    comb = combinations(A,size)
-    for c in comb:
-        pattern = to_binary(''.join(c))
-        patterns.add(pattern)
+# def create_patterns(attributes, patterns, size):
+#     """Creates all patterns of a given size and add them to patterns"""
+#     comb = combinations(A,size)
+#     for c in comb:
+#         pattern = to_binary(''.join(c))
+#         patterns.add(pattern)
 
-patterns = set()
+# patterns = set()
 #add all itemsets of size 2 and 3 to patterns:
 # create_patterns(A, patterns, 2)
-create_patterns(A, patterns, 2)
-create_patterns(A, patterns, 3)
+# create_patterns(A, patterns, 2)
+# create_patterns(A, patterns, 3)
 
-print 'patterns: ', len(patterns)
+# print 'patterns: ', len(patterns)
 # #Add all singletons to sumary:
 # create_patterns(A, C, 1)
 
@@ -324,26 +324,26 @@ def iterative_scaling(C):
 
 # sorted_patterns = list(patterns)[::-1]
 # sorted_pattern = filter(lambda x: fr(x) >= 1, sorted_patterns)
-def find_best_itemset(C, u0, U):
-    """Returns a pattern that potentially will be included in the summary."""
-    # return patterns.pop();
-    Z = None
-    best = -1
-    removable = set()
-    for X in patterns:
-        fr_X = fr(X)
-        p_X = query(X, C, u0, U)
-        h_X = h(fr_X, p_X)
-        if h_X > best:
-            best = h_X
-            Z = X
-        if h_X <= 0.0:
-            print "heurestic of zero remove? h:", h_X
-
-            # print "Itemset already predicted exactly, remove!"
-
-    patterns.remove(Z)
-    return Z
+# def find_best_itemset(C, u0, U):
+#     """Returns a pattern that potentially will be included in the summary."""
+#     # return patterns.pop();
+#     Z = None
+#     best = -1
+#     removable = set()
+#     for X in patterns:
+#         fr_X = fr(X)
+#         p_X = query(X, C, u0, U)
+#         h_X = h(fr_X, p_X)
+#         if h_X > best:
+#             best = h_X
+#             Z = X
+#         if h_X <= 0.0:
+#             print "heurestic of zero remove? h:", h_X
+#
+#             # print "Itemset already predicted exactly, remove!"
+#
+#     patterns.remove(Z)
+#     return Z
 
 def MTV():
     """ """
@@ -366,7 +366,7 @@ def MTV():
     cur_score = s(C, u0, U)
 
     # Brute force all patterns
-    while len(patterns) > 0 and len(C) < k:
+    while len(C) < k:
 
         # Possible best itemset to include in the summary
         start = time()
