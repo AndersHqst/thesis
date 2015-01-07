@@ -6,6 +6,7 @@ class Block(object):
         super(Block, self).__init__()
         self.union_of_itemsets = 0
         self.itemsets = set()
+        self.singletons = set()
         self.block_size = 0
         self.cummulative_block_size = 0
         self.block_weight = 0
