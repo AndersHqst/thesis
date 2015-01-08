@@ -363,19 +363,19 @@ def compute_block_weights(T_c, U):
 
     start = time()
 
-    # total_weight = 1
-    # for i in I:
-    #     total_weight *= (1 + U[i])
+    total_weight = 1
+    for i in I:
+        total_weight *= (1 + U[i])
 
     for T in T_c:
-        T.cummulative_block_weight = 1
-        for i in I:
-            if contains(T.union_of_itemsets, i):
-                T.cummulative_block_weight *= U[i]
-            else:
-                T.cummulative_block_weight *= (1 + U[i])
-        # for i in T.singletons:
-            # T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
+        T.cummulative_block_weight = total_weight
+        # for i in I:
+        #     if contains(T.union_of_itemsets, i):
+        #         T.cummulative_block_weight *= U[i]
+        #     else:
+        #         T.cummulative_block_weight *= (1 + U[i])
+        for i in T.singletons:
+            T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
 
     block_weights_a += time() - start
     start = time()
