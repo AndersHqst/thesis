@@ -6,6 +6,7 @@ class Block(object):
         super(Block, self).__init__()
         self.union_of_itemsets = 0
         self.itemsets = set()
+        self.singletons = set()
         self.block_size = 0
         self.cummulative_block_size = 0
         self.block_weight = 0
@@ -28,4 +29,4 @@ class Block(object):
             Defined has the partial order on blocks,
             sets(T_1, C) < sets(T_2, C)
         """
-        return self.itemsets < other.itemsets
+        return self.union_of_itemsets & other.union_of_itemsets == self.union_of_itemsets
