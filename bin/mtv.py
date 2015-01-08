@@ -257,7 +257,7 @@ def brute_find_best_itemset_with_max_size(Y, C, u0, U):
     print 'heuristic: ', best
     return Z
 
-def find_best_itemset(X, Y, Z, C, u0, U, s=0.1, m=None, X_length=0):
+def find_best_itemset(X, Y, Z, C, u0, U, s=0, m=None, X_length=0):
     global branches_pruned
     global min_sup_pruned
     """
@@ -411,6 +411,8 @@ def iterative_scaling(C):
             fr_x = fr(x)
             if  abs(1 - fr_x) < float_precision:
                 fr_x = 0.9999999999
+            if  abs(1 - p) < float_precision:
+                p = 0.9999999999
 
             # if abs(1 - p) < float_precision or p > 1.0:
                 # p = 0.99
@@ -496,6 +498,8 @@ def MTV():
         # Heuristi for best itemset to include in the summary
         start = time()
         X = find_best_itemset_with_max_size(0, C, u0, U, m=None)
+        if X in I:
+            print 'X was a singleton! These should not be possible from the heurestic'
         # X = D[randint(1, len(D))]
         print 'Found best itemset: ', time() - start
 
@@ -537,7 +541,7 @@ tmp = []
 for i in D:
     if i != 0:
         tmp.append(i)
-D = tmp[:20]
+D = tmp
 print 'Cleaned D: ', [to_chars(x) for x in D]
 
 # Set of singletons
