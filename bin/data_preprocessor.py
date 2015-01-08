@@ -109,5 +109,5 @@ abundance_matrix = abundance_matrix(matrix)
 #otu_stats(matrix)
 #otu_limits(matrix)
 data_cleaning(abundance_matrix)
-print data_to_binary(abundance_matrix, number_of_otus=4)
+print data_to_binary(abundance_matrix, number_of_otus=50)
 
