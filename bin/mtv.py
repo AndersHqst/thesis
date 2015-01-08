@@ -75,7 +75,7 @@ print D
 U = {}
 u0 = 0
 
-def total_probability(T_c):
+def total_probability(T_c, C, u0, U):
     """ Assert and print the total probability of the model """
     total_prob = 0.0
     for T in T_c:
@@ -118,9 +118,12 @@ def singletons_of_itemsets(union):
 
 def model(T, C, u0, U):
     res = 1.0
-    for x in C:
+    for x in C - I:
         if contains(T.union_of_itemsets, x):
-            res = res * U[x]
+            try:
+                res = res * U[x]
+            except:
+                print 'asdf'
     # assert T.block_weight != 0, "Block weight was 0"
     return u0 * res * T.block_weight
 
@@ -416,20 +419,28 @@ def iterative_scaling(C):
             U[x] = U[x] * (fr_x / p) * ((1 - p) / (1 - fr_x))
 
             if p > 1.0:
-                print 'p above 1'
+                print 'p above 1: ', p
+            if p < 0.0:
+                print 'p below 0: ', p
             u0 = u0 * (1 - fr_x) / (1 - p)
 
             # diff = abs(fr(x) - p)
             # if diff > biggest_diff:
                 # biggest_diff = diff
                 # print 'biggest_diff:%f fx:%f p:%f' % (biggest_diff, fr(x), p)
-    T_c = compute_blocks(C.union([3]))
-    compute_block_weights(T_c, U)
-    total_probability(T_c)
-    # pprob = 0.0
-    # for t in range(A):
-    #     pprob += old_model(t, C, u0, U)
-    # print 'Total t prob: ', pprob
+            # print U
+        # prob = 0.0
+        # for t in range(A):
+        #     prob += old_model(t, C, u0, U)
+        # print 'Total t prob: ', prob
+        # T_c = compute_blocks(C)
+        # compute_block_weights(T_c, U)
+        # total_probability(T_c, C, u0, U)
+
+    # T_c = compute_blocks(C.union([3]))
+    # compute_block_weights(T_c, U)
+    # total_probability(T_c)
+
 
     # print 'Converge iterations:%d biggest_diff:%f ' % (converge_iterations, biggest_diff)
     return u0, U
@@ -484,8 +495,8 @@ def MTV():
 
         # Heuristi for best itemset to include in the summary
         start = time()
-        # X = find_best_itemset_with_max_size(0, C, u0, U, m=None)
-        X = D[randint(1, len(D))]
+        X = find_best_itemset_with_max_size(0, C, u0, U, m=None)
+        # X = D[randint(1, len(D))]
         print 'Found best itemset: ', time() - start
 
         if X == 0:
