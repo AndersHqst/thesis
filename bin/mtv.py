@@ -11,6 +11,7 @@ from Block import Block
 from time import time
 from graph import Graph, Component
 from model import Model
+from timer import *
 
 float_precision = 0.00001
 
@@ -89,12 +90,15 @@ def union_of_itemsets(itemsets):
         result = c | result
     return result
 
-def singletons_of_itemsets(union):
+def singletons_of_itemsets(itemsets):
     singletons = set()
-    for position in range(1000):
-        b = 2 ** position
-        if union & b == b:
-            singletons.add(b)
+    for itemset in itemsets:
+        val = itemset
+        while val != 0:
+            pos = len(bin(val)) - 3
+            singleton = 2 ** pos
+            val = val ^ singleton
+            singletons.add(singleton)
     return singletons
 
 
@@ -221,15 +225,18 @@ def find_best_itemset(Y, model):
     global min_sup_pruned
     global explored
     global Z
+
     query_cache = {}
     branches_pruned = 0
     min_sup_pruned = 0
+    nodes_visited = 0
 
 
     Z = find_best_itemset_rec(0, I.copy(), [(0,0)], model, m=None, s=0.1)
 
     print 'branches pruned: ', branches_pruned
     print 'min sup pruned: ', min_sup_pruned
+    print 'nodes visited: ', nodes_visited
 
     # Edge cases where we only find singletons not exactly described by the model
     # We search the top 10 Zs to see if there was a non singleton itemset
@@ -260,9 +267,11 @@ def brute_find_best_itemset_with_max_size(Y, model):
     return Z
 
 def find_best_itemset_rec(X, Y, Z, model, s=0.25, m=None, X_length=0):
+
     global branches_pruned
     global min_sup_pruned
     global explored
+    global nodes_visited
     """
     :param X: itemset
     :param Y: remaining itemsets
@@ -274,6 +283,7 @@ def find_best_itemset_rec(X, Y, Z, model, s=0.25, m=None, X_length=0):
     :return: Best itemset Z
     """
 
+    nodes_visited += 1
     fr_X = fr(X)
     if fr_X < s:
         min_sup_pruned += 1
@@ -394,7 +404,8 @@ def compute_blocks(C):
     T_unions = set()
 
     # iterate the combination sizes in reverse
-    for i in range(len(C)+1)[::-1]:
+    a = range(len(C)+1)[::-1]
+    for i in a:
         choose = i
         for comb in combinations(C, choose):
             union = union_of_itemsets(comb)
@@ -402,7 +413,7 @@ def compute_blocks(C):
                 T_unions.add(union)
                 T = Block()
                 T.union_of_itemsets = union
-                T.singletons = singletons_of_itemsets(union)
+                T.singletons = singletons_of_itemsets(comb)
                 T.itemsets = set(comb)
                 T_c.append(T)
 
@@ -612,12 +623,16 @@ for c in model.C:
     print 'query %s with fr %f query %f uX: %f' % (to_index_list(c), fr(c), query(c, model), model.U[c])
 print 'u0: ', model.u0
 
+print 'Longest blocks in compute block sizes: ', longest_blocks
+
 # Building time
 print 'Build blocks a: ', build_blocks_time_a
 print 'Build blocks b: ', build_blocks_time_b
 print 'Call model: ', call_model_time
 print 'Block weights a,', block_weights_a
 print 'Block weights b,', block_weights_b
+
+timer_print_timings()
 
 # Write a .dat file that can be used with the Mampey MTV implementation
 with open('data_2.dat', 'w') as fd:
