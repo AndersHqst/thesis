@@ -125,9 +125,6 @@ def query(x, model):
     global build_blocks_time_b
     global call_model_time
 
-    # TODO: only time the code if cmd line arg was given
-    # start = time()
-
     # TODO: improve this. The model has a 'base graph' we can add to.
     # simply save a copy of the existing graph, add the node, use new graph,
     # switch back to old graph
@@ -138,26 +135,21 @@ def query(x, model):
 
     disjoint_blocks = []
     for itemsets in G.disjoint_summaries():
-        disjoint_blocks.append(compute_blocks(itemsets))
-        # build_blocks_time_a += time() - start
+        blocks = compute_blocks(itemsets)
+        disjoint_blocks.append(blocks)
 
     T_c = []
     for blocks in disjoint_blocks:
-        start = time()
-
         compute_block_weights(blocks, model.U)
-        # build_blocks_time_b += time() - start
         T_c = T_c + blocks
 
     # start = time()
-    estiamte = 0.0
+    estimate = 0.0
     for T in T_c:
         if contains(T.union_of_itemsets, x):
-            estiamte += p(T, model)
+            estimate += p(T, model)
 
-    # call_model_time += time() - start
-
-    return estiamte
+    return estimate
 
 # Memoise: The function will cache previous results with the argument
 # this assumes that D does not change between cached results.
@@ -245,27 +237,6 @@ def find_best_itemset(Y, model):
         if not (z in I) and z != 0:
             return z[0]
     return Z[0][0]
-
-def brute_find_best_itemset_with_max_size(Y, model):
-    start = time()
-    best = 0.0
-    Z = None
-    for i in range(A-1):
-        X = i+1
-        fr_X = fr(X)
-        if fr_X < 0.25:
-            continue
-        p_X = query(X, model)
-
-        h_X = h(fr_X, p_X)
-        if h_X > best:
-            best = h_X
-            Z = X
-
-    print 'Brute forced best itemset, time: ', time() - start
-    print 'Best itemset', Z, to_index_list(Z)
-    print 'heuristic: ', best
-    return Z
 
 def find_best_itemset_rec(X, Y, Z, model, s=0.25, m=None, X_length=0):
 
@@ -429,16 +400,7 @@ def compute_block_sizes(T_c):
                 Ti.block_size = Ti.block_size - Tj.block_size
     return T_c
 
-block_weights_a = 0
-block_weights_b = 0
-longest_blocks = 0
 def compute_block_weights(T_c, U):
-    global block_weights_a
-    global block_weights_b
-    global longest_blocks
-
-    start = time()
-
     total_weight = 1
     for i in I:
         total_weight *= (1 + U[i])
@@ -448,18 +410,11 @@ def compute_block_weights(T_c, U):
         for i in T.singletons:
             T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
 
-    block_weights_a += time() - start
-    start = time()
-
-    if longest_blocks < len(T_c):
-        longest_blocks = len(T_c)
-
     for i, Ti in enumerate(T_c):
         Ti.block_weight = Ti.cummulative_block_weight
         for Tj in T_c[:i]:
             if Ti < Tj:
                 Ti.block_weight = Ti.block_weight - Tj.block_weight
-    block_weights_b += time() - start
 
 
 def iterative_scaling(model):
@@ -470,9 +425,8 @@ def iterative_scaling(model):
     for c in _C:
         model.U[c] = 1.0
 
-
     # TODO: only time the code if cmd line arg was given
-    start = time()
+    timer_start('Iterative scaling')
 
     # TODO: iterate until converged
     iterations = 0
@@ -502,7 +456,7 @@ def iterative_scaling(model):
             iterations += 1
 
     # TODO: only time the code if cmd line arg was given
-    print 'Iterative scaling done (%f secs)' % (time() - start)
+    timer_stop('Iterative scaling')
 
 
     def __str__(self):
@@ -575,7 +529,7 @@ for i in D:
 D = tmp
 
 
-def singletons(I, D):
+def singletons(D):
     """
     Finds all singletons present in a dataset D and adds them to a set I.
     All rows in D are or'ed together to create a bit mask of all attributes.
@@ -584,6 +538,7 @@ def singletons(I, D):
     :param D: Dataset where singletons will be taken from
     :return:
     """
+    global I
 
     # Mask all bits observed in D
     mask = 0
@@ -591,20 +546,11 @@ def singletons(I, D):
         mask = mask | d
 
     # Create set of singletons for all 1 bits
-    bit_position = 0
-    while mask != 0:
-
-        # Is the bit on the current position 1?
-        if mask & 1 == 1:
-            I.add(2 ** bit_position)
-
-        # Shift right and adjust position
-        mask = mask >> 1
-        bit_position += 1
+    I = singletons_of_itemsets([mask])
 
 # Set of singletons
 I = set()
-singletons(I, D)
+singletons(D)
 print 'Singletons (%d): %s' % (len(I), I)
 
 start = time()
@@ -616,20 +562,10 @@ for x in model.C:
 
 print 'Top 10 best heuristics at finel FindBestItemSet: ', [(to_index_list(x), y) for x, y in Z]
 
-print 'Longest blocks in compute block weights: ', longest_blocks
-
 for c in model.C:
     print 'query %s with fr %f query %f uX: %f' % (to_index_list(c), fr(c), query(c, model), model.U[c])
 print 'u0: ', model.u0
 
-print 'Longest blocks in compute block sizes: ', longest_blocks
-
-# Building time
-print 'Build blocks a: ', build_blocks_time_a
-print 'Build blocks b: ', build_blocks_time_b
-print 'Call model: ', call_model_time
-print 'Block weights a,', block_weights_a
-print 'Block weights b,', block_weights_b
 
 timer_print_timings()
 
