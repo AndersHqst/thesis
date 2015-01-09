@@ -101,7 +101,7 @@ def model(T, C, u0, U):
                 res = res * U[x]
             except:
                 print 'asdf'
-    # assert T.block_weight != 0, "Block weight was 0"
+
     return u0 * res * T.block_weight
 
 def old_model(t, C, u0, U):
@@ -119,7 +119,9 @@ def query(x, C, u0, U):
     global build_blocks_time_b
     global call_model_time
 
+    # TODO: only time the code if cmd line arg was given
     start = time()
+    
     # Compute blocks
     T_c = compute_blocks(C.union([x]))
 
@@ -134,10 +136,9 @@ def query(x, C, u0, U):
     for T in T_c:
         if contains(T.union_of_itemsets, x):
             p += model(T, C, u0, U)
-    # assert p != 0, "p was 0 for itemset: %d" % x
+
     call_model_time += time() - start
-    # if p == 1.0:
-        # p = 0.9999
+
     return p
 
 # Memoise: The function will cache previous results with the argument
