@@ -95,8 +95,8 @@ def singletons_of_itemsets(union):
 
 def model(T, C, u0, U):
     res = 1.0
-    for x in C - I:
-        if contains(T.union_of_itemsets, x):
+    for x in C:
+        if contains(T.union_of_itemsets, x) and not (x in I):
             try:
                 res = res * U[x]
             except:
