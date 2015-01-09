@@ -205,6 +205,7 @@ def find_best_itemset(Y, C, u0, U):
     global branches_pruned
     global min_sup_pruned
     global explored
+    global Z
     query_cache = {}
     branches_pruned = 0
     min_sup_pruned = 0
@@ -212,7 +213,7 @@ def find_best_itemset(Y, C, u0, U):
 
     Z = find_best_itemset_rec(0, I.copy(), [(0,0)], C, u0, U, m=None, s=0.1)
 
-    print 'Top 10 best Z: ', Z
+    print 'Top 10 best Z: ', [(to_index_list(x), y) for x,y in Z]
     print 'branches pruned: ', branches_pruned
     print 'min sup pruned: ', min_sup_pruned
 
