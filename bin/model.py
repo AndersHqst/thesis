@@ -4,3 +4,4 @@ class Model(object):
         self.u0 = 0
         self.U = {}
         self.C = []
+        self.G = None
