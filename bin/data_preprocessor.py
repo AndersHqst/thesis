@@ -127,5 +127,6 @@ data_cleaning(abundance_matrix)
 lower_limits = otu_limits(abundance_matrix)
 print lower_limits
 print data_to_binary(abundance_matrix, otu_stat = lower_limits)
+print data_to_binary(abundance_matrix, number_of_otus=50)
 
 
