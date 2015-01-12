@@ -470,9 +470,6 @@ def iterative_scaling(model):
     timer_stop('Iterative scaling')
 
 
-    def __str__(self):
-        return 'nodes: %s components: ' % (bin(self.nodes), self.components)
-
 
 def MTV():
     """ """
