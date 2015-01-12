@@ -84,30 +84,49 @@ def otu_stats(matrix):
     return otu_stats
 
 def otu_limits(matrix):
-    otu_limits =[]
-    number_of_otus = len(get_otus(matrix))
-    for column in range(3,len(matrix[0])-1):
-        cur_abundances =[]
-        for row in range(1,len(matrix)):
-            cur_abundance = int(float(matrix[row][column]))
-            cur_abundances.append(cur_abundance)
-        cur_abundances.sort()
-        otu_limits.append(cur_abundances[int(5*number_of_otus/100.0)])
-    print 'otu_list', otu_limits
-    return otu_limits
+    lower_limits = []
+    for row in matrix.T:
+        Q_1 = np.percentile(row, 25)
+        Q_3 = np.percentile(row, 75)
+        IQR = Q_3-Q_1
+        low = Q_1 - 1.5 * IQR
+        upp = Q_3 + 1.5 * IQR
+        if low > 0:
+            print 'low: ', low
+        abundances_without_outliers = []
+        for i, value in enumerate(row):
+            #if value <= upp and value >= low:
+            if value >= low:
+                abundances_without_outliers.append(value)
+            else:
+                print value
+        stand_d = tstd(abundances_without_outliers)
+        mean = np.mean(abundances_without_outliers)
+        cur_lower = mean - 1.96 * stand_d
+        #cur_lower = np.mean(abundances_without_outliers) - 2*tstd(abundances_without_outliers)
+        if cur_lower < 0:
+            cur_lower = 0
+        lower_limits.append(cur_lower)
+    return lower_limits
+
 
 def data_cleaning(matrix):
     """Cleans the abundance matrix """
     #Removes otus which greatest abundance is 2 or lower
-
     clean_matrix = matrix.T[(matrix.T > 2).any(1),]
     #return cleaned_matrix
     return clean_matrix.T
+
+
 
 matrix = loadData()
 abundance_matrix = abundance_matrix(matrix)
 #otu_stats(matrix)
 #otu_limits(matrix)
 data_cleaning(abundance_matrix)
+lower_limits = otu_limits(abundance_matrix)
+print lower_limits
+print data_to_binary(abundance_matrix, otu_stat = lower_limits)
 print data_to_binary(abundance_matrix, number_of_otus=50)
+
 
