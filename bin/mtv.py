@@ -25,7 +25,7 @@ model = Model()
 Z = list()
 
 #Maximum description length
-k = 2
+k = 6
 
 
 D = [21415, 405699, 921899, 761510, 330665, 50970, 306223, 5199, 381774, 103028, 745639, 502414, 581, 562356, 957547, 932979, 570599, 23175, 638694, 136764, 470066, 833478, 716342, 50282, 63152, 947408, 82343, 888639, 190586, 621982, 589862, 682409, 134334, 688306, 632724, 334408, 929026, 548801, 551132, 504552, 845351, 138961, 544142, 92379, 49554, 915311, 903555, 962526, 30498, 289818, 10800, 345909, 487053, 125766, 523631, 174254, 559138, 256349, 754332, 938511, 1002062, 606879, 340165, 874619, 881341, 867731, 164271, 86124, 137125, 690770, 202291, 234552, 733041, 801285, 205811, 1047206, 423512, 218847, 107931, 580221, 46457, 900791, 815593, 139424, 203079, 201607, 90494, 404517, 879538, 834110, 606952, 396832, 86907, 344951, 591667, 727317, 347627, 633111, 664092, 1008713, 398054, 425449, 1046759, 605223, 455833, 873611, 351676, 349668, 770365, 419096, 564896, 851994, 407543, 851913, 695336, 515435, 922762, 797134, 369942, 872349, 495114, 227718, 402448, 399326, 334229, 382707, 151194, 889540, 535077, 778197, 380056, 637648, 893416, 902114, 1029435, 648946, 962767, 482108, 193286, 986671, 327394, 231550, 278109, 866283, 912137, 284118, 664393, 9794, 539012, 275435, 165921, 810591, 388354, 461143, 49360, 414486, 396285, 251994, 1005026, 407486, 213157, 953070, 610329, 224336, 83418, 855209, 53395, 424425, 646189, 23342, 305377, 493753, 1012500, 672178, 242262, 544137, 795057, 196304, 954895, 817445, 435515, 462169, 547429, 428031, 157882, 630440, 646981, 105647, 587554, 606385, 92989, 444736, 726758, 621216, 657007, 710537, 96419, 648289, 834942, 97076, 928094, 861473, 896428, 569212, 842970, 412296, 111054, 867388, 631813, 955413, 465995, 638286, 190938, 839092, 323203, 463151, 804090, 899056, 232127, 42629, 314318, 980576, 443360, 403920, 54771, 230824, 633898, 298065, 730677, 168881, 531705, 842610, 465424, 533300, 857033, 712976, 137554, 666771, 860443, 982378, 186829, 728970, 984119, 1017068, 283739, 32464, 982841, 396024, 242038, 959384, 957026, 397664, 989927, 375417, 797588, 766105, 350704, 139760, 553706, 348380, 428792, 849648, 652317, 392422, 519685, 597542, 568168, 686904, 197964, 708405, 531034, 915145, 279481, 970868, 720768, 355165, 743891, 893418, 413868, 986389, 850115, 402686, 798065, 848994, 799325, 732902, 666437, 752729, 642324, 887869, 991404, 481895, 303809, 736986, 468877, 875064, 397081, 368902, 130331, 151841, 159918, 785485, 33594, 84210, 58995, 478375, 244604, 429863, 543589, 520734, 636488, 44047, 566576, 1029151, 300021, 37854, 592258, 40679, 454733, 71668, 948158, 838585, 881323, 1020346, 385791, 997728, 65949, 268996, 310561, 698954, 713410, 86841, 77718, 913347, 507970, 559648, 367969, 295495, 218140, 804179, 390674, 13925, 126060, 258737, 632312, 699373, 49925, 979658, 165621, 498751, 99538, 1021119, 785247, 648251, 101732, 818373, 1038389, 806440, 559233, 697884, 131173, 236622, 392914, 159646, 402393, 440803, 539285, 470393, 922636, 52422, 248780, 693249, 983750, 186401, 799724, 779860, 584779, 949554, 661548, 478192, 1047550, 855279, 102392, 861756, 699871, 998186, 284473, 28326, 629910, 490800, 838920, 793437, 176807, 539255, 398270, 883273, 727976, 579104, 694316, 708088, 223887, 780170, 306543, 470709, 232473, 414365, 250821, 608178, 15849, 820953, 369710, 289313, 932766, 75384, 119055, 961205, 857757, 782032, 435220, 345589, 553062, 838514, 887950, 573303, 72165, 701840, 637442, 244805, 982984, 519748, 931635, 413756, 13819, 267121, 118980, 925336, 953611, 332834, 890803, 862317, 582858, 330155, 50482, 167843, 683358, 432953, 337494, 748501, 495543, 888773, 637373, 802300, 551322, 321424, 602517, 756204, 65308, 70217, 510053, 670294, 71017, 729280, 739264, 531136, 328419, 916968, 692296, 92424, 432580, 1030142, 183241, 346266, 143062, 946631, 206822, 125393, 210718, 459268, 212354, 432516, 438779, 409351, 660409, 710449, 56874, 666091, 969179, 142857, 651017, 793861, 368484, 600924, 141907, 275102, 734229, 614707, 786974, 361794, 856380, 993982, 651878, 324980, 444908, 84895, 477360, 1015017, 559771, 370956, 797234, 573547, 115337, 16373, 462979, 979092, 322844, 759524, 215601, 662922, 845317, 839335, 590995, 520312, 825068, 18020, 673940, 412221, 1036449, 585065, 320702, 765172, 935029, 280180, 41451, 469606, 337040, 446778, 665019, 19057, 83010, 303019, 916678, 13754, 328689, 625386, 437820, 817271, 513601, 490143, 464166, 564788, 9503, 988320, 1025645, 183841, 582616, 518648, 685207, 783407, 79960, 432517, 992454, 380307, 46624, 303589, 83018, 307988, 903487, 533287, 721859, 606013, 415335, 512700, 232575, 829962, 952717, 978973, 276743, 420201, 865717, 579435, 895868, 233299, 122455, 212123, 185245, 656520, 1006761, 273013, 948987, 562490, 894545, 272257, 501839, 732445, 308503, 726262, 257770, 383403, 147898, 158654]
@@ -126,30 +126,48 @@ def query(x, model):
     global call_model_time
 
     # TODO: improve this. The model has a 'base graph' we can add to.
+    # TODO: How to split C. Do we need more than one model?
     # simply save a copy of the existing graph, add the node, use new graph,
     # switch back to old graph
-    timer_start('build graph')
-    G = Graph()
-    G.add_node(x)
-    for c in model.C:
-        G.add_node(c)
+    # b = False
+    # T_c = []
+    # if b:
+    #     timer_start('build graph')
+    #     G = Graph()
+    #     G.add_node(x)
+    #     for c in model.C:
+    #         G.add_node(c)
+    #     timer_stop('build graph')
+    #
+    #     timer_start('Compute blocks')
+    #     disjoint_blocks = []
+    #     for itemsets in G.disjoint_summaries():
+    #         blocks = compute_blocks(itemsets)
+    #         disjoint_blocks.append(blocks)
+    #     timer_start('Compute blocks')
+    #
+    #     timer_start('Block weights')
+    #     # T_c = []
+    #     for blocks in disjoint_blocks:
+    #         compute_block_weights(blocks, x, model.U)
+    #         T_c = T_c + blocks
+    #
+    # else:
+    timer_start('Compute blocks')
 
-    disjoint_blocks = []
-    for itemsets in G.disjoint_summaries():
-        blocks = compute_blocks(itemsets)
-        disjoint_blocks.append(blocks)
-    timer_stop('build graph')
+    T_c = compute_blocks(model.C + [x])
+    compute_block_weights(T_c, x, model.U)
 
-    T_c = []
-    for blocks in disjoint_blocks:
-        compute_block_weights(blocks, model.U)
-        T_c = T_c + blocks
+    timer_stop('Block weights')
 
-    # start = time()
+    timer_start('Compute p')
+
     estimate = 0.0
     for T in T_c:
         if contains(T.union_of_itemsets, x):
             estimate += p(T, model)
+
+    timer_stop('Compute p')
 
     return estimate
 
@@ -224,14 +242,13 @@ def find_best_itemset(Y, model):
     query_cache = {}
     branches_pruned = 0
     min_sup_pruned = 0
-    nodes_visited = 0
 
-
-    Z = find_best_itemset_rec(0, I.copy(), [(0,0)], model, m=3, s=0.1)
+    timer_start('Find best itemset')
+    Z = find_best_itemset_rec(0, I.copy(), [(0,0)], model, m=3, s=0.08)
+    timer_stop('Find best itemset')
 
     print 'branches pruned: ', branches_pruned
     print 'min sup pruned: ', min_sup_pruned
-    print 'nodes visited: ', nodes_visited
 
     # Edge cases where we only find singletons not exactly described by the model
     # We search the top 10 Zs to see if there was a non singleton itemset
@@ -368,6 +385,7 @@ def compute_blocks(C):
         return: Topologically sorted blocks T_C
     """
 
+    timer_start('Compute blocks')
     key = tuple(sorted(C))
     if key in block_cache:
         return block_cache[key]
@@ -390,6 +408,7 @@ def compute_blocks(C):
                 T_c.append(T)
 
     block_cache[key] = T_c
+    timer_stop('Compute blocks')
     return T_c
 
 def compute_block_sizes(T_c):
@@ -402,24 +421,29 @@ def compute_block_sizes(T_c):
                 Ti.block_size = Ti.block_size - Tj.block_size
     return T_c
 
-def compute_block_weights(T_c, U):
+def compute_block_weights(T_c, x, U):
     total_weight = 1
     for i in I:
         total_weight *= (1 + U[i])
 
+    timer_start('Cummulative weight')
     for T in T_c:
         T.cummulative_block_weight = total_weight
         for i in T.singletons:
             T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
+    timer_stop('Cummulative weight')
 
+    timer_start('Block weight')
     for i, Ti in enumerate(T_c):
         Ti.block_weight = Ti.cummulative_block_weight
+        if Ti.union_of_itemsets & x == 0:
+            continue
         for Tj in T_c[:i]:
             if Ti < Tj:
                 Ti.block_weight = Ti.block_weight - Tj.block_weight
+    timer_stop('Block weight')
 
-
-def iterative_scaling(model):
+def iterative_scaling(models):
 
     # Initialize U and i0
     model.u0 = 2 ** -len(I)

@@ -2,7 +2,6 @@ from time import time
 timings = {}
 starts = {}
 
-start = 0
 def timer_start(flag):
     global start
     global starts
@@ -10,7 +9,6 @@ def timer_start(flag):
     starts[flag] = time()
 
 def timer_stop(flag):
-    global start
     global timings
     global starts
 

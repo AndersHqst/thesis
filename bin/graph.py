@@ -26,7 +26,7 @@ class Graph(object):
         :return:
         """
 
-        # Find all intersectin or disjoint components
+        # Find all intersecting or disjoint components
         intersecting_components = []
         disjoint_components = []
         while 0 < len(self.components):
@@ -43,8 +43,7 @@ class Graph(object):
         new_component.itemsets = [itemset]
         for intersecting_component in intersecting_components:
                 new_component.nodes = new_component.nodes | intersecting_component.nodes
-                for intersecting_itemset in intersecting_component.itemsets:
-                    new_component.itemsets.append(intersecting_itemset)
+                new_component.itemsets += intersecting_component.itemsets
 
         self.components = disjoint_components + [new_component]
 
