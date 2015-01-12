@@ -243,7 +243,7 @@ def find_best_itemset(Y, model):
     min_sup_pruned = 0
 
     timer_start('Find best itemset')
-    Z = find_best_itemset_rec(0, I.copy(), [(0,0)], model, m=5, s=0.20)
+    Z = find_best_itemset_rec(0, I.copy(), [(0,0)], model, m=None, s=0.20)
     timer_stop('Find best itemset')
 
     print 'branches pruned: ', branches_pruned
