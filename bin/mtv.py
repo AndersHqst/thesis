@@ -120,10 +120,12 @@ def old_model(t, C, u0, U):
 build_blocks_time_a = 0
 build_blocks_time_b = 0
 call_model_time = 0
+max_block_length = 0
 def query(x, model):
     global build_blocks_time_a
     global build_blocks_time_b
     global call_model_time
+    global max_block_length
 
     # TODO: improve this. The model has a 'base graph' we can add to.
     # TODO: How to split C. Do we need more than one model?
@@ -154,9 +156,8 @@ def query(x, model):
     #
     # else:
 
-    T_c = compute_blocks(model.C + [x])
-    compute_block_weights(T_c, x, model.U)
-
+    T_c = compute_blocks(model.C + [x], x)
+    compute_block_weights(T_c, model.U)
 
     timer_start('Compute p')
 
@@ -378,15 +379,12 @@ def find_best_itemset_iter(X, Singletons, Z, model, s=0.25, m=None, X_length=0):
 
 # @memoise_set
 block_cache = {}
-def compute_blocks(C):
+def compute_blocks(C, x):
     """Compute the set of blocks that C infer
         return: Topologically sorted blocks T_C
     """
 
     timer_start('Compute blocks')
-    key = tuple(sorted(C))
-    if key in block_cache:
-        return block_cache[key]
 
     T_c = list()
     T_unions = set()
@@ -397,6 +395,12 @@ def compute_blocks(C):
         choose = i
         for comb in combinations(C, choose):
             union = union_of_itemsets(comb)
+
+            # Ignore all blocks not needed to query this itemset
+            # This optimization is equal to that of splitting C
+            if union & x == 0 and union != 0:
+                continue
+
             if not union in T_unions:
                 T_unions.add(union)
                 T = Block()
@@ -405,7 +409,6 @@ def compute_blocks(C):
                 T.itemsets = set(comb)
                 T_c.append(T)
 
-    block_cache[key] = T_c
     timer_stop('Compute blocks')
     return T_c
 
@@ -419,7 +422,7 @@ def compute_block_sizes(T_c):
                 Ti.block_size = Ti.block_size - Tj.block_size
     return T_c
 
-def compute_block_weights(T_c, x, U):
+def compute_block_weights(T_c, U):
     total_weight = 1
     for i in I:
         total_weight *= (1 + U[i])
@@ -434,8 +437,6 @@ def compute_block_weights(T_c, x, U):
     timer_start('Block weight')
     for i, Ti in enumerate(T_c):
         Ti.block_weight = Ti.cummulative_block_weight
-        if Ti.union_of_itemsets & x == 0:
-            continue
         for Tj in T_c[:i]:
             if Ti < Tj:
                 Ti.block_weight = Ti.block_weight - Tj.block_weight
@@ -585,6 +586,7 @@ print 'Singletons (%d): %s' % (len(I), I)
 
 start = time()
 MTV()
+print 'max blocks length: ', max_block_length
 print 'MTV run time: ', time() - start
 print 'Final summary: '
 for x in model.C:
