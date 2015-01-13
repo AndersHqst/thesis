@@ -142,7 +142,7 @@ def query(y, model):
 
     #TODO: Fix this, no need to call compute blocks...
     T_c = []
-    if y & model.T_c[0].union_of_itemsets != 0 and model.T_c[0].union_of_itemsets != 0:
+    if y & model.T_c[0].union_of_itemsets != 0: # and model.T_c[0].union_of_itemsets != 0:
         T_c = compute_blocks(model, y)
         compute_block_weights(T_c, None, model.U)
     else:
@@ -265,7 +265,7 @@ def find_best_itemset(Y, model):
             return z
     return Z[0]
 
-def find_best_itemset_rec(X, Y, Z, model, s, m, X_length=0):
+def find_best_itemset_rec(X_tup, Y, Z, model, s, m, X_length=0):
 
     global branches_pruned
     global min_sup_pruned
@@ -280,7 +280,7 @@ def find_best_itemset_rec(X, Y, Z, model, s, m, X_length=0):
                      this is the fastest way to know its length
     :return: Best itemset Z
     """
-
+    X = X_tup
     fr_X = fr(X)
     if fr_X < s:
         min_sup_pruned += 1
