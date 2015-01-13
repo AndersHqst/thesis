@@ -8,3 +8,4 @@ class Model(object):
         self.BIC_scrores = {}
         self.G = None
         self.T_c = []
+        self.total_weight = None
