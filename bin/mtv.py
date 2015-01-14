@@ -14,8 +14,10 @@ from time import time
 from graph import Graph, Component
 from model import Model
 from timer import *
+# Read command line arguments
+import sys, getopt
 
-float_precision = 0.00001
+float_precision = 1e-5
 
 # Sample
 D = list()
@@ -323,7 +325,7 @@ def find_best_itemset_rec(X, Y, Z, model, s, m, X_length=0):
 
     b = max(h(fr_X, p_XY), h(fr_XY, p_X))
 
-    if Z[0][0] == 0 or b > h_Z:
+    if Z[0][0] == 0 or b > Z[-1][1]:
         if m is None or X_length < m:
             while 0 < len(Y):
                 y = Y.pop()
@@ -648,29 +650,83 @@ def singletons(D):
     # Create set of singletons for all 1 bits
     I = singletons_of_itemsets([mask])
 
-# Set of singletons
-I = set()
-singletons(D)
-print '%d items in %d transactions' % (len(I), len(D))
 
-start = time()
-MTV()
-print '\nModel predictions:'
-for c in model.C:
-    print 'query %s with fr %f query %f uX: %f' % (to_index_list(c), fr(c), query(c, model), model.U[c])
-print ''
-print 'k=%d, m=%d, s=%0.2f' % (k, m, s)
-print '\nMTV run time: ', time() - start
-print '\nSummary: '
-print 'Heuristic \t BIC score \t Itemsets'
-print '0.000000 \t %f \t Singletons ' % model.BIC_scrores['iterative_scaling']
-for x in model.C:
-    print '%f \t %f \t %s' % (model.heurestics[x], model.BIC_scrores[x], to_index_list(x))
+def print_help(s, k, z):
+    print '-h print this help message'
+    print '-m Maximum number of items per itemset, default=inf'
+    print '-s Minimum itemset support, default: s=%f' % s
+    print '-k Mine top k itemsets, default is %d' % k
+    print '-v verbose'
+    print '-z Suggest best top z itemsets, will slow down computation, default %d' %z
 
-print ''
-timer_print_timings()
+def parse_argv(argv):
 
-# Write a .dat file that can be used with the Mampey MTV implementation
-with open('data_2.dat', 'w') as fd:
-    for itemset in D:
-        fd.write(' '.join([str(x) for x in to_index_list(itemset)]) + '\n')
+    k = 10
+    m = None
+    z = 1
+    s = 0.25
+
+
+    try:
+        # Cmd line arguments.
+        # Arguments followed by ':' expect a value
+        opts, args = getopt.getopt(argv, "hm:s:k:vz:")
+    except getopt.GetoptError:
+       print 'Unknown arguments'
+       print_help(s, k, z)
+       sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print_help(s, k, z)
+            sys.exit()
+
+        elif opt in ("-m"):
+            m = args['-m']
+
+        elif opt in ("-k"):
+            k = args['-k']
+
+        elif opt in ("-s"):
+            s = args['-s']
+
+        elif opt in ("-z"):
+            s = args['-z']
+
+        return k, m, s, z
+
+def main(argv):
+
+    k, m, s, z = parse_argv(argv)
+
+    I = set()
+    singletons(D)
+    print '%d items in %d transactions' % (len(I), len(D))
+
+    MTV()
+
+    start = time()
+
+    print '\nModel predictions:'
+    for c in model.C:
+        print 'query %s with fr %f query %f uX: %f' % (to_index_list(c), fr(c), query(c, model), model.U[c])
+    print ''
+    print 'k=%d, m=%d, s=%0.2f' % (k, m, s)
+    print '\nMTV run time: ', time() - start
+    print '\nSummary: '
+    print 'Heuristic \t BIC score \t Itemsets'
+    print '0.000000 \t %f \t Singletons ' % model.BIC_scrores['iterative_scaling']
+    for x in model.C:
+        print '%f \t %f \t %s' % (model.heurestics[x], model.BIC_scrores[x], to_index_list(x))
+
+    print ''
+    timer_print_timings()
+
+    # Write a .dat file that can be used with the Mampey MTV implementation
+    with open('data_2.dat', 'w') as fd:
+        for itemset in D:
+            fd.write(' '.join([str(x) for x in to_index_list(itemset)]) + '\n')
+
+    print 'final Z: ', [(to_index_list(x[0]), x[1]) for x in Z]
+
+if __name__ == "__main__":
+       main(sys.argv[1:])
