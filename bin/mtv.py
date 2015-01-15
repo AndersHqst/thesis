@@ -29,7 +29,7 @@ def print_help(s, k, z):
     print '-k Mine top k itemsets, default is %d' % k
     print '-v verbose'
     print '-z Suggest best top z itemsets, will slow down computation, default %d' %z
-    print '-d print debug and performance info'
+    print '--debug print debug and performance info'
 
 def parse_argv(argv):
 
@@ -73,9 +73,9 @@ def main(argv):
 
     k, m, s, z, debug = parse_argv(argv)
     model = Model(D, k=k, m=m, s=s, z=z)
+    start = time()
     model.mtv()
 
-    start = time()
     print '%d items in %d transactions' % (len(model.I), len(model.D))
 
     if debug:
@@ -92,6 +92,8 @@ def main(argv):
         print '%f \t %f \t %s' % (model.heurestics[x], model.BIC_scrores[x], itemsets.to_index_list(x))
 
     print ''
+    print 'fast estiamtes: ', model.fast_estimate_count
+    print 'queries: ', model.queries
 
     if debug:
         timer_print_timings()

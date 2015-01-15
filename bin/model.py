@@ -3,11 +3,13 @@ from charitems import to_binary, to_chars
 from math import log
 from itertools import combinations
 from memoisation import memoise
-from Block import Block
+from block import Block
 from timer import *
 from settings import *
 import itemsets
 from heurestic import h
+import sys
+sys.setrecursionlimit(1500)
 
 class Model(object):
 
@@ -54,6 +56,10 @@ class Model(object):
 
         # Cached frequency counts in D
         self.fr_cache = {}
+
+        self.fast_estimate = 0
+        self.fast_estimate_count = 0
+        self.queries = 0
 
 
     def p(self, T, y):
@@ -104,6 +110,20 @@ class Model(object):
         :param y: Itemset
         :return: Estimate of y
         """
+        self.queries += 1
+
+        fast_estiamte = 0.0
+        if self.T_c[0].precomputed != -1 and len(self.C) > 0 and y & self.T_c[0].union_of_itemsets == 0:
+            # for T in self.T_c:
+            singleton_product = 1
+            for i in itemsets.singletons_of_itemset(y):
+                singleton_product *= self.U[i] / (1 + self.U[i])
+
+            fast_estiamte += self.fast_estimate * singleton_product
+
+            self.fast_estimate_count += 1
+            return fast_estiamte
+
         cls = self.closure(y)
         T_c = self.compute_block_weights(y, cls)
 
@@ -449,6 +469,41 @@ class Model(object):
         timer_stop('Iterative scaling')
 
 
+    def precompute_blocks(self):
+        for T in self.T_c:
+            T.precomputed = -1
+            T.uxs = -1
+        self.fast_estimate = 0
+        for T in self.T_c:
+            self.precompute_blocks_rec(T)
+            self.fast_estimate += T.uxs * T.precomputed
+
+
+    def precompute_blocks_rec(self, T):
+
+        if T.uxs == -1:
+            T.uxs = 1
+            for x in self.C:
+                assert not (x in self.I), "Singletons are not in summary calling p()"
+                if itemsets.contains(T.union_of_itemsets, x):
+                    T.uxs = T.uxs * self.U[x]
+            T.uxs *= self.u0
+
+        if T.precomputed != -1:
+            return T.precomputed
+
+        if T == self.T_c[0]:
+            T.precomputed = T.block_weight
+            return T.precomputed
+
+        res = T.cummulative_block_weight
+        for Ti in self.T_c[::-1]:
+            if Ti != T and T < Ti:
+                res -= self.precompute_blocks_rec(Ti)
+
+
+        T.precomputed = res
+        return res
 
     def mtv(self):
         """ """
@@ -489,9 +544,14 @@ class Model(object):
 
             T_c = self.compute_blocks()
             self.T_c = T_c
-
             # Update model
             self.iterative_scaling()
+
+            timer_start('Precompute blocks')
+            self.compute_block_weights(0, set())
+            self.precompute_blocks()
+            timer_stop('Precompute blocks')
+
 
             # Compute score
             cur_score = self.score()
