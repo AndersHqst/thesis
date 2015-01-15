@@ -104,7 +104,7 @@ class Model(object):
         return closure
 
 
-    def query(self, y):
+    def query(self, y, precomputed=False):
         """
         Query the probability on an itemset y.
         :param y: Itemset
@@ -112,17 +112,38 @@ class Model(object):
         """
         self.queries += 1
 
-        fast_estiamte = 0.0
-        if self.T_c[0].precomputed != -1 and len(self.C) > 0 and y & self.T_c[0].union_of_itemsets == 0:
-            # for T in self.T_c:
-            singleton_product = 1
-            for i in itemsets.singletons_of_itemset(y):
-                singleton_product *= self.U[i] / (1 + self.U[i])
 
-            fast_estiamte += self.fast_estimate * singleton_product
+        if precomputed and len(self.C) > 0:
+            fast_estimate = 0.0
+            if y & self.T_c[0].union_of_itemsets == 0:
 
-            self.fast_estimate_count += 1
-            return fast_estiamte
+                adjusted_singleton_product = 1
+                for i in itemsets.singletons_of_itemset(y):
+                    adjusted_singleton_product *= self.U[i] / (1 + self.U[i])
+
+                fast_estimate += self.fast_estimate * adjusted_singleton_product
+
+                self.fast_estimate_count += 1
+                return fast_estimate
+            # else:
+            #     # What to do here? Iterate T_c, blocks not ignored by clojure,
+            #     # just multiply by adjusted singletons that do not intersect
+            #     # add uxs + T.block_weight?
+            #     cls = self.closure(y)
+            #     for T in self.T_c:
+            #         for c in cls:
+            #             if not (c in T.itemsets):
+            #                 continue
+            #
+            #             mask = y & T.union_of_itemsets
+            #             ys = mask ^ y
+            #             adjusted_singleton_product = 1
+            #             for i in itemsets.singletons_of_itemset(ys):
+            #                 adjusted_singleton_product *= self.U[i] / (1 + self.U[i])
+            #
+            #             fast_estimate += T.uxs * T.block_weight * adjusted_singleton_product
+            #
+            # return fast_estimate
 
         cls = self.closure(y)
         T_c = self.compute_block_weights(y, cls)
@@ -179,7 +200,7 @@ class Model(object):
         if X in self.query_cache:
             estimate = self.query_cache[X]
         else:
-            estimate = self.query(X)
+            estimate = self.query(X, precomputed=True)
             self.query_cache[X] = estimate
 
         return estimate
@@ -470,13 +491,25 @@ class Model(object):
 
 
     def precompute_blocks(self):
-        for T in self.T_c:
-            T.precomputed = -1
-            T.uxs = -1
+
         self.fast_estimate = 0
+
         for T in self.T_c:
-            self.precompute_blocks_rec(T)
-            self.fast_estimate += T.uxs * T.precomputed
+            T.uxs = 1
+            for x in self.C:
+                assert not (x in self.I), "Singletons are not in summary calling p()"
+                if itemsets.contains(T.union_of_itemsets, x):
+                    T.uxs = T.uxs * self.U[x]
+            T.uxs *= self.u0
+            self.fast_estimate += T.uxs * T.block_weight
+
+        # Old recursive version.. anything we need to do here?
+        # for T in self.T_c:
+        #     T.precomputed = -1
+        #     T.uxs = -1
+        # for T in self.T_c:
+        #     self.precompute_blocks_rec(T)
+        #     self.fast_estimate += T.uxs * T.precomputed
 
 
     def precompute_blocks_rec(self, T):
@@ -501,8 +534,8 @@ class Model(object):
             if Ti != T and T < Ti:
                 res -= self.precompute_blocks_rec(Ti)
 
-
         T.precomputed = res
+        print 'precomputed %f weight %f res %f' % (T.precomputed, T.block_weight, res)
         return res
 
     def mtv(self):
