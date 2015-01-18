@@ -112,38 +112,16 @@ class Model(object):
         """
         self.queries += 1
 
-
         if precomputed and len(self.C) > 0:
-            fast_estimate = 0.0
+
             if y & self.T_c[0].union_of_itemsets == 0:
 
-                adjusted_singleton_product = 1
+                fast_estimate = 1.0
                 for i in itemsets.singletons_of_itemset(y):
-                    adjusted_singleton_product *= self.U[i] / (1 + self.U[i])
-
-                fast_estimate += self.fast_estimate * adjusted_singleton_product
+                    fast_estimate *= self.U[i] / (1 + self.U[i])
 
                 self.fast_estimate_count += 1
                 return fast_estimate
-            # else:
-            #     # What to do here? Iterate T_c, blocks not ignored by clojure,
-            #     # just multiply by adjusted singletons that do not intersect
-            #     # add uxs + T.block_weight?
-            #     cls = self.closure(y)
-            #     for T in self.T_c:
-            #         for c in cls:
-            #             if not (c in T.itemsets):
-            #                 continue
-            #
-            #             mask = y & T.union_of_itemsets
-            #             ys = mask ^ y
-            #             adjusted_singleton_product = 1
-            #             for i in itemsets.singletons_of_itemset(ys):
-            #                 adjusted_singleton_product *= self.U[i] / (1 + self.U[i])
-            #
-            #             fast_estimate += T.uxs * T.block_weight * adjusted_singleton_product
-            #
-            # return fast_estimate
 
         cls = self.closure(y)
         T_c = self.compute_block_weights(y, cls)
