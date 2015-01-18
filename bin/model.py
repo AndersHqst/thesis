@@ -104,7 +104,7 @@ class Model(object):
         return closure
 
 
-    def query(self, y, precomputed=False):
+    def query(self, y, reuse_model=False):
         """
         Query the probability on an itemset y.
         :param y: Itemset
@@ -112,7 +112,7 @@ class Model(object):
         """
         self.queries += 1
 
-        if precomputed and len(self.C) > 0:
+        if reuse_model:
 
             if y & self.T_c[0].union_of_itemsets == 0:
 
@@ -178,7 +178,7 @@ class Model(object):
         if X in self.query_cache:
             estimate = self.query_cache[X]
         else:
-            estimate = self.query(X, precomputed=True)
+            estimate = self.query(X, reuse_model=True)
             self.query_cache[X] = estimate
 
         return estimate
