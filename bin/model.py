@@ -104,24 +104,21 @@ class Model(object):
         return closure
 
 
-    def query(self, y, reuse_model=False):
+    def query(self, y):
         """
         Query the probability on an itemset y.
         :param y: Itemset
         :return: Estimate of y
         """
-        self.queries += 1
 
-        if reuse_model:
+        if y & self.T_c[0].union_of_itemsets == 0:
 
-            if y & self.T_c[0].union_of_itemsets == 0:
+            independence_estimate = 1.0
+            for i in itemsets.singletons_of_itemset(y):
+                independence_estimate *= self.U[i] / (1 + self.U[i])
 
-                fast_estimate = 1.0
-                for i in itemsets.singletons_of_itemset(y):
-                    fast_estimate *= self.U[i] / (1 + self.U[i])
-
-                self.fast_estimate_count += 1
-                return fast_estimate
+            self.fast_estimate_count += 1
+            return independence_estimate
 
         cls = self.closure(y)
         T_c = self.compute_block_weights(y, cls)
@@ -164,7 +161,7 @@ class Model(object):
         return p
 
 
-    def cached_itemset_stats(self, X):
+    def cached_itemset_stats(self, X, tag=''):
         """
         Helper function to cache queries.
         Note this can only be used from e.g. FindBestItemSet
@@ -178,7 +175,7 @@ class Model(object):
         if X in self.query_cache:
             estimate = self.query_cache[X]
         else:
-            estimate = self.query(X, reuse_model=True)
+            estimate = self.query(X)
             self.query_cache[X] = estimate
 
         return estimate
@@ -227,7 +224,7 @@ class Model(object):
         if fr_X < self.s:
             return Z
 
-        p_X = self.cached_itemset_stats(X)
+        p_X = self.cached_itemset_stats(X, tag='X')
         fr_Z = self.fr(Z[-1][0])
         p_Z = self.cached_itemset_stats(Z[-1][0])
 
