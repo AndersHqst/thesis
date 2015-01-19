@@ -57,7 +57,6 @@ class Model(object):
         # Cached frequency counts in D
         self.fr_cache = {}
 
-        self.fast_estimate = 0
         self.independence_estimate_count = 0
         self.queries = 0
 
@@ -234,7 +233,6 @@ class Model(object):
         p_Z = self.cached_itemset_stats(Z[-1][0])
 
         h_X = h(fr_X, p_X)
-        # h_Z = h(fr_Z, p_Z)
         if h_X > Z[-1][1] or len(Z) < self.z:
             Z.append((X, h_X))
             # Sort by descending  heuristic
@@ -423,10 +421,8 @@ class Model(object):
         for c in _C:
             self.U[c] = 1.0
 
-        # TODO: only time the code if cmd line arg was given
         timer_start('Iterative scaling')
 
-        # TODO: iterate until converged
         iterations = 0
         epsilon = 1e-5
 
@@ -464,59 +460,8 @@ class Model(object):
             if max_error < epsilon:
                 break
 
-        # print 'Iterative scaling converged in %d iterations, with biggest diff: %f' % (iterations, max_error)
-
-        # TODO: only time the code if cmd line arg was given
         timer_stop('Iterative scaling')
 
-
-    def precompute_blocks(self):
-
-        self.fast_estimate = 0
-
-        for T in self.T_c:
-            T.uxs = 1
-            for x in self.C:
-                assert not (x in self.I), "Singletons are not in summary calling p()"
-                if itemsets.contains(T.union_of_itemsets, x):
-                    T.uxs = T.uxs * self.U[x]
-            T.uxs *= self.u0
-            self.fast_estimate += T.uxs * T.block_weight
-
-        # Old recursive version.. anything we need to do here?
-        # for T in self.T_c:
-        #     T.precomputed = -1
-        #     T.uxs = -1
-        # for T in self.T_c:
-        #     self.precompute_blocks_rec(T)
-        #     self.fast_estimate += T.uxs * T.precomputed
-
-
-    def precompute_blocks_rec(self, T):
-
-        if T.uxs == -1:
-            T.uxs = 1
-            for x in self.C:
-                assert not (x in self.I), "Singletons are not in summary calling p()"
-                if itemsets.contains(T.union_of_itemsets, x):
-                    T.uxs = T.uxs * self.U[x]
-            T.uxs *= self.u0
-
-        if T.precomputed != -1:
-            return T.precomputed
-
-        if T == self.T_c[0]:
-            T.precomputed = T.block_weight
-            return T.precomputed
-
-        res = T.cummulative_block_weight
-        for Ti in self.T_c[::-1]:
-            if Ti != T and T < Ti:
-                res -= self.precompute_blocks_rec(Ti)
-
-        T.precomputed = res
-        print 'precomputed %f weight %f res %f' % (T.precomputed, T.block_weight, res)
-        return res
 
     def mtv(self):
         """ """
@@ -537,7 +482,7 @@ class Model(object):
         self.iterative_scaling()
 
         # Save initial BIC score for the independence distribution
-        self.BIC_scrores['iterative_scaling'] = self.score()
+        self.BIC_scrores['initial_score'] = self.score()
 
         # Add itemsets until we have k
         while len(self.C) < self.k:
@@ -559,12 +504,6 @@ class Model(object):
             self.T_c = T_c
             # Update model
             self.iterative_scaling()
-
-            timer_start('Precompute blocks')
-            self.compute_block_weights(0, set())
-            self.precompute_blocks()
-            timer_stop('Precompute blocks')
-
 
             # Compute score
             cur_score = self.score()
