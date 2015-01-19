@@ -92,11 +92,12 @@ def main(argv):
         print '%f \t %f \t %s' % (model.heurestics[x], model.BIC_scrores[x], itemsets.to_index_list(x))
 
     print ''
-    print 'fast estiamtes: ', model.fast_estimate_count
-    print 'queries: ', model.queries
+
 
     if debug:
         timer_print_timings()
+        print 'independence estimates: ', model.independence_estimate_count
+        print 'queries: ', model.queries
 
     # Write a .dat file that can be used with the Mampey MTV implementation
     with open('data_2.dat', 'w') as fd:

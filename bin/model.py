@@ -58,7 +58,7 @@ class Model(object):
         self.fr_cache = {}
 
         self.fast_estimate = 0
-        self.fast_estimate_count = 0
+        self.independence_estimate_count = 0
         self.queries = 0
 
 
@@ -104,6 +104,15 @@ class Model(object):
         return closure
 
 
+    def independence_estimate(self, y):
+        independence_estimate = 1.0
+        for i in itemsets.singletons_of_itemset(y):
+            independence_estimate *= self.U[i] / (1 + self.U[i])
+
+        self.independence_estimate_count += 1
+        return independence_estimate
+
+
     def query(self, y):
         """
         Query the probability on an itemset y.
@@ -111,14 +120,10 @@ class Model(object):
         :return: Estimate of y
         """
 
+        self.queries += 1
+
         if y & self.T_c[0].union_of_itemsets == 0:
-
-            independence_estimate = 1.0
-            for i in itemsets.singletons_of_itemset(y):
-                independence_estimate *= self.U[i] / (1 + self.U[i])
-
-            self.fast_estimate_count += 1
-            return independence_estimate
+            return self.independence_estimate(y)
 
         cls = self.closure(y)
         T_c = self.compute_block_weights(y, cls)
