@@ -219,12 +219,11 @@ class Model(object):
             return Z
 
         p_X = self.cached_itemset_stats(X)
-        fr_Z = self.fr(Z[-1][0])
-        p_Z = self.cached_itemset_stats(Z[-1][0])
 
         h_X = h(fr_X, p_X)
         if h_X > Z[-1][1] or len(Z) < self.z:
             Z.append((X, h_X))
+
             # Sort by descending  heuristic
             Z.sort(lambda x, y: x[1] < y[1] and 1 or -1)
             if self.z < len(Z):
@@ -454,7 +453,6 @@ class Model(object):
 
     def mtv(self):
         """ """
-        global model
 
         # TODO move this data cleaning elsewhere
         tmp = []
@@ -509,13 +507,8 @@ class Model(object):
             return -1 * ((len(D)) * (log(u0, 2) + sum([self.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D))
 
         except Exception, e:
-            print 'Exception in score function'
-            print 'Summary: ', _C
-            b = 'YES'
-            if u0 < 0:
-                b = 'NO'
-            print 'u0 %f above 0: %s' % (u0, b)
-            print 'U: ', U
+            print 'Exception in score function, ', e
+            print self
             exit()
 
     def is_in_sumamry(self, y):
@@ -537,3 +530,11 @@ class Model(object):
         assert abs(total_prob - 1.0) < 0.0001, "Total probability was: %f " % total_prob
         print 'total prob: ', total_prob
 
+
+    def __str__(self):
+
+            str = u'Summary: {0:s} '.format(self.C)
+            str += u'U: {0:s} '.format(self.U)
+            str += u'u0: {0:f} '.format(self.u0)
+
+            return str
