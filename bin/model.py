@@ -125,8 +125,7 @@ class Model(object):
 
         counter_inc('Block queries')
 
-        cls = self.closure(y)
-        T_c = self.compute_block_weights(y, cls)
+        T_c = self.compute_block_weights(y)
 
         timer_start('Compute p')
         estimate = 0.0
@@ -357,7 +356,12 @@ class Model(object):
                 return False
         return True
 
-    def compute_block_weights(self, y, closure):
+    def compute_block_weights(self, y=0):
+        """
+        Returns blocks for T_c + y, or all blocks if no y is passed
+        :param y: Optional query parameter
+        :return:
+        """
 
         U = self.U
         blocks = []
@@ -365,6 +369,8 @@ class Model(object):
         total_weight = 1
         for i in self.I:
             total_weight *= (1 + U[i])
+            
+        closure = self.closure(y)
 
         timer_start('Cummulative weight')
         for T in self.T_c:
