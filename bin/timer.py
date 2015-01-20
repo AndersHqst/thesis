@@ -18,4 +18,4 @@ def timer_stop(flag):
 
 def timer_print_timings():
     for flag in timings:
-        print '[Timer] %s: %f' % (flag, timings[flag])
+        print '[TIMER] %s: %f' % (flag, timings[flag])

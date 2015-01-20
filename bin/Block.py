@@ -11,8 +11,6 @@ class Block(object):
         self.cummulative_block_size = 0
         self.block_weight = 0
         self.cummulative_block_weight = 0
-        self.precomputed = -1
-        self.uxs = 1
 
     def __str__(self):
         return to_chars(self.union_of_itemsets) + ' blocksize: ' + str(self.block_size) + ' blockweight: ' + str(self.block_weight)

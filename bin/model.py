@@ -1,10 +1,11 @@
 from __future__ import division
 from charitems import to_binary, to_chars
 from math import log
-from itertools import combinations
+from itertools import combinations, permutations
 from memoisation import memoise
 from block import Block
 from timer import *
+from counter import *
 from settings import *
 import itemsets
 from heurestic import h
@@ -57,9 +58,6 @@ class Model(object):
         # Cached frequency counts in D
         self.fr_cache = {}
 
-        self.independence_estimate_count = 0
-        self.queries = 0
-
 
     def p(self, T, y):
         """
@@ -90,7 +88,7 @@ class Model(object):
 
     def closure(self, y):
         """
-        Returns a clojure of itemset in C that har subsets of y
+        Returns a closure of itemset in C that har subsets of y
         :param y: Itemset to create clojure for
         :return: Clojure over C w.r.t y
         """
@@ -108,7 +106,8 @@ class Model(object):
         for i in itemsets.singletons_of_itemset(y):
             independence_estimate *= self.U[i] / (1 + self.U[i])
 
-        self.independence_estimate_count += 1
+        counter_inc('Independence estimates')
+
         return independence_estimate
 
 
@@ -119,25 +118,20 @@ class Model(object):
         :return: Estimate of y
         """
 
-        self.queries += 1
+        counter_inc('Total queries')
 
         if y & self.T_c[0].union_of_itemsets == 0:
             return self.independence_estimate(y)
+
+        counter_inc('Block queries')
 
         cls = self.closure(y)
         T_c = self.compute_block_weights(y, cls)
 
         timer_start('Compute p')
-
         estimate = 0.0
-        for T in T_c[:-1]:
+        for T in T_c:
             estimate += self.p(T, y)
-
-        # Include the empty block
-        # for the empty itemset
-        if y == 0:
-            estimate += self.p(T_c[-1], y)
-
         timer_stop('Compute p')
 
         return estimate
@@ -165,7 +159,7 @@ class Model(object):
         return p
 
 
-    def cached_itemset_stats(self, X, tag=''):
+    def cached_itemset_stats(self, X):
         """
         Helper function to cache queries.
         Note this can only be used from e.g. FindBestItemSet
@@ -201,10 +195,7 @@ class Model(object):
         Z = self.find_best_itemset_rec(0, self.I.copy(), [(0,0)])
         timer_stop('Find best itemset')
 
-        # print 'branches pruned: ', branches_pruned
-        # print 'min sup pruned: ', min_sup_pruned
-
-        # Edge cases where we only find singletons not exactly described by the model
+        # Edge case, where we only find singletons not exactly described by the model
         # We search the top 10 Zs to see if there was a non singleton itemset
         for z in Z:
             if not (z in self.I) and z != 0:
@@ -228,7 +219,7 @@ class Model(object):
         if fr_X < self.s:
             return Z
 
-        p_X = self.cached_itemset_stats(X, tag='X')
+        p_X = self.cached_itemset_stats(X)
         fr_Z = self.fr(Z[-1][0])
         p_Z = self.cached_itemset_stats(Z[-1][0])
 
@@ -317,7 +308,7 @@ class Model(object):
 
         return Z
 
-    def compute_blocks(self):
+    def compute_blocks(self, set_prob=False):
         """
             Compute the set of blocks that C infer
             return: Topologically sorted blocks T_c
@@ -339,6 +330,9 @@ class Model(object):
                     T_unions.add(union)
                     T = Block()
                     T.union_of_itemsets = union
+                    if set_prob:
+                        self.C_masks[union] = comb
+                        self.cached_queries[union] = self.query(union)
                     T.singletons = itemsets.singletons_of_itemsets(comb)
                     T.itemsets = set(comb)
                     T_c.append(T)
@@ -357,9 +351,14 @@ class Model(object):
                     Ti.block_size = Ti.block_size - Tj.block_size
         return T_c
 
+    def block_in_closure(self, T, closure):
+        for c in closure:
+            if not (c in T.itemsets):
+                return False
+        return True
+
     def compute_block_weights(self, y, closure):
 
-        T_c = self.T_c
         U = self.U
         blocks = []
 
@@ -368,24 +367,24 @@ class Model(object):
             total_weight *= (1 + U[i])
 
         timer_start('Cummulative weight')
-        for T in T_c:
+        for T in self.T_c:
 
-            for c in closure:
-                if not (c in T.itemsets):
-                    continue
+            if self.block_in_closure(T, closure):
 
-            blocks.append(T)
+                blocks.append(T)
 
-            T.cummulative_block_weight = total_weight
+                T.cummulative_block_weight = total_weight
 
-            # Remove singletons from y already covered by the block
-            mask = y & T.union_of_itemsets
-            ys = mask ^ y
-            for i in itemsets.singletons_of_itemset(ys):
-                T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
+                # Remove singletons from y already covered by the block
+                mask = y & T.union_of_itemsets
+                ys = mask ^ y
+                for i in itemsets.singletons_of_itemset(ys):
+                    T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
 
-            for i in T.singletons:
-                T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
+                for i in T.singletons:
+                    T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
+
+
         timer_stop('Cummulative weight')
 
         timer_start('Block weight')
@@ -394,22 +393,6 @@ class Model(object):
             for Tj in blocks[:i]:
                 if Ti < Tj:
                     Ti.block_weight = Ti.block_weight - Tj.block_weight
-
-        # TODO: empty block, remove this from here, not pretty
-        # if not (blocks[-1].union_of_itemsets == 0):
-        if True:
-            T = Block()
-            T.block_weight = total_weight
-            T.union_of_itemsets = 0
-            T.singletons = itemsets.singletons_of_itemsets([0])
-            T.itemsets = set()
-
-            for i, Ti in enumerate(T_c):
-                T.block_weight = T.block_weight - Ti.block_weight
-
-            timer_stop('Block weight')
-
-            return blocks + [T]
 
         return blocks
 
@@ -451,9 +434,9 @@ class Model(object):
 
                 self.u0 = self.u0 * (1 - fr_x) / (1 - estimate)
 
-
-
                 max_error = max(max_error, 1 - min(fr_x, estimate) / max(fr_x, estimate))
+
+                counter_max('Iterative scaling max iterations', iterations)
 
             iterations += 1
 
@@ -500,8 +483,8 @@ class Model(object):
             self.C.append(X)
             self.heurestics[X] = heurestic
 
-            T_c = self.compute_blocks()
-            self.T_c = T_c
+            self.T_c = self.compute_blocks()
+
             # Update model
             self.iterative_scaling()
 
