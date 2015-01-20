@@ -96,11 +96,6 @@ def main(argv):
     k, m, s, z, c, f, o, debug = parse_argv(argv)
     D = dummy_data
 
-    # with open('../data/example.dat', 'wb') as fd:
-    #     for d in D:
-    #         line = ' '.join([str(x) for x in itemsets.to_index_list(d)]) + '\n'
-    #         fd.write(line)
-
     # Input dataset
     if f is None:
         print 'No dataset provided. Using dummy data. Use -f'
@@ -112,36 +107,42 @@ def main(argv):
     if not (c is None):
         initial_c = parse_dat_file(c)
 
+    # Initialize the model
     model = Model(D, k=k, m=m, s=s, z=z)
+
+    # Seed initial C if provided
     if not (initial_c is None):
         model.C = initial_c
+
+    # Total run time
     start = time()
     model.mtv()
 
-    # Write output
+    # Write final summary to file
     if not (o is None):
         with open(o, 'wb') as fd:
             for X in model.C:
                 line = ' '.join([str(x) for x in itemsets.to_index_list(X)]) + '\n'
                 fd.write(line)
 
+    # Print number of items and transactions
     print '%d items in %d transactions' % (len(model.I), len(model.D))
 
     if debug:
         print '\nModel predictions:'
         for c in model.C:
             print 'query %s with fr %f query %f uX: %f' % (itemsets.to_index_list(c), model.fr(c), model.query(c), model.U[c])
+
+    # Print general run parameters and final summary C
     print ''
     print 'k=%d, m=%d, s=%f' % (k, m, s)
     print '\nMTV run time: ', time() - start
     print '\nSummary: '
     print 'Heuristic \t BIC score \t Itemsets'
     print 'x.xxxxxx \t %f \t Singletons + seed ' % model.BIC_scrores['initial_score']
-
     for x in model.C:
         if x in model.BIC_scrores:
             print '%f \t %f \t %s' % (model.heurestics[x], model.BIC_scrores[x], itemsets.to_index_list(x))
-
     print ''
 
     if debug:

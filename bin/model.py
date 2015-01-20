@@ -369,7 +369,7 @@ class Model(object):
         total_weight = 1
         for i in self.I:
             total_weight *= (1 + U[i])
-            
+
         closure = self.closure(y)
 
         timer_start('Cummulative weight')
@@ -390,7 +390,6 @@ class Model(object):
                 for i in T.singletons:
                     T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
 
-
         timer_stop('Cummulative weight')
 
         timer_start('Block weight')
@@ -399,6 +398,7 @@ class Model(object):
             for Tj in blocks[:i]:
                 if Ti < Tj:
                     Ti.block_weight = Ti.block_weight - Tj.block_weight
+        timer_stop('Block weight')
 
         return blocks
 
