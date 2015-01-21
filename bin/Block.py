@@ -9,6 +9,7 @@ class Block(object):
         self.singletons = set()
         self.block_size = 0
         self.cummulative_block_size = 0
+        self.parent = 0
         self.block_weight = 0
         self.cummulative_block_weight = 0
 

@@ -51,6 +51,25 @@ def abundance_matrix(matrix):
     # From row 1, from column 4 to second last
     return matrix[1:, 4:-1].astype(np.int)
 
+def compute_relative_values(matrix):
+    """
+    Returns a matrix with relative abundance counts, relative
+    to the sample size.
+    :param matrix:
+    :return: Relative abundance matrix
+    """
+
+    relative_matrix = []
+
+    for row in matrix:
+        total = sum(row)
+        new_row = []
+        for col in row:
+            new_row.append(col / float(total))
+        relative_matrix.append(new_row)
+
+    return np.array(relative_matrix)
+
 def data_to_binary(matrix, otu_stat=None, number_of_otus=0):
     """ Descritises the matrix and returns a binary representation """
     binary_list = []
@@ -123,10 +142,20 @@ matrix = loadData()
 abundance_matrix = abundance_matrix(matrix)
 #otu_stats(matrix)
 #otu_limits(matrix)
-data_cleaning(abundance_matrix)
-lower_limits = otu_limits(abundance_matrix)
-print lower_limits
-print data_to_binary(abundance_matrix, otu_stat = lower_limits)
-print data_to_binary(abundance_matrix, number_of_otus=50)
+abundance_matrix = data_cleaning(abundance_matrix)
+rel_matrix = compute_relative_values(abundance_matrix)
+# lower_limits = otu_limits(abundance_matrix)
+# print lower_limits
+# print data_to_binary(abundance_matrix, otu_stat = lower_limits)
+# print data_to_binary(abundance_matrix, number_of_otus=50)
+# print abundance_matrix
+# print rel_matrix
+# write to csv
+
+with open('rel_abundance.csv', 'wb') as fd:
+    for row in rel_matrix:
+        line = ', '.join([str(x) for x in row]) + '\n'
+        fd.write(line)
+
 
 
