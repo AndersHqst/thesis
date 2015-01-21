@@ -384,10 +384,10 @@ class Model(object):
                 mask = y & T.union_of_itemsets
                 ys = mask ^ y
                 for i in itemsets.singletons_of_itemset(ys):
-                    T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
+                    T.cummulative_block_weight *= U[i] / (1 + U[i])
 
                 for i in T.singletons:
-                    T.cummulative_block_weight *= U[i] * (1 / (1 + U[i]))
+                    T.cummulative_block_weight *= U[i] / (1 + U[i])
 
         timer_stop('Cummulative weight')
 
