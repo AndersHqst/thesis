@@ -150,7 +150,3 @@ def stool_results():
     """
     return filtered_results(bodysite='Stool', same_bodysite_only=True)
 
-
-res = stool_results()
-
-print 'done'
