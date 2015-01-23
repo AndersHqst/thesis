@@ -5,7 +5,26 @@ Rows are bacteria down to various depths of their family tree,
 with their abundance counts for each sample
 """
 
+"""
+RESULTS
+
+Stool:
+    353 rows - 2 header rows = 351 samples.
+    Cleaning bacteria with only 2 or lower as max abundance -> 353, ie probably already cleaned
+    removed all bacteria that never occur more than twice
+    samples before cleaning:  355
+    bacteria before cleaning:  728
+    samples after cleaning:  355
+    bacteria after cleaning:  189 # threshold 2
+    bacteria after cleaning 130: threshold 10
+    cleaned:  539
+
+
+"""
+
 import numpy as np
+import csv
+from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title
 
 COLUMN_TID = 0
 COLUMN_BODY_SITE = 1
@@ -22,7 +41,6 @@ def parse_dataset(csv_file):
     :param csv_file:
     :return:
     """
-    import csv
 
     fd = open(csv_file, 'rb')
     csv_reader = csv.reader(fd, delimiter='\t')
@@ -53,6 +71,25 @@ def parse_dataset(csv_file):
 
     return arr.T
 
+def get_dataset(file_name):
+    """
+    Read the daset from file
+    :param file_name:
+    :return:
+    """
+    fd = open(file_name, 'rb')
+    csv_reader = csv.reader(fd, delimiter='\t')
+    matrix = []
+    for index, row in enumerate(csv_reader):
+        # header rows
+        if index <= 1:
+            matrix.append(row)
+        # convert abundances
+        else:
+            id_cols = row[:2]
+            abundances = [int(x) for x in row[2:]]
+            matrix.append(id_cols + abundances)
+    return np.array(matrix)
 
 def dataset_at_bodyset(csv_file, bodysite):
     dataset = parse_dataset(csv_file)
@@ -85,7 +122,6 @@ def save_stool_samples():
     Helper function to save a stool sub-sample file to the data folder
     :return:
     """
-    import csv
 
     dataset = dataset_at_bodyset('../../data/hmp.lq.phylotype.filter.tab', 'Stool')
 
@@ -96,3 +132,108 @@ def save_stool_samples():
 
     fd.close()
 
+def get_stool_dataset():
+    """
+    Helper fundtion to specifically read the stool dataset
+    :return:
+    """
+
+    return get_dataset('../../data/Stool.tab')
+
+
+def data_cleaning(dataset):
+    """
+    Remove bacteria with no abundance above 2
+    :param dataset:
+    :return:
+    """
+
+    # remove 0 samples
+    no_zero_samples = []
+    for index, row in enumerate(dataset):
+        # Header rows
+        if index < 2:
+            no_zero_samples.append(row)
+        else:
+            sample_abundances = [int(x) for x in row[2:]]
+            if max(sample_abundances) > 0:
+                no_zero_samples.append(row)
+
+
+
+    # Remove bacteria with abundance count <= 2
+    # transpose the zero sample matrix to iterate
+    # bacterias as rows
+    cleaned_dataset = []
+    for index, row in enumerate(np.array(no_zero_samples).T):
+        # Header rows
+        if index < 2:
+            cleaned_dataset.append(row)
+        else:
+            abundances = [int(x) for x in row[2:]]
+            if not max(abundances) <= 10:
+                cleaned_dataset.append(row)
+
+    # Return the result, transposed to the original
+    return np.array(cleaned_dataset).T
+
+def abundance_matrix(matrix):
+    """ Return the submatrix of abundance count.print 'rows before: ', len(dataset) - 2 """
+    # From row 1, from column 2
+    return matrix[1:, 2:].astype(np.int)
+
+
+def compute_relative_values(dataset):
+    """
+    Returns a matrix with relative abundance counts, relative
+    to the sample size.
+    :param matrix:
+    :return: Relative abundance matrix
+    """
+
+    # Keep headers
+    relative_matrix = [list(dataset[0])]
+
+    # relative per sample!
+    # Skip row with headers
+    for row in dataset[1:]:
+        abundances = [int(x) for x in row[2:]]
+        total = sum(abundances)
+        new_row = list(row[:2])
+        for value in abundances:
+            new_row.append(value / float(total))
+        relative_matrix.append(list(new_row))
+
+    return np.array(relative_matrix)
+
+def plot_bacteria_hist(dataset, file_prefix, mid_quantile=False):
+    """
+    Saves a histogram of abundances binned
+    :param dataset:
+    :return:
+    """
+    for row in dataset.T[2:]:
+        abundances = [float(x) for x in row[2:]]
+        if mid_quantile:
+            abundances.sort()
+            abundances = abundances[int(len(abundances)*0.25): -int(len(abundances)*0.25)]
+        print 'max abundance: ', max(abundances)
+        xlabel('relative abundance bin bin')
+        ylabel('#occurrences')
+        bacteria_name = row[0]
+        title(bacteria_name)
+        hist(abundances)
+        savefig('../../plots/hist/normalized_mid_quantile/' + file_prefix + '-' + bacteria_name.replace('|', '_').replace('/','-'))
+        close()
+
+ds = get_stool_dataset()
+ds = data_cleaning(ds)
+ds = compute_relative_values(ds)
+
+fd = open('../../data/Stool_normalized.tab', 'wb')
+csv_writer = csv.writer(fd, delimiter='\t')
+csv_writer.writerows(ds)
+plot_bacteria_hist(ds, 'stool_normalized', mid_quantile=True)
+
+# print 'samples: ', len(ds)
+# print 'bacteria: ', len(ds[0])
