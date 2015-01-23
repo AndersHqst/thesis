@@ -24,7 +24,8 @@ Stool:
 
 import numpy as np
 import csv
-from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title
+from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf
+from faust_parser import  stool_results
 
 COLUMN_TID = 0
 COLUMN_BODY_SITE = 1
@@ -171,7 +172,7 @@ def data_cleaning(dataset):
             cleaned_dataset.append(row)
         else:
             abundances = [int(x) for x in row[2:]]
-            if not max(abundances) <= 10:
+            if not max(abundances) <= 2:
                 cleaned_dataset.append(row)
 
     # Return the result, transposed to the original
@@ -218,22 +219,94 @@ def plot_bacteria_hist(dataset, file_prefix, mid_quantile=False):
             abundances.sort()
             abundances = abundances[int(len(abundances)*0.25): -int(len(abundances)*0.25)]
         print 'max abundance: ', max(abundances)
-        xlabel('relative abundance bin bin')
+        xlabel('relative abundance bin')
         ylabel('#occurrences')
         bacteria_name = row[0]
         title(bacteria_name)
-        hist(abundances)
-        savefig('../../plots/hist/normalized_mid_quantile/' + file_prefix + '-' + bacteria_name.replace('|', '_').replace('/','-'))
+        hist(abundances, color='#0066FF')
+        savefig('../../plots/hist/raw_mid_quantile/' + file_prefix + '-' + bacteria_name.replace('|', '_').replace('/','-'))
         close()
 
-ds = get_stool_dataset()
-ds = data_cleaning(ds)
-ds = compute_relative_values(ds)
+def run():
+    ds = get_stool_dataset()
+    ds = data_cleaning(ds)
+    # ds = compute_relative_values(ds)
 
-fd = open('../../data/Stool_normalized.tab', 'wb')
-csv_writer = csv.writer(fd, delimiter='\t')
-csv_writer.writerows(ds)
-plot_bacteria_hist(ds, 'stool_normalized', mid_quantile=True)
+    # fd = open('../../data/Stool_normalized.tab', 'wb')
+    # csv_writer = csv.writer(fd, delimiter='\t')
+    # csv_writer.writerows(ds)
+    plot_bacteria_hist(ds, 'stool_raw', mid_quantile=True)
 
-# print 'samples: ', len(ds)
-# print 'bacteria: ', len(ds[0])
+    # print 'samples: ', len(ds)
+    # print 'bacteria: ', len(ds[0])
+
+# run()
+
+###
+### Plot abundances for Faust results
+###
+def columns_for_clade(headers, clade_name):
+    indeces = []
+    for index, header in enumerate(headers):
+        if clade_name in header:
+            indeces.append(index)
+    return indeces
+
+def plot_relationships():
+    ds = get_stool_dataset()
+    ds = data_cleaning(ds)
+    ds = compute_relative_values(ds)
+
+    faust_results = stool_results()
+    for faust_result in faust_results:
+
+
+        clades1 = faust_result.clade_1.split('-')
+        origin = ''
+        if 'unclassified' in clades1:
+            origin = clades1[0]
+        else:
+            origin = '|'.join(clades1)
+
+        clades2 = faust_result.clade_2.split('-')
+        to = ''
+        if 'unclassified' in clades2:
+            to = clades2[0]
+        else:
+            to = '|'.join(clades2)
+
+        xlabel('from')
+        ylabel('to')
+        title_text = 'Relationship: %d ' % faust_result.direction
+        title(title_text)
+        # find from-to bacteria abundances
+        xs = []
+        ys = []
+        headers = ds[0][2:]
+        for row in ds[1:]:
+            for from_col in columns_for_clade(headers, origin):
+                from_abundance = row[from_col]
+                for to_col in columns_for_clade(headers, to):
+                    to_abundance = row[to_col]
+                    xs.append(from_abundance)
+                    ys.append(to_abundance)
+
+        # fig = gcf()
+        # ax = fig.gca()
+        # ax.set_yscale('log')
+        # ax.set_xscale('log')
+
+        # print 'Found %d relations' % len(xs)
+        vals = zip(xs, ys)
+        vals.sort()
+
+        # vals = vals[:-20]
+        plot([x for x,y in vals], [y for x,y in vals], 'bo', color='#0066FF')
+        file_name = 'results_normalized/' + origin + '---' + to + '_' + str(faust_result.direction)
+        # print '[RESULT] ', file_name
+        # print vals
+        savefig(file_name)
+        close()
+
+
+plot_relationships()

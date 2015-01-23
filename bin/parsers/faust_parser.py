@@ -2,7 +2,7 @@
 COLUMN_NODE_IDENTIFIER_1 = "Node identifier 1"
 COLUMN_NODE_IDENTIFIER_2 = "Node  identifier 2" # Note double space is in the original file
 COLUMN_CLADE_1 = "Clade 1"
-COLUMN_CLADE_2 = "Clade 1"
+COLUMN_CLADE_2 = "Clade 2"
 COLUMN_BODY_SITE_1 = "Bodysite 1"
 COLUMN_BODY_SITE_2 = "Bodysite 2"
 COLUMN_NUMBER_OF_SUPPORTING_METHODS = "Number of dataset- or method-specific networks supporting relationship"
@@ -45,7 +45,7 @@ class FaustResult(object):
     def __str__(self):
 
         s = 'Bodysites: %s-%s, ' % (self.body_site_1, self.body_site_2)
-        s += 'clades: %s-%s, ' % (self.clade_1, self.clade_2)
+        s += 'clades: %s %s, ' % (self.clade_1, self.clade_2)
         s += 'direction: %d, ' % self.direction
         s += 'supporting methods: %d' % self.number_of_supporting_methods
 
@@ -133,7 +133,7 @@ def faust_results(csv_file):
     return results
 
 def filtered_results(bodysite=None, same_bodysite_only=False):
-    filtered_results = faust_results('../data/faust_results_dots.csv')
+    filtered_results = faust_results('../../data/faust_results_dots.csv')
 
     if not (bodysite is None):
         filtered_results = filter(lambda faust_result: faust_result.body_site_1 == bodysite or faust_result.body_site_2 == bodysite, filtered_results)
