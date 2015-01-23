@@ -2,7 +2,7 @@
 A set of helper functions for working with itemsets represented as integers
 """
 
-from memoisation import memoise
+from utils.memoisation import memoise
 
 def contains(a, b):
     """ True if a contains b """

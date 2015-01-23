@@ -1,11 +1,11 @@
 from __future__ import division
 from charitems import to_binary, to_chars
 from math import log
-from itertools import combinations, permutations
-from memoisation import memoise
+from itertools import combinations
+from utils.memoisation import memoise
 from block import Block
-from timer import *
-from counter import *
+from utils.timer import *
+from utils.counter import *
 from settings import *
 import itemsets
 from heurestic import h
