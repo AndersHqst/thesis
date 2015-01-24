@@ -46,17 +46,24 @@ class Model(object):
         # Block w.r.t C
         self.T_c = []
 
-        # Dataset
-        self.D = D
+        # Dataset, is it right to always remove empty rows?
+        tmp = []
+        for i in D:
+            if i != 0:
+                tmp.append(i)
+        self.D = tmp
 
         # Singletons
-        self.I = set()
+        self.I = itemsets.singletons(self.D)
 
         # Cached queries in FindBestItemSet
         self.query_cache = {}
 
         # Cached frequency counts in D
         self.fr_cache = {}
+
+        self.iterative_scaling()
+
 
 
     def p(self, T, y):
@@ -409,6 +416,8 @@ class Model(object):
         for c in _C:
             self.U[c] = 1.0
 
+        self.T_c = self.compute_blocks()
+
         timer_start('Iterative scaling')
 
         iterations = 0
@@ -450,23 +459,8 @@ class Model(object):
 
         timer_stop('Iterative scaling')
 
-
     def mtv(self):
         """ """
-
-        # TODO move this data cleaning elsewhere
-        tmp = []
-        for i in self.D:
-            if i != 0:
-                tmp.append(i)
-        self.D = tmp
-
-        self.I = itemsets.singletons(self.D)
-
-        self.T_c = self.compute_blocks()
-
-        # Initialize the model
-        self.iterative_scaling()
 
         # Save initial BIC score for the independence distribution
         self.BIC_scrores['initial_score'] = self.score()
@@ -486,8 +480,6 @@ class Model(object):
             # Add X to summary
             self.C.append(X)
             self.heurestics[X] = heurestic
-
-            self.T_c = self.compute_blocks()
 
             # Update model
             self.iterative_scaling()
