@@ -15,6 +15,9 @@ class FaustResult(object):
     def __init__(self):
         super(FaustResult, self).__init__()
 
+        # row for resutl in the faust result file
+        self.row = 0
+
         # Body site and clade name separeted by |
         self.node_identifier_1 = ""
         self.node_identifier_2 = ""
@@ -89,9 +92,10 @@ def faust_results(csv_file):
     # Get headers
     headers = csv_reader.next()
 
-    for row in csv_reader:
+    for index, row in enumerate(csv_reader):
         try:
             faust_result = FaustResult()
+            faust_result.id = index
             faust_result.node_identifier_1 = row[headers.index(COLUMN_NODE_IDENTIFIER_1)]
             faust_result.node_identifier_2 = row[headers.index(COLUMN_NODE_IDENTIFIER_2)]
 

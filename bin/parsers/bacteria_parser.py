@@ -46,12 +46,9 @@ def parse_dataset(csv_file):
     fd = open(csv_file, 'rb')
     csv_reader = csv.reader(fd, delimiter='\t')
 
-    matrix = []
-
-
     # Pop the TID and STSite rows
-    matrix.append(csv_reader.next())
-    matrix.append(csv_reader.next())
+    matrix = np.array(csv_reader.next())
+    matrix = np.vstack([matrix, csv_reader.next()])
 
     # Read in entire matrix and transform abundance values
     # these are in the sub block from index row:2 col:1
@@ -63,14 +60,14 @@ def parse_dataset(csv_file):
             if x != '':
                 val = int(x)
             abundances.append(val)
-        matrix.append([bacteria] + abundances)
+        new_row = np.array([bacteria] + abundances)
+        matrix = np.vstack([matrix, new_row])
 
     fd.close()
 
-    # Convert and return transposed
-    arr = np.array(matrix)
-
-    return arr.T
+    # Return a transposed matrix as
+    # we work with samples as rows
+    return matrix.T
 
 def get_dataset(file_name):
     """
@@ -80,17 +77,15 @@ def get_dataset(file_name):
     """
     fd = open(file_name, 'rb')
     csv_reader = csv.reader(fd, delimiter='\t')
-    matrix = []
+    # header rows
+    matrix = np.array(csv_reader.next())
+    matrix = np.vstack([matrix, csv_reader.next()])
     for index, row in enumerate(csv_reader):
-        # header rows
-        if index <= 1:
-            matrix.append(row)
-        # convert abundances
-        else:
-            id_cols = row[:2]
-            abundances = [int(x) for x in row[2:]]
-            matrix.append(id_cols + abundances)
-    return np.array(matrix)
+        id_cols = row[:2]
+        abundances = [int(x) for x in row[2:]]
+        new_row = np.array(id_cols + abundances)
+        matrix = np.vstack([matrix, new_row])
+    return matrix
 
 def dataset_at_bodyset(csv_file, bodysite):
     dataset = parse_dataset(csv_file)
@@ -171,7 +166,7 @@ def data_cleaning(dataset):
         if index < 2:
             cleaned_dataset.append(row)
         else:
-            abundances = [int(x) for x in row[2:]]
+            abundances = [int(x) for x in row[1:]]
             if not max(abundances) <= 2:
                 cleaned_dataset.append(row)
 
@@ -247,9 +242,12 @@ def run():
 ###
 def columns_for_clade(headers, clade_name):
     indeces = []
+    # print 'Bacteria for cladename: ', clade_name
     for index, header in enumerate(headers):
         if clade_name in header:
+            # print 'header [%d]: %s' % (index, header)
             indeces.append(index)
+    # print '\n'
     return indeces
 
 def plot_relationships():
@@ -260,20 +258,11 @@ def plot_relationships():
     faust_results = stool_results()
     for faust_result in faust_results:
 
-
         clades1 = faust_result.clade_1.split('-')
-        origin = ''
-        if 'unclassified' in clades1:
-            origin = clades1[0]
-        else:
-            origin = '|'.join(clades1)
+        origin = '|'.join(clades1)
 
         clades2 = faust_result.clade_2.split('-')
-        to = ''
-        if 'unclassified' in clades2:
-            to = clades2[0]
-        else:
-            to = '|'.join(clades2)
+        to = '|'.join(clades2)
 
         xlabel('from')
         ylabel('to')
@@ -284,12 +273,14 @@ def plot_relationships():
         ys = []
         headers = ds[0][2:]
         for row in ds[1:]:
+            # print 'FROM'
             for from_col in columns_for_clade(headers, origin):
                 from_abundance = row[from_col]
+                # print 'TO'
                 for to_col in columns_for_clade(headers, to):
                     to_abundance = row[to_col]
-                    xs.append(from_abundance)
-                    ys.append(to_abundance)
+                    xs.append(float(from_abundance))
+                    ys.append(float(to_abundance))
 
         # fig = gcf()
         # ax = fig.gca()
@@ -297,12 +288,15 @@ def plot_relationships():
         # ax.set_xscale('log')
 
         # print 'Found %d relations' % len(xs)
-        vals = zip(xs, ys)
-        vals.sort()
+        # vals = zip(xs, ys)
+        # vals.sort()
+        # vals = filter(lambda (x,y): x != 0 or y != 0, vals)
+        # vals.sort(reverse=True)
+        # print vals
 
         # vals = vals[:-20]
-        plot([x for x,y in vals], [y for x,y in vals], 'bo', color='#0066FF')
-        file_name = 'results_normalized/' + origin + '---' + to + '_' + str(faust_result.direction)
+        plot(xs, ys, 'g.', color='#0066FF')
+        file_name = '../../plots/plots/normalized/' +str(faust_result.id) + '_' + origin + '---' + to + '_' + str(faust_result.direction)
         # print '[RESULT] ', file_name
         # print vals
         savefig(file_name)
