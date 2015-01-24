@@ -68,8 +68,6 @@ def association_rules(model, itemsets, use_observed_frequency=False):
                                 prob_Y = model.query(Y)
 
                             if prob_Y > float_precision:
-                                if X == 4 and Y == 11:
-                                    pass
 
                                 cond_prob = prob_XY / prob_Y
 
