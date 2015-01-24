@@ -54,6 +54,16 @@ def to_index_list(itemset):
         pos += 1
     return l
 
+def to_index_lists(itemsets):
+    """
+    Use to_index_list on every itemset in the passed in
+    itemsets and returns them in a list
+    """
+    l = []
+    for itemset in itemsets:
+        l.append(to_index_list(itemset))
+    return l
+
 def union_of_itemsets(itemsets):
     """Union of items in itemsets"""
     result = 0

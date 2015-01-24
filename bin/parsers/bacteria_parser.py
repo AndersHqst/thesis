@@ -24,8 +24,10 @@ Stool:
 
 import numpy as np
 import csv
-from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf
+from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf, figtext
 from faust_parser import  stool_results
+from scipy.stats import pearsonr, spearmanr
+
 
 COLUMN_TID = 0
 COLUMN_BODY_SITE = 1
@@ -219,7 +221,7 @@ def plot_bacteria_hist(dataset, file_prefix, mid_quantile=False):
         bacteria_name = row[0]
         title(bacteria_name)
         hist(abundances, color='#0066FF')
-        savefig('../../plots/hist/raw_mid_quantile/' + file_prefix + '-' + bacteria_name.replace('|', '_').replace('/','-'))
+        savefig('../../plots/hist/raw/' + file_prefix + '-' + bacteria_name.replace('/','-'))
         close()
 
 def run():
@@ -230,7 +232,7 @@ def run():
     # fd = open('../../data/Stool_normalized.tab', 'wb')
     # csv_writer = csv.writer(fd, delimiter='\t')
     # csv_writer.writerows(ds)
-    plot_bacteria_hist(ds, 'stool_raw', mid_quantile=True)
+    plot_bacteria_hist(ds, 'stool_raw')
 
     # print 'samples: ', len(ds)
     # print 'bacteria: ', len(ds[0])
@@ -293,6 +295,19 @@ def plot_relationships():
         # vals = filter(lambda (x,y): x != 0 or y != 0, vals)
         # vals.sort(reverse=True)
         # print vals
+        try:
+            pearson = pearsonr(xs, ys)
+            spearman = spearmanr(xs, ys)
+            correlation_coef = 'Pearson: (%.3f,%.3f), Spearman: (%.3f,%.3f)' % (pearson[0], pearson[1], spearman[0], spearman[1])
+            correlation_coef += ' sample points: %d' % len(xs)
+            figtext(0.01, 0.01, correlation_coef, fontsize=10)
+        except Exception, e:
+            print e
+            print 'Faust result: ', faust_result.id
+            print 'clades1: ', clades1
+            print 'clades2: ', clades2
+            print 'xs: %s', xs
+            print 'ys: %s', ys
 
         # vals = vals[:-20]
         plot(xs, ys, 'g.', color='#0066FF')
@@ -303,4 +318,4 @@ def plot_relationships():
         close()
 
 
-plot_relationships()
+# plot_relationships()
