@@ -11,7 +11,7 @@ class AssociationRule(object):
         # The rule is X -> Y, ie given an X, probability of Y
         self.X = 0
         self.Y = 0
-        self.conditional_probability = 0
+        self.confidence = 0
 
     def __str__(self):
         return '(%.3f) %s -> %s' % (self.conditional_probability, to_index_list(self.X), to_index_list(self.Y))
@@ -80,18 +80,18 @@ def association_rules(model, itemsets, use_observed_frequency=False):
 
                             if prob_X > float_precision:
 
-                                cond_prob = prob_XY / prob_X
+                                conf = prob_XY / prob_X
 
                                 rule = AssociationRule()
                                 rule.X = X
                                 rule.Y = Y
-                                rule.conditional_probability = cond_prob
+                                rule.confidence = conf
                                 # tuple of tuple with X,Y and rule
                                 association_rules.append(rule)
 
 
     # sort by descending probability
-    association_rules.sort(lambda ar1, ar2: ar1.conditional_probability < ar2.conditional_probability and 1 or -1)
+    association_rules.sort(lambda ar1, ar2: ar1.confidence < ar2.confidence and 1 or -1)
 
     return association_rules
 
