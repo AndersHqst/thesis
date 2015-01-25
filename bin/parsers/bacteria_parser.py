@@ -260,6 +260,9 @@ def plot_relationships():
     faust_results = stool_results()
     for faust_result in faust_results:
 
+        if faust_result.number_of_supporting_methods < 5:
+            continue
+
         clades1 = faust_result.clade_1.split('-')
         origin = '|'.join(clades1)
 
@@ -311,7 +314,7 @@ def plot_relationships():
 
         # vals = vals[:-20]
         plot(xs, ys, 'g.', color='#0066FF')
-        file_name = '../../plots/plots/normalized/' +str(faust_result.id) + '_' + origin + '---' + to + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/normalized_5_indicators/' +str(faust_result.id) + '_' + origin + '---' + to + '_' + str(faust_result.direction)
         # print '[RESULT] ', file_name
         # print vals
         savefig(file_name)
@@ -319,3 +322,52 @@ def plot_relationships():
 
 
 # plot_relationships()
+
+
+###
+###  Class and functions to analyse the bacteria family tree
+###
+class Node(object):
+    def __init__(self):
+        super(Node, self).__init__()
+        self.children = []
+        self.name = ""
+    def __str__(self):
+        return self.name
+
+def add_recursively(node, names):
+    if len(names) > 0:
+        name = names.pop(0)
+        if not name in [n.name for n in node.children]:
+            child = Node()
+            child.name = name
+            node.children.append(child)
+            add_recursively(child, names)
+        else:
+            child = [n for n in node.children if n.name == name][0]
+            add_recursively(child, names)
+
+
+def build_bacteria_family_tree(ds):
+    bacteria_clades = ds[0][2:]
+    root = Node()
+    root.name = 'root'
+    for clade in bacteria_clades:
+        names = clade.split('|')
+        if len(names) > 0:
+            add_recursively(root, names)
+        else:
+            print 'bad column: ', names
+    return root
+
+def count_nodes(node, depth=0, count=0, count_depth=0):
+    for child in node.children:
+        count = count_nodes(child, depth+1, count, count_depth)
+    if depth <= count_depth:
+        return 1 + count
+    return count
+
+
+ds = get_stool_dataset()
+tree = build_bacteria_family_tree(ds)
+print 'stree size : ', count_nodes(tree, count_depth=4)

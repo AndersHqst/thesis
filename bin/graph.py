@@ -55,6 +55,3 @@ class Graph(object):
         for component in self.components:
             yield component.itemsets
 
-
-
-
