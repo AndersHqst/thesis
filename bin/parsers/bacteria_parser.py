@@ -260,13 +260,13 @@ def columns_for_clade(headers, clade_name):
 def plot_relationships():
     ds = get_stool_dataset()
     ds = data_cleaning(ds)
-    ds = compute_relative_values(ds)
+    # ds = compute_relative_values(ds)
 
     faust_results = stool_results()
     for faust_result in faust_results:
 
-        if faust_result.number_of_supporting_methods < 5:
-            continue
+        # if faust_result.number_of_supporting_methods < 5:
+        #     continue
 
         clades1 = faust_result.clade_1.split('-')
         origin = '|'.join(clades1)
@@ -289,8 +289,8 @@ def plot_relationships():
                 # print 'TO'
                 for to_col in columns_for_clade(headers, to):
                     to_abundance = row[to_col]
-                    xs.append(float(from_abundance))
-                    ys.append(float(to_abundance))
+                    xs.append(int(from_abundance))
+                    ys.append(int(to_abundance))
 
         # fig = gcf()
         # ax = fig.gca()
@@ -319,14 +319,14 @@ def plot_relationships():
 
         # vals = vals[:-20]
         plot(xs, ys, 'g.', color='#0066FF')
-        file_name = '../../plots/plots/normalized_5_indicators/' +str(faust_result.id) + '_' + origin + '---' + to + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/normalized/' +str(faust_result.id) + '_' + origin.replace('|', '-') + '---' + to.replace('|', '-') + '_' + str(faust_result.direction)
         # print '[RESULT] ', file_name
         # print vals
         savefig(file_name)
         close()
 
 
-# plot_relationships()
+plot_relationships()
 
 
 ###
@@ -373,6 +373,6 @@ def count_nodes(node, depth=0, count=0, count_depth=0):
     return count
 
 
-ds = get_stool_dataset()
-tree = build_bacteria_family_tree(ds)
-print 'stree size : ', count_nodes(tree, count_depth=3)
+# ds = get_stool_dataset()
+# tree = build_bacteria_family_tree(ds)
+# print 'stree size : ', count_nodes(tree, count_depth=3)
