@@ -83,3 +83,14 @@ def singletons_of_itemset(itemset):
         pos += 1
     return singletons
 
+def binary_vectors_to_ints(binary_matrix):
+    values = []
+    for row in binary_matrix:
+        val = 0
+        pos = 0
+        for bin_val in row[::-1]:
+            bit = 2 ** pos * bin_val
+            val = val | bit
+            pos += 1
+        values.append(val)
+    return values

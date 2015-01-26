@@ -32,7 +32,7 @@ import csv
 from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf, figtext
 from faust_parser import  results
 from scipy.stats import pearsonr, spearmanr
-
+from itemsets import binary_vectors_to_ints
 
 COLUMN_TID = 0
 COLUMN_BODY_SITE = 1
@@ -232,6 +232,22 @@ def columns_for_clade(headers, clade_name):
     # print '\n'
     return indeces
 
+def discretize_binary(dataset, threshold):
+    abundance_matrix = []
+    for row in dataset[1:]:
+        abundances = [float(x) for x in row[2:]]
+        b = max(abundances) * threshold
+        discrete_row = []
+        for val in abundances:
+            if val < b:
+                discrete_row.append(0)
+            else:
+                discrete_row.append(1)
+        abundance_matrix.append(discrete_row)
+    return abundance_matrix
+
+
+
 def plot_relationships():
     ds = get_dataset('Stool')
     ds = data_cleaning(ds)
@@ -312,7 +328,7 @@ def plot_relationships():
         close()
 
 
-plot_relationships()
+# plot_relationships()
 
 
 ###
@@ -362,3 +378,12 @@ def count_nodes(node, depth=0, count=0, count_depth=0):
 # ds = get_stool_dataset()
 # tree = build_bacteria_family_tree(ds)
 # print 'stree size : ', count_nodes(tree, count_depth=3)
+
+ds = get_dataset('Stool')
+ds = data_cleaning(ds)
+ds = compute_relative_values(ds)
+abundance_matrix = discretize_binary(ds, 0.15)
+# print abundance_matrix
+itemsets = binary_vectors_to_ints(abundance_matrix)
+from parser import write_dat_file
+write_dat_file('../../data/stool_discrete_015.dat', itemsets)

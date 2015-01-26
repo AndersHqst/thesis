@@ -129,6 +129,7 @@ def otu_limits(matrix):
     return lower_limits
 
 
+
 def data_cleaning(matrix):
     """Cleans the abundance matrix """
     #Removes otus which greatest abundance is 2 or lower

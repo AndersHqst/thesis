@@ -20,3 +20,10 @@ def parse_dat_file(path):
                 val = val | 2 ** bp
             D.append(val)
     return D
+
+def write_dat_file(file_name, data):
+    import itemsets
+    with open(file_name, 'wb') as fd:
+        for X in data:
+            line = ' '.join([str(x) for x in itemsets.to_index_list(X)]) + '\n'
+            fd.write(line)
