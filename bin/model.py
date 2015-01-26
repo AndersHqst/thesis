@@ -340,7 +340,9 @@ class Model(object):
                         self.cached_queries[union] = self.query(union)
                     T.singletons = itemsets.singletons_of_itemsets(comb)
                     T.itemsets = set(comb)
+
                     T_c.append(T)
+
 
         timer_stop('Compute blocks')
         return T_c
@@ -404,6 +406,7 @@ class Model(object):
             for Tj in blocks[:i]:
                 if Ti < Tj:
                     Ti.block_weight = Ti.block_weight - Tj.block_weight
+
         timer_stop('Block weight')
 
         return blocks
@@ -432,7 +435,8 @@ class Model(object):
                 estimate = self.query(x)
 
                 if self.fr(x) == 0 or estimate == 0:
-                    assert False, 'itemset %d has frequency=%f and p=%f. It should not be added to the summary' % (x, self.fr(x), estimate)
+                    msg = 'itemset %d has frequency=%f and p=%f. It should not be added to the summary' % (x, self.fr(x), estimate)
+                    assert False, msg
                     exit()
 
                 fr_x = self.fr(x)

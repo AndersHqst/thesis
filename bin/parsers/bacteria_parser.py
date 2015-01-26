@@ -9,7 +9,7 @@ with their abundance counts for each sample
 RESULTS
 
 Stool:
-    353 rows - 2 header rows = 351 samples.
+    354 rows - 2 header rows = 351 samples.
     Cleaning bacteria with only 2 or lower as max abundance -> 353, ie probably already cleaned
     removed all bacteria that never occur more than twice
     samples before cleaning:  355
@@ -30,7 +30,7 @@ Stool:
 import numpy as np
 import csv
 from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf, figtext
-from faust_parser import  stool_results
+from faust_parser import  results
 from scipy.stats import pearsonr, spearmanr
 
 
@@ -76,12 +76,37 @@ def parse_dataset(csv_file):
     # we work with samples as rows
     return matrix.T
 
-def get_dataset(file_name):
+def dataset_at_bodyset(csv_file, bodysite):
+    dataset = parse_dataset(csv_file)
+    # Return row 1 with headers + sample at desired bodysite
+    return np.vstack([dataset[:1], dataset[dataset[:,COLUMN_BODY_SITE] == bodysite]])
+
+
+def save_sample(bodysite='Stool'):
+    """
+    Helper function to save a stool sub-sample file to the data folder
+    :return:
+    """
+
+    dataset = dataset_at_bodyset('../../data/hmp.lq.phylotype.filter.tab', bodysite)
+
+    file_name = '%s.tab' % bodysite
+
+    fd = open('../../data/' + file_name, 'wb')
+
+    csv_writer = csv.writer(fd, delimiter='\t')
+    csv_writer.writerows(dataset)
+
+    fd.close()
+
+
+def get_dataset(bodysite='Stool'):
     """
     Read the daset from file
     :param file_name:
     :return:
     """
+    file_name = '../../data/%s.tab' % bodysite
     fd = open(file_name, 'rb')
     csv_reader = csv.reader(fd, delimiter='\t')
     # header rows
@@ -93,56 +118,6 @@ def get_dataset(file_name):
         new_row = np.array(id_cols + abundances)
         matrix = np.vstack([matrix, new_row])
     return matrix
-
-def dataset_at_bodyset(csv_file, bodysite):
-    dataset = parse_dataset(csv_file)
-    # Return row 1 with headers + sample at desired bodysite
-    return np.vstack([dataset[:1], dataset[dataset[:,COLUMN_BODY_SITE] == bodysite]])
-
-
-def bacteria_name(bacterial_clade):
-    """
-    Helper function to get the last descendent of a bacterial clade
-    ex:
-    Bacteria|Fusobacteria|Fusobacteria|Fusobacteriales|Fusobacteriaceae|Fusobacterium -> Fusobacterium
-    Bacteria|Proteobacteria|Alphaproteobacteria|Rhizobiales|Methylocystaceae|unclassified -> Methylocystaceae
-    :param bacterial_clade:
-    :return:
-    """
-
-    if bacterial_clade == '':
-        return bacterial_clade
-
-    s = bacterial_clade.split('|')
-
-    if s[-1] == 'unclassified' and len(s) > 1:
-        return s[-2]
-
-    return s[-1]
-
-def save_stool_samples():
-    """
-    Helper function to save a stool sub-sample file to the data folder
-    :return:
-    """
-
-    dataset = dataset_at_bodyset('../../data/hmp.lq.phylotype.filter.tab', 'Stool')
-
-    fd = open('../../data/Stool.tab', 'wb')
-
-    csv_writer = csv.writer(fd, delimiter='\t')
-    csv_writer.writerows(dataset)
-
-    fd.close()
-
-def get_stool_dataset():
-    """
-    Helper fundtion to specifically read the stool dataset
-    :return:
-    """
-
-    return get_dataset('../../data/Stool.tab')
-
 
 def data_cleaning(dataset):
     """
@@ -230,7 +205,7 @@ def plot_bacteria_hist(dataset, file_prefix, mid_quantile=False):
         close()
 
 def run():
-    ds = get_stool_dataset()
+    ds = get_dataset()
     ds = data_cleaning(ds)
     # ds = compute_relative_values(ds)
 
@@ -258,15 +233,18 @@ def columns_for_clade(headers, clade_name):
     return indeces
 
 def plot_relationships():
-    ds = get_stool_dataset()
+    ds = get_dataset('Stool')
     ds = data_cleaning(ds)
-    # ds = compute_relative_values(ds)
+    ds = compute_relative_values(ds)
 
-    faust_results = stool_results()
+    faust_results = results('Stool')
     for faust_result in faust_results:
 
-        # if faust_result.number_of_supporting_methods < 5:
-        #     continue
+        if faust_result.number_of_supporting_methods < 5:
+            continue
+
+        if 'Bacteria-Bacteroidetes' in faust_result.clade_1 and 'Lachnospiraceae-unclassified' in faust_result.clade_2:
+            pass
 
         clades1 = faust_result.clade_1.split('-')
         origin = '|'.join(clades1)
@@ -281,7 +259,7 @@ def plot_relationships():
         # find from-to bacteria abundances
         xs = []
         ys = []
-        headers = ds[0][2:]
+        headers = ds[0]
         for row in ds[1:]:
             # print 'FROM'
             for from_col in columns_for_clade(headers, origin):
@@ -289,8 +267,8 @@ def plot_relationships():
                 # print 'TO'
                 for to_col in columns_for_clade(headers, to):
                     to_abundance = row[to_col]
-                    xs.append(int(from_abundance))
-                    ys.append(int(to_abundance))
+                    xs.append(float(from_abundance))
+                    ys.append(float(to_abundance))
 
         # fig = gcf()
         # ax = fig.gca()
@@ -317,9 +295,17 @@ def plot_relationships():
             print 'xs: %s', xs
             print 'ys: %s', ys
 
+        disc_x = max(xs) * 0.15
+        disc_y = max(ys) * 0.15
+        # plot discretization lines
+        a, b = [disc_x, disc_x], [0, max(ys)]
+        c, d = [0, max(xs)], [disc_y, disc_y]
+        plot(a,b,c='r')
+        plot(c,d,c='r')
+
         # vals = vals[:-20]
         plot(xs, ys, 'g.', color='#0066FF')
-        file_name = '../../plots/plots/normalized/' +str(faust_result.id) + '_' + origin.replace('|', '-') + '---' + to.replace('|', '-') + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/stool_normalized_5_indicators/' +str(faust_result.id) + '_' + origin.replace('|', '-') + '---' + to.replace('|', '-') + '_' + str(faust_result.direction)
         # print '[RESULT] ', file_name
         # print vals
         savefig(file_name)

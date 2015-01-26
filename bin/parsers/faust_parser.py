@@ -147,10 +147,13 @@ def filtered_results(bodysite=None, same_bodysite_only=False):
 
     return filtered_results
 
-def stool_results():
+def results(bodysite='Stool'):
     """
     Helper method to get inter-site Stool results
     :return:
     """
-    return filtered_results(bodysite='Stool', same_bodysite_only=True)
+    return filtered_results(bodysite=bodysite, same_bodysite_only=True)
+
+
+
 
