@@ -19,6 +19,11 @@ Stool:
     bacteria after cleaning 130: threshold 10
     cleaned:  539
 
+    Full bacteria tree has 1054 nodes.
+    Bacteria, unclassified, Archaea as the roots.
+    If we only take top 3 levels we are down to dept index 4, we only have 182 nodes
+    depth index 3 gives 79 nodes
+
 
 """
 
@@ -370,4 +375,4 @@ def count_nodes(node, depth=0, count=0, count_depth=0):
 
 ds = get_stool_dataset()
 tree = build_bacteria_family_tree(ds)
-print 'stree size : ', count_nodes(tree, count_depth=4)
+print 'stree size : ', count_nodes(tree, count_depth=3)
