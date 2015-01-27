@@ -1,3 +1,7 @@
+"""
+Simple classes to build a graph that splits its nodes into disjoint components
+"""
+
 class Component(object):
 
     def __init__(self):
@@ -9,10 +13,10 @@ class Component(object):
         return 'nodes: %s components: ' % (bin(self.nodes), self.components)
 
 
-class Graph(object):
+class GraphComponents(object):
 
     def __init__(self):
-        super(Graph, self).__init__()
+        super(GraphComponents, self).__init__()
 
         # Nodes in a component
         self.components = []

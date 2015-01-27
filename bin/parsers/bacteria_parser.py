@@ -328,7 +328,7 @@ def plot_relationships():
         close()
 
 
-# plot_relationships()
+plot_relationships()
 
 
 ###
@@ -379,11 +379,11 @@ def count_nodes(node, depth=0, count=0, count_depth=0):
 # tree = build_bacteria_family_tree(ds)
 # print 'stree size : ', count_nodes(tree, count_depth=3)
 
-ds = get_dataset('Stool')
-ds = data_cleaning(ds)
-ds = compute_relative_values(ds)
-abundance_matrix = discretize_binary(ds, 0.15)
-# print abundance_matrix
-itemsets = binary_vectors_to_ints(abundance_matrix)
-from parser import write_dat_file
-write_dat_file('../../data/stool_discrete_015.dat', itemsets)
+# ds = get_dataset('Stool')
+# ds = data_cleaning(ds)
+# ds = compute_relative_values(ds)
+# abundance_matrix = discretize_binary(ds, 0.15)
+print abundance_matrix
+# itemsets = binary_vectors_to_ints(abundance_matrix)
+# from parser import write_dat_file
+# write_dat_file('../../data/stool_discrete_015.dat', itemsets)
