@@ -328,51 +328,9 @@ def plot_relationships():
         close()
 
 
-plot_relationships()
+# plot_relationships()
 
 
-###
-###  Class and functions to analyse the bacteria family tree
-###
-class Node(object):
-    def __init__(self):
-        super(Node, self).__init__()
-        self.children = []
-        self.name = ""
-    def __str__(self):
-        return self.name
-
-def add_recursively(node, names):
-    if len(names) > 0:
-        name = names.pop(0)
-        if not name in [n.name for n in node.children]:
-            child = Node()
-            child.name = name
-            node.children.append(child)
-            add_recursively(child, names)
-        else:
-            child = [n for n in node.children if n.name == name][0]
-            add_recursively(child, names)
-
-
-def build_bacteria_family_tree(ds):
-    bacteria_clades = ds[0][2:]
-    root = Node()
-    root.name = 'root'
-    for clade in bacteria_clades:
-        names = clade.split('|')
-        if len(names) > 0:
-            add_recursively(root, names)
-        else:
-            print 'bad column: ', names
-    return root
-
-def count_nodes(node, depth=0, count=0, count_depth=0):
-    for child in node.children:
-        count = count_nodes(child, depth+1, count, count_depth)
-    if depth <= count_depth:
-        return 1 + count
-    return count
 
 
 # ds = get_stool_dataset()
@@ -383,7 +341,7 @@ def count_nodes(node, depth=0, count=0, count_depth=0):
 # ds = data_cleaning(ds)
 # ds = compute_relative_values(ds)
 # abundance_matrix = discretize_binary(ds, 0.15)
-print abundance_matrix
+# print abundance_matrix
 # itemsets = binary_vectors_to_ints(abundance_matrix)
 # from parser import write_dat_file
 # write_dat_file('../../data/stool_discrete_015.dat', itemsets)
