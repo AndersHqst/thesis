@@ -33,6 +33,7 @@ from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, t
 from faust_parser import  results
 from scipy.stats import pearsonr, spearmanr
 from itemsets import binary_vectors_to_ints
+from files import write_tab_file
 
 COLUMN_TID = 0
 COLUMN_BODY_SITE = 1
@@ -156,9 +157,13 @@ def data_cleaning(dataset):
     return np.array(cleaned_dataset).T
 
 def abundance_matrix(matrix):
-    """ Return the submatrix of abundance count.print 'rows before: ', len(dataset) - 2 """
+    """ Return the submatrix of abundances"""
     # From row 1, from column 2
-    return matrix[1:, 2:].astype(np.int)
+    try:
+        return matrix[1:, 2:].astype(np.int)
+    except:
+        pass
+    return matrix[1:, 2:].astype(np.float)
 
 
 def compute_relative_values(dataset):
@@ -232,19 +237,66 @@ def columns_for_clade(headers, clade_name):
     # print '\n'
     return indeces
 
+def replace_abundance_matrix(dataset, replacement):
+    """
+    Replace the abundance matrix of a dataset
+    :param dataset: Dataset
+    :param replacement: Replacement for abundance matrix
+    :return:
+    """
+    clade_names = np.array(dataset[0][2:])
+    ds = np.vstack((clade_names, replacement))
+
+    # Attach sample columns, on left side
+    left_columns = np.array(dataset)[:,0:2]
+    ds = np.hstack((left_columns, ds))
+
+    return ds
+
+def discrete_value(row, value, threshold=0.15):
+    row_sorted = sorted(row)
+    b = max(row_sorted) * threshold
+    if value < b:
+        return 0
+    return 1
+
+def discrete_abundances(row, threshold):
+
+    # sorted and remove highest values
+    # row_sorted = sorted(row)
+
+    # remove top 5 pct outliers
+    # outliers = -int((len(row)*0.05))
+
+    # row_sorted = row_sorted[:outliers]
+
+    discrete_row = []
+
+    for val in row:
+        discrete_row.append(discrete_value(row, val, threshold))
+
+    return discrete_row
+
+
 def discretize_binary(dataset, threshold):
-    abundance_matrix = []
-    for row in dataset[1:]:
-        abundances = [float(x) for x in row[2:]]
-        b = max(abundances) * threshold
-        discrete_row = []
-        for val in abundances:
-            if val < b:
-                discrete_row.append(0)
-            else:
-                discrete_row.append(1)
-        abundance_matrix.append(discrete_row)
-    return abundance_matrix
+
+    # Get the abundance matrix and discretize it
+    abundances = abundance_matrix(dataset).T
+    discrete_matrix = []
+    for row in abundances:
+        discrete_matrix.append(discrete_abundances(row, threshold))
+    discrete_matrix = np.array(discrete_matrix).T
+
+    # Replace the abundance submatrix
+    discretized_dataset = replace_abundance_matrix(dataset, discrete_matrix)
+
+    return discretized_dataset
+
+# ds = get_dataset('Stool')
+# ds = data_cleaning(ds)
+# ds = compute_relative_values(ds)
+# ds = discretize_binary(ds, 0.15)
+# write_tab_file('../../data/Stool_disc.tab', ds)
 
 
 
@@ -252,9 +304,8 @@ def plot_relationships():
     ds = get_dataset('Stool')
     ds = data_cleaning(ds)
     ds = compute_relative_values(ds)
-
     faust_results = results('Stool')
-    for faust_result in faust_results:
+    for faust_result in faust_results[:10]:
 
         if faust_result.number_of_supporting_methods < 5:
             continue
@@ -275,16 +326,23 @@ def plot_relationships():
         # find from-to bacteria abundances
         xs = []
         ys = []
-        headers = ds[0]
-        for row in ds[1:]:
+        discrete_xs = []
+        discrete_ys = []
+        headers = ds[0][2:]
+        for _row in ds[1:]:
+            row = [float(x) for x in _row[2:]]
             # print 'FROM'
             for from_col in columns_for_clade(headers, origin):
                 from_abundance = row[from_col]
+
                 # print 'TO'
                 for to_col in columns_for_clade(headers, to):
                     to_abundance = row[to_col]
-                    xs.append(float(from_abundance))
-                    ys.append(float(to_abundance))
+                    xs.append(from_abundance)
+                    ys.append(to_abundance)
+
+                    discrete_xs.append(discrete_value(row, from_abundance))
+                    discrete_ys.append(discrete_value(row, to_abundance))
 
         # fig = gcf()
         # ax = fig.gca()
@@ -319,6 +377,18 @@ def plot_relationships():
         plot(a,b,c='r')
         plot(c,d,c='r')
 
+        # write discrete results onto plot
+        pairs = zip(discrete_xs, discrete_ys)
+        _00 = '00: ' + str(len([x for x in pairs if x == (0,0)]))
+        _01 = '01: ' + str(len([x for x in pairs if x == (0,1)]))
+        _10 = '10: ' + str(len([x for x in pairs if x == (1,0)]))
+        _11 = '11: ' + str(len([x for x in pairs if x == (1,1)]))
+        figtext(0.7, 0.85, _00, fontsize=10)
+        figtext(0.7, 0.80, _01, fontsize=10)
+        figtext(0.7, 0.75, _10, fontsize=10)
+        figtext(0.7, 0.70, _11, fontsize=10)
+
+
         # vals = vals[:-20]
         plot(xs, ys, 'g.', color='#0066FF')
         file_name = '../../plots/plots/stool_normalized_5_indicators/' +str(faust_result.id) + '_' + origin.replace('|', '-') + '---' + to.replace('|', '-') + '_' + str(faust_result.direction)
@@ -328,20 +398,4 @@ def plot_relationships():
         close()
 
 
-# plot_relationships()
-
-
-
-
-# ds = get_stool_dataset()
-# tree = build_bacteria_family_tree(ds)
-# print 'stree size : ', count_nodes(tree, count_depth=3)
-
-# ds = get_dataset('Stool')
-# ds = data_cleaning(ds)
-# ds = compute_relative_values(ds)
-# abundance_matrix = discretize_binary(ds, 0.15)
-# print abundance_matrix
-# itemsets = binary_vectors_to_ints(abundance_matrix)
-# from parser import write_dat_file
-# write_dat_file('../../data/stool_discrete_015.dat', itemsets)
+plot_relationships()

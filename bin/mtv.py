@@ -3,7 +3,7 @@
 import sys
 import getopt
 from model import Model
-from parsers.parser import parse_dat_file, write_dat_file
+from parsers.files import parse_dat_file, write_dat_file
 
 from settings import *
 import itemsets

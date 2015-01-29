@@ -1,3 +1,5 @@
+from django.core.files.locks import _fd
+
 
 def parse_dat_file(path):
     """
@@ -22,8 +24,28 @@ def parse_dat_file(path):
     return D
 
 def write_dat_file(file_name, data):
+    """
+    Write itemsets to .dat file format. Eact item is represented by
+    the positions of ones in binary
+    :param file_name:
+    :param data:
+    :return:
+    """
     import itemsets
     with open(file_name, 'wb') as fd:
         for X in data:
             line = ' '.join([str(x) for x in itemsets.to_index_list(X)]) + '\n'
             fd.write(line)
+
+
+def write_tab_file(file_name, dataset):
+    """
+    Writes a dataset to tab seperated .tab file
+    :param file_name:
+    :param dataset:
+    :return:
+    """
+    import csv
+    with open(file_name, 'wb') as fd:
+        csv_writer = csv.writer(fd, delimiter='\t')
+        csv_writer.writerows(dataset)
