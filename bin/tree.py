@@ -16,6 +16,7 @@ class Node(object):
         # w.r.t. the clade at a given leaf
         self.abundances = None
 
+
     def is_leaf(self):
         """
         Note: only leaf nodes hold a abundance column
@@ -40,6 +41,7 @@ class Tree(object):
         self.ds = None
         # Submatrix of ds with bacteria abundances
         self.bacteria_abundances = None
+        self.nodes = {}
 
 
     def add_clades(self, node, clades, abundances, depth=0):
@@ -52,15 +54,19 @@ class Tree(object):
         if depth < len(clades):
             name = clades[depth]
             if not name in [n.name for n in node.children]:
+                assert not (name in self.nodes), 'Attempting to add node twice'
+
                 child = Node()
                 child.name = name
                 child.parent = node
                 child.clades = '|'.join(clades[:depth+1])
+                self.nodes[name] = node
                 node.children.append(child)
                 self.add_clades(child, clades, abundances, depth + 1)
             else:
                 child = [n for n in node.children if n.name == name][0]
                 self.add_clades(child, clades, abundances, depth + 1)
+
         # This is a leaf
         else:
             node.abundances = abundances
@@ -182,6 +188,19 @@ class Tree(object):
 
         return dataset
 
+    def abundance_for_calde(self, clade_name):
+        """
+        Get the abundance row at a given clade
+        :param clade_name:
+        :return:
+        """
+        assert clade_name and not (clade_name == ''), 'No clade name provided'
+
+        # Get the name, in e.g. Faust clade names may occur as Bacteria|Firmicutes
+        name = clade_name.split('|')[-1]
+        node = self.nodes[name]
+
+        return self.abundance_column_in_subtree(node)
 
     def count_nodes(self, node, depth=0, count=0, count_depth=0):
         """
@@ -211,7 +230,8 @@ def test_tree():
     tree = Tree()
     tree.build_bacteria_family_tree(ds)
 
-    sub_ds = tree.dataset_at_max_depth(10)
+    sub_ds = tree.dataset_at_max_depth(2)
+    # Test be inspecting the result..
     print sub_ds
 
 test_tree()

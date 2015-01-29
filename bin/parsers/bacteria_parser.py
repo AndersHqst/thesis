@@ -35,6 +35,9 @@ from scipy.stats import pearsonr, spearmanr
 from itemsets import binary_vectors_to_ints
 from files import write_tab_file
 
+import os
+dir = os.path.dirname(__file__)
+
 COLUMN_TID = 0
 COLUMN_BODY_SITE = 1
 # In the transposed matrix, beyond the first two columns are
@@ -88,12 +91,12 @@ def save_sample(bodysite='Stool'):
     Helper function to save a stool sub-sample file to the data folder
     :return:
     """
+    faust_file = os.path.join(dir, '../../data/hmp.lq.phylotype.filter.tab')
+    dataset = dataset_at_bodyset(faust_file, bodysite)
 
-    dataset = dataset_at_bodyset('../../data/hmp.lq.phylotype.filter.tab', bodysite)
+    file_name = os.path.join(dir, '../../data/%s.tab' % bodysite)
 
-    file_name = '%s.tab' % bodysite
-
-    fd = open('../../data/' + file_name, 'wb')
+    fd = open(file_name, 'wb')
 
     csv_writer = csv.writer(fd, delimiter='\t')
     csv_writer.writerows(dataset)
@@ -107,7 +110,7 @@ def get_dataset(bodysite='Stool'):
     :param file_name:
     :return:
     """
-    file_name = '../../data/%s.tab' % bodysite
+    file_name = os.path.join(dir, '../../data/%s.tab' % bodysite)
     fd = open(file_name, 'rb')
     csv_reader = csv.reader(fd, delimiter='\t')
     # header rows
@@ -300,15 +303,16 @@ def discretize_binary(dataset, threshold):
 
 
 
-def plot_relationships():
+def plot_relationships(relative_values=True):
     ds = get_dataset('Stool')
     ds = data_cleaning(ds)
-    ds = compute_relative_values(ds)
+    if relative_values:
+        ds = compute_relative_values(ds)
     faust_results = results('Stool')
-    for faust_result in faust_results[:10]:
+    for faust_result in faust_results:
 
-        if faust_result.number_of_supporting_methods < 5:
-            continue
+        # if faust_result.number_of_supporting_methods < 5:
+        #     continue
 
         if 'Bacteria-Bacteroidetes' in faust_result.clade_1 and 'Lachnospiraceae-unclassified' in faust_result.clade_2:
             pass
@@ -330,12 +334,16 @@ def plot_relationships():
         discrete_ys = []
         headers = ds[0][2:]
         for _row in ds[1:]:
-            row = [float(x) for x in _row[2:]]
-            # print 'FROM'
+
+            # Make values in the abundance row  numeric
+            if relative_values:
+                row = [float(x) for x in _row[2:]]
+            else:
+                row = [int(x) for x in _row[2:]]
+
             for from_col in columns_for_clade(headers, origin):
                 from_abundance = row[from_col]
 
-                # print 'TO'
                 for to_col in columns_for_clade(headers, to):
                     to_abundance = row[to_col]
                     xs.append(from_abundance)
@@ -392,10 +400,11 @@ def plot_relationships():
         # vals = vals[:-20]
         plot(xs, ys, 'g.', color='#0066FF')
         file_name = '../../plots/plots/stool_normalized_5_indicators/' +str(faust_result.id) + '_' + origin.replace('|', '-') + '---' + to.replace('|', '-') + '_' + str(faust_result.direction)
+        file_name = os.path.join(dir, file_name)
         # print '[RESULT] ', file_name
         # print vals
         savefig(file_name)
         close()
 
 
-plot_relationships()
+# plot_relationships()
