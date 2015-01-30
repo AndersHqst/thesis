@@ -1,5 +1,3 @@
-from django.core.files.locks import _fd
-
 
 def parse_dat_file(path):
     """
@@ -22,6 +20,27 @@ def parse_dat_file(path):
                 val = val | 2 ** bp
             D.append(val)
     return D
+
+def parse_header_file(path):
+    """
+    Parses a header file where headers can correspond to
+    attribute indeces. Header files are expected to be as the
+    same format as .dat files with header names seperated eith a space
+    :param path:
+    :return:
+    """
+    with open(path) as fd:
+
+        lines = fd.readlines()
+
+        if len(lines) != 1:
+            print 'Header files should only contains 1 line. Ignoring header file: ', path
+            return None
+
+        clean_line = lines[0].replace('\n', '')
+
+        return clean_line.split(' ')
+
 
 def write_dat_file(file_name, data):
     """

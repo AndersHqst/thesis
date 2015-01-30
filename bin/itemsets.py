@@ -38,11 +38,13 @@ def singletons(D):
     # Create set of singletons for all 1 bits
     return singletons_of_itemsets([mask])
 
-def to_index_list(itemset):
+def to_index_list(itemset, headers=None):
     """
     Returns a sorted list of the binary indeces of 1's
     found in the itemset
     :param itemset:
+    :param headers: if headers are provided,
+    indexes will be converted to header names in the returned list
     :return: List of binary indeces i itemset
     """
     l = []
@@ -52,6 +54,16 @@ def to_index_list(itemset):
             l.append(pos)
         itemset = itemset >> 1
         pos += 1
+
+    if not (headers is None):
+        attribute_names = []
+        for i in l:
+            if i < len(headers):
+                attribute_names.append(headers[i])
+            else:
+                attribute_names.append(i)
+        return attribute_names
+
     return l
 
 def to_index_lists(itemsets):

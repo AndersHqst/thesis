@@ -12,6 +12,7 @@ from heurestic import h
 import sys
 sys.setrecursionlimit(1500)
 
+
 class Model(object):
 
     def __init__(self, D, k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z):
@@ -63,7 +64,6 @@ class Model(object):
         self.fr_cache = {}
 
         self.iterative_scaling()
-
 
 
     def p(self, T, y):
@@ -205,9 +205,10 @@ class Model(object):
         # We search the top 10 Zs to see if there was a non singleton itemset
         for z in Z:
             if not (z in self.I) and z != 0:
-                return z
+                return z[0]
         print 'No valid z in Z: ', Z
-        return Z[0]
+        return Z[0][0]
+
 
     def find_best_itemset_rec(self, X, Y, Z, X_length=0):
         """
@@ -249,6 +250,7 @@ class Model(object):
                     Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
 
         return Z
+
 
     def find_best_itemset_iter(self, X, I, Z, model, s, m, X_length=0):
         """
@@ -313,6 +315,7 @@ class Model(object):
 
         return Z
 
+
     def compute_blocks(self, set_prob=False):
         """
             Compute the set of blocks that C infer
@@ -358,11 +361,13 @@ class Model(object):
                     Ti.block_size = Ti.block_size - Tj.block_size
         return T_c
 
+
     def block_in_closure(self, T, closure):
         for c in closure:
             if not (c in T.itemsets):
                 return False
         return True
+
 
     def compute_block_weights(self, y=0):
         """
@@ -410,6 +415,7 @@ class Model(object):
         timer_stop('Block weight')
 
         return blocks
+
 
     def iterative_scaling(self):
 
@@ -463,34 +469,45 @@ class Model(object):
 
         timer_stop('Iterative scaling')
 
-    def mtv(self):
-        """ """
 
-        # Save initial BIC score for the independence distribution
+    def validate_best_itemset(self, itemset):
+        """
+        Returns true if an itemset is valid to be added to C, or false.
+        Singletons or the empty set should not be added to C, but this can happen
+        in cases where e.g. thresholds for support or min itemset size
+        are too strict
+        """
+        if itemset in self.I:
+            print 'X was a singleton! These should not be possible from the heurestic'
+            return False
+
+        if itemset == 0:
+            print 'Best itemset found was the empty set (0). This could ' \
+                      'mean the heurestic could not find any itemset ' \
+                      'not already predicted by the model, or above ' \
+                      'the provided thresholds. Exiting MTV'
+            return False
+
+        return True
+
+
+    def mtv(self):
+        """
+        Run the mtv algorithm with current parameterization of the model
+        """
+
         self.BIC_scrores['initial_score'] = self.score()
 
         # Add itemsets until we have k
+        # We ignore an increasing BIC score, and always mine k itemsets
         while len(self.C) < self.k:
 
-            X, heurestic = self.find_best_itemset()
-            assert not (X in self.I), 'X was a singleton! These should not be possible from the heurestic'
+            X = self.find_best_itemset()
 
-            if X == 0:
-                print 'Best itemset found was the empty set (0). This probably ' \
-                      'means the heurestic could not find any itemset ' \
-                      'not already predicted by the model. Exiting MTV'
+            if not (self.validate_best_itemset(X)):
                 break
 
-            # Add X to summary
-            self.C.append(X)
-            self.heurestics[X] = heurestic
-
-            # Update model
-            self.iterative_scaling()
-
-            # Compute score
-            cur_score = self.score()
-            self.BIC_scrores[X] = cur_score
+            self.add_to_summary(X)
 
 
     def score(self):
@@ -506,6 +523,28 @@ class Model(object):
             print 'Exception in score function, ', e
             print self
             exit()
+
+
+    def add_to_summary(self, itemset):
+        """
+        Added an itemset to C and update current BIC score and heurestic
+        for the itemset.
+        :param itemset: An itemset to be added to C
+        :return:
+        """
+        heuristic = h(self.fr(itemset), self.query(itemset))
+
+        # Add X to summary
+        self.C.append(itemset)
+        self.heurestics[itemset] = heuristic
+
+        # Update model
+        self.iterative_scaling()
+
+        # Compute score
+        cur_score = self.score()
+        self.BIC_scrores[itemset] = cur_score
+
 
     def is_in_sumamry(self, y):
         """

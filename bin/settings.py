@@ -8,6 +8,7 @@ DEFAULT_DEBUG = False
 DEFAULT_C = None
 DEFAULT_F = None
 DEFAULT_O = None
+DEFAULT_H = None
 
 
 float_precision = 1e-5
