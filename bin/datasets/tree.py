@@ -11,6 +11,7 @@ class Node(object):
         self.parent = None
         self.children = []
         self.name = ""
+        self.depth = 0
         self.clades = ""
         # Numpy array of the abundance colum
         # w.r.t. the clade at a given leaf
@@ -24,8 +25,10 @@ class Node(object):
         """
         return (self.abundances is None) == False
 
+
     def is_root(self):
         return self.parent is None
+
 
     def __str__(self):
         return self.name
@@ -67,6 +70,7 @@ class Tree(object):
                 child = Node()
                 child.name = name
                 child.parent = node
+                child.depth = depth + 1
                 child.clades = '|'.join(clades[:depth+1])
                 self.nodes[name] = node
                 node.children.append(child)
@@ -196,7 +200,8 @@ class Tree(object):
 
         return dataset
 
-    def abundance_for_calde(self, clade_name):
+
+    def abundance_for_clade(self, clade_name):
         """
         Get the abundance row at a given clade.
         Important that calde names are given with the parent name
@@ -205,10 +210,12 @@ class Tree(object):
         :return:
         """
         assert clade_name and not (clade_name == ''), 'No clade name provided'
+        assert clade_name in self.nodes, 'No node for clade_name'
 
-        node = self.nodes[clade_name]
+        node = self.node_for_clade_name(clade_name)
 
         return self.abundance_column_in_subtree(node)
+
 
     def count_nodes(self, node, depth=0, count=0, count_depth=0):
         """
@@ -225,6 +232,16 @@ class Tree(object):
             return 1 + count
         return count
 
+
+    def node_for_clade_name(self, clade_name):
+        assert clade_name and not (clade_name == ''), 'No clade name provided'
+        assert clade_name in self.nodes, 'No node for clade_name'
+
+        return self.nodes[clade_name]
+
+
+    def has_clade(self, clade_name):
+        return clade_name in self.nodes
 
 def test_tree():
     # Create a toy dataset, with the same .tab format as we use

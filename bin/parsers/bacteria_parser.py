@@ -247,7 +247,7 @@ def replace_abundance_matrix(dataset, replacement):
 
     return ds
 
-def discrete_value(row, value, threshold=0.15):
+def discrete_value(row, value, threshold=0.5):
     row_sorted = sorted(row)
     b = max(row_sorted) * threshold
     if value < b:
@@ -301,22 +301,22 @@ def plot_relationships(relative_values=True):
     if relative_values:
         ds = compute_relative_values(ds)
 
-    t = Tree(ds)
+    tree = Tree(ds)
     faust_results = results('Stool')
-    return
+
     for faust_result in faust_results:
 
-        # if faust_result.number_of_supporting_methods < 5:
-        #     continue
+        if faust_result.number_of_supporting_methods < 5:
+            continue
 
-        if 'Bacteria-Bacteroidetes' in faust_result.clade_1 and 'Lachnospiraceae-unclassified' in faust_result.clade_2:
-            pass
+        # make sure the faust result is in the tree
+        # ex Clostridiales|IncertaeSedisXIV is not in the data set
+        if not (tree.has_clade(faust_result.clade_1) and tree.has_clade(faust_result.clade_2)):
+            continue
 
-        clades1 = faust_result.clade_1.split('-')
-        origin = '|'.join(clades1)
-
-        clades2 = faust_result.clade_2.split('-')
-        to = '|'.join(clades2)
+        # Get the nodes in the phylogenetic tree
+        from_node = tree.node_for_clade_name(faust_result.clade_1)
+        to_node = tree.node_for_clade_name(faust_result.clade_2)
 
         xlabel('from')
         ylabel('to')
@@ -327,26 +327,40 @@ def plot_relationships(relative_values=True):
         ys = []
         discrete_xs = []
         discrete_ys = []
-        headers = ds[0][2:]
-        for _row in ds[1:]:
+
+        # Get the total abundance for hte clades in the tree
+        abundance_from = tree.abundance_column_in_subtree(from_node)
+        abundance_to = tree.abundance_column_in_subtree(to_node)
+
+        # List the in-sample values for each sample
+        for index, _row in enumerate(ds[1:]):
+            from_abundance = abundance_from[index]
+            to_abundance = abundance_to[index]
+
+            xs.append(from_abundance)
+            ys.append(to_abundance)
+
+            discrete_xs.append(discrete_value(abundance_from, from_abundance))
+            discrete_ys.append(discrete_value(abundance_to, to_abundance))
 
             # Make values in the abundance row  numeric
-            if relative_values:
-                row = [float(x) for x in _row[2:]]
-            else:
-                row = [int(x) for x in _row[2:]]
+            # if relative_values:
+            #     row = [float(x) for x in _row[2:]]
+            # else:
+            #     row = [int(x) for x in _row[2:]]
+            #
+            # for from_col in columns_for_clade(headers, origin):
+            #     from_abundance = row[from_col]
+            #
+            #     for to_col in columns_for_clade(headers, to):
+            #         to_abundance = row[to_col]
+            #         xs.append(from_abundance)
+            #         ys.append(to_abundance)
+            #
+            #         discrete_xs.append(discrete_value(row, from_abundance))
+            #         discrete_ys.append(discrete_value(row, to_abundance))
 
-            for from_col in columns_for_clade(headers, origin):
-                from_abundance = row[from_col]
-
-                for to_col in columns_for_clade(headers, to):
-                    to_abundance = row[to_col]
-                    xs.append(from_abundance)
-                    ys.append(to_abundance)
-
-                    discrete_xs.append(discrete_value(row, from_abundance))
-                    discrete_ys.append(discrete_value(row, to_abundance))
-
+        # Uncomment to use log axis
         # fig = gcf()
         # ax = fig.gca()
         # ax.set_yscale('log')
@@ -361,19 +375,22 @@ def plot_relationships(relative_values=True):
         try:
             pearson = pearsonr(xs, ys)
             spearman = spearmanr(xs, ys)
+
+            if pearson > 0.5:
+                pass
             correlation_coef = 'Pearson: (%.3f,%.3f), Spearman: (%.3f,%.3f)' % (pearson[0], pearson[1], spearman[0], spearman[1])
             correlation_coef += ' sample points: %d' % len(xs)
             figtext(0.01, 0.01, correlation_coef, fontsize=10)
         except Exception, e:
             print e
             print 'Faust result: ', faust_result.id
-            print 'clades1: ', clades1
-            print 'clades2: ', clades2
+            print 'clades1: ', from_node.name
+            print 'clades2: ', to_node.name
             print 'xs: %s', xs
             print 'ys: %s', ys
 
-        disc_x = max(xs) * 0.15
-        disc_y = max(ys) * 0.15
+        disc_x = max(xs) * 0.5
+        disc_y = max(ys) * 0.5
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]
         c, d = [0, max(xs)], [disc_y, disc_y]
@@ -381,7 +398,7 @@ def plot_relationships(relative_values=True):
         plot(c,d,c='r')
 
         # write discrete results onto plot
-        pairs = zip(discrete_xs, discrete_ys)
+        pairs = zip(discrete_ys, discrete_xs)
         _00 = '00: ' + str(len([x for x in pairs if x == (0,0)]))
         _01 = '01: ' + str(len([x for x in pairs if x == (0,1)]))
         _10 = '10: ' + str(len([x for x in pairs if x == (1,0)]))
@@ -391,10 +408,15 @@ def plot_relationships(relative_values=True):
         figtext(0.7, 0.75, _10, fontsize=10)
         figtext(0.7, 0.70, _11, fontsize=10)
 
+        from_depth = 'From depth: %d' % from_node.depth
+        to_depth = 'To depth: %d' % to_node.depth
+        figtext(0.7, 0.65, from_depth, fontsize=10)
+        figtext(0.7, 0.60, to_depth, fontsize=10)
+
 
         # vals = vals[:-20]
         plot(xs, ys, 'g.', color='#0066FF')
-        file_name = '../../plots/plots/stool_normalized_5_indicators/' +str(faust_result.id) + '_' + origin.replace('|', '-') + '---' + to.replace('|', '-') + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/stool_normalized_clade_5_indicators/' +str(faust_result.id) + '_' + from_node.name.replace('|', '-') + '---' + to_node.name.replace('|', '-') + '_' + str(faust_result.direction)
         file_name = os.path.join(dir, file_name)
         # print '[RESULT] ', file_name
         # print vals

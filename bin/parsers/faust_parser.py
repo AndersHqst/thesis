@@ -105,8 +105,9 @@ def faust_results(csv_file):
             faust_result.body_site_1 = row[headers.index(COLUMN_BODY_SITE_1)]
             faust_result.body_site_2 = row[headers.index(COLUMN_BODY_SITE_2)]
 
-            faust_result.clade_1 = row[headers.index(COLUMN_CLADE_1)]
-            faust_result.clade_2 = row[headers.index(COLUMN_CLADE_2)]
+            # Replace '-' with a '|' in the clade names, this is the format used elsewhre
+            faust_result.clade_1 = row[headers.index(COLUMN_CLADE_1)].replace('-', '|')
+            faust_result.clade_2 = row[headers.index(COLUMN_CLADE_2)].replace('-', '|')
 
             try:
                 faust_result.number_of_supporting_methods = int(row[headers.index(COLUMN_NUMBER_OF_SUPPORTING_METHODS)])
