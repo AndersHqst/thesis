@@ -3,7 +3,7 @@ Class and spezialized functions to build and work with a bacteria family tree.
 """
 
 import numpy as np
-from parsers.bacteria_parser import abundance_matrix
+from utils.dataset_helpers import abundance_matrix
 
 class Node(object):
     def __init__(self):
@@ -33,26 +33,34 @@ class Node(object):
 
 class Tree(object):
 
-    def __init__(self):
+    def __init__(self, ds):
         super(Tree, self).__init__()
         self.root = Node()
         self.root.name = 'Root'
-        "Dataset related to the tree"
-        self.ds = None
+        "Dataset related to the datasets"
+        self.ds = ds
         # Submatrix of ds with bacteria abundances
         self.bacteria_abundances = None
         self.nodes = {}
+        self.__build_bacteria_family_tree(self.ds)
 
 
-    def add_clades(self, node, clades, abundances, depth=0):
+    def __add_clades(self, node, clades, abundances, depth=0):
         """
-        Recursively adds a list of clades to current tree.
+        Recursively adds a list of clades to current datasets.
         :param node:
         :param clades:
         :return:
         """
         if depth < len(clades):
-            name = clades[depth]
+
+            # Unique name for the node includes the parent name
+            # if not roow in the phylogenetic tree
+            if depth == 0:
+                name = clades[depth]
+            else:
+                name = clades[depth-1] + '|' + clades[depth]
+
             if not name in [n.name for n in node.children]:
                 assert not (name in self.nodes), 'Attempting to add node twice'
 
@@ -62,25 +70,25 @@ class Tree(object):
                 child.clades = '|'.join(clades[:depth+1])
                 self.nodes[name] = node
                 node.children.append(child)
-                self.add_clades(child, clades, abundances, depth + 1)
+                self.__add_clades(child, clades, abundances, depth + 1)
             else:
                 child = [n for n in node.children if n.name == name][0]
-                self.add_clades(child, clades, abundances, depth + 1)
+                self.__add_clades(child, clades, abundances, depth + 1)
 
         # This is a leaf
         else:
             node.abundances = abundances
 
 
-    def build_bacteria_family_tree(self, ds):
+    def __build_bacteria_family_tree(self, ds):
         """
-        Build the bacteria family tree from a dataset.
+        Build the bacteria family datasets from a dataset.
         The data set is expected to be in the format of the datasets
         that can be created with bacteria parser, i.e. fir row from
         index [0][2:] hold bacterial clades
         row [1][2:] hold bacteria abundances
         :param ds: Daset with all know clades as columns.
-        :return: Bacteria family tree
+        :return: Bacteria family datasets
         """
         self.ds = ds
 
@@ -89,13 +97,13 @@ class Tree(object):
         # Headers with clades
         bacteria_clades = ds[0][2:]
 
-        # Insert all clades in the tree
+        # Insert all clades in the datasets
         for index, clade in enumerate(bacteria_clades):
             names = clade.split('|')
             if len(names) > 0:
                 abundances = self.bacteria_abundances.T[index]
                 # pass abundance as a column
-                self.add_clades(self.root, names, abundances.T)
+                self.__add_clades(self.root, names, abundances.T)
             else:
                 print 'bad column: ', names
         return self.root
@@ -150,8 +158,8 @@ class Tree(object):
         """
         Returns a data w.r.t a max depth. Subtrees at max deth will have the
         abundances merge, and the clade name is create for the reached node.
-        :param max_depth: Max depth in bacteria tree.
-        :return: Dataset at max_depth in the tree
+        :param max_depth: Max depth in bacteria datasets.
+        :return: Dataset at max_depth in the datasets
         """
 
         abundance_columns = None
@@ -190,26 +198,26 @@ class Tree(object):
 
     def abundance_for_calde(self, clade_name):
         """
-        Get the abundance row at a given clade
+        Get the abundance row at a given clade.
+        Important that calde names are given with the parent name
+        if any ex: Firmicutes|Erysipelotrichi
         :param clade_name:
         :return:
         """
         assert clade_name and not (clade_name == ''), 'No clade name provided'
 
-        # Get the name, in e.g. Faust clade names may occur as Bacteria|Firmicutes
-        name = clade_name.split('|')[-1]
-        node = self.nodes[name]
+        node = self.nodes[clade_name]
 
         return self.abundance_column_in_subtree(node)
 
     def count_nodes(self, node, depth=0, count=0, count_depth=0):
         """
-        Returns the number of nodes in the tree
+        Returns the number of nodes in the datasets
         :param node: Current node
         :param depth: Current depth
         :param count: Current count
         :param count_depth: Optional max depth for the count
-        :return: Number of nodes in the tree
+        :return: Number of nodes in the datasets
         """
         for child in node.children:
             count = self.count_nodes(child, depth+1, count, count_depth)
@@ -234,4 +242,4 @@ def test_tree():
     # Test be inspecting the result..
     print sub_ds
 
-test_tree()
+# test_tree()

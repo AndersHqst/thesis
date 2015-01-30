@@ -1,4 +1,7 @@
 
+import os
+dir = os.path.dirname(__file__)
+
 COLUMN_NODE_IDENTIFIER_1 = "Node identifier 1"
 COLUMN_NODE_IDENTIFIER_2 = "Node  identifier 2" # Note double space is in the original file
 COLUMN_CLADE_1 = "Clade 1"
@@ -137,7 +140,10 @@ def faust_results(csv_file):
     return results
 
 def filtered_results(bodysite=None, same_bodysite_only=False):
-    filtered_results = faust_results('../../data/faust_results_dots.csv')
+
+    file_name = os.path.join(dir, '../../data/faust_results_dots.csv')
+
+    filtered_results = faust_results(file_name)
 
     if not (bodysite is None):
         filtered_results = filter(lambda faust_result: faust_result.body_site_1 == bodysite or faust_result.body_site_2 == bodysite, filtered_results)

@@ -19,14 +19,15 @@ Stool:
     bacteria after cleaning 130: threshold 10
     cleaned:  539
 
-    Full bacteria tree has 1054 nodes.
+    Full bacteria datasets has 1054 nodes.
     Bacteria, unclassified, Archaea as the roots.
     If we only take top 3 levels we are down to dept index 4, we only have 182 nodes
     depth index 3 gives 79 nodes
 
 
 """
-
+import os
+dir = os.path.dirname(__file__)
 import numpy as np
 import csv
 from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf, figtext
@@ -34,9 +35,8 @@ from faust_parser import  results
 from scipy.stats import pearsonr, spearmanr
 from itemsets import binary_vectors_to_ints
 from files import write_tab_file
-
-import os
-dir = os.path.dirname(__file__)
+from datasets.tree import Tree
+from utils.dataset_helpers import abundance_matrix
 
 COLUMN_TID = 0
 COLUMN_BODY_SITE = 1
@@ -158,15 +158,6 @@ def data_cleaning(dataset):
 
     # Return the result, transposed to the original
     return np.array(cleaned_dataset).T
-
-def abundance_matrix(matrix):
-    """ Return the submatrix of abundances"""
-    # From row 1, from column 2
-    try:
-        return matrix[1:, 2:].astype(np.int)
-    except:
-        pass
-    return matrix[1:, 2:].astype(np.float)
 
 
 def compute_relative_values(dataset):
@@ -304,11 +295,15 @@ def discretize_binary(dataset, threshold):
 
 
 def plot_relationships(relative_values=True):
+
     ds = get_dataset('Stool')
     ds = data_cleaning(ds)
     if relative_values:
         ds = compute_relative_values(ds)
+
+    t = Tree(ds)
     faust_results = results('Stool')
+    return
     for faust_result in faust_results:
 
         # if faust_result.number_of_supporting_methods < 5:
@@ -407,4 +402,4 @@ def plot_relationships(relative_values=True):
         close()
 
 
-# plot_relationships()
+plot_relationships()
