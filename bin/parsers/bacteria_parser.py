@@ -33,8 +33,6 @@ import csv
 from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf, figtext
 from faust_parser import  results
 from scipy.stats import pearsonr, spearmanr
-from itemsets import binary_vectors_to_ints
-from files import write_tab_file
 from datasets.tree import Tree
 from utils.dataset_helpers import abundance_matrix
 
@@ -121,7 +119,7 @@ def get_dataset(bodysite='Stool'):
         abundances = [int(x) for x in row[2:]]
         new_row = np.array(id_cols + abundances)
         matrix = np.vstack([matrix, new_row])
-    return matrix
+    return data_cleaning(matrix)
 
 def data_cleaning(dataset):
     """
@@ -205,7 +203,6 @@ def plot_bacteria_hist(dataset, file_prefix, mid_quantile=False):
 
 def run():
     ds = get_dataset()
-    ds = data_cleaning(ds)
     # ds = compute_relative_values(ds)
 
     # fd = open('../../data/Stool_normalized.tab', 'wb')
@@ -258,14 +255,6 @@ def discrete_value(row, value, threshold=0.5):
 
 def discrete_abundances(row, threshold):
 
-    # sorted and remove highest values
-    # row_sorted = sorted(row)
-
-    # remove top 5 pct outliers
-    # outliers = -int((len(row)*0.05))
-
-    # row_sorted = row_sorted[:outliers]
-
     discrete_row = []
 
     for val in row:
@@ -274,13 +263,13 @@ def discrete_abundances(row, threshold):
     return discrete_row
 
 
-def discretize_binary(dataset, threshold):
+def discretize_binary(dataset):
 
     # Get the abundance matrix and discretize it
     abundances = abundance_matrix(dataset).T
     discrete_matrix = []
     for row in abundances:
-        discrete_matrix.append(discrete_abundances(row, threshold))
+        discrete_matrix.append(discrete_abundances(row))
     discrete_matrix = np.array(discrete_matrix).T
 
     # Replace the abundance submatrix
@@ -299,7 +288,7 @@ def discretize_binary(dataset, threshold):
 def plot_relationships(relative_values=True):
 
     ds = get_dataset('Stool')
-    ds = data_cleaning(ds)
+
     if relative_values:
         ds = compute_relative_values(ds)
 

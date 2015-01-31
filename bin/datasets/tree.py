@@ -36,12 +36,19 @@ class Node(object):
 
 class Tree(object):
 
-    def __init__(self, ds):
+    def __init__(self, ds, binary):
+        """
+        Initialize a binary or numeric Tree for a give n dataset.
+        :param ds: Dataset to build phylogenetic Tree from
+        :param binary: If True, abundances will be binary
+        :return:
+        """
         super(Tree, self).__init__()
         self.root = Node()
         self.root.name = 'Root'
         "Dataset related to the datasets"
         self.ds = ds
+        self.binary = binary
         # Submatrix of ds with bacteria abundances
         self.bacteria_abundances = None
         self.nodes = {}
@@ -135,6 +142,8 @@ class Tree(object):
         for child in node.children:
             column = column + self.abundance_column_in_subtree(child, column)
 
+        if self.binary:
+            return (column > 0).astype(int)
         return column
 
 

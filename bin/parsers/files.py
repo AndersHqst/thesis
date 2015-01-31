@@ -44,7 +44,7 @@ def parse_header_file(path):
 
 def write_dat_file(file_name, data):
     """
-    Write itemsets to .dat file format. Eact item is represented by
+    Write itemsets to .dat file format. Each item is represented by
     the positions of ones in binary
     :param file_name:
     :param data:
