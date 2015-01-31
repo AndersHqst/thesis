@@ -160,10 +160,10 @@ class Tree(object):
             nodes = []
 
         if max_depth <= depth or node.is_leaf():
-            return [node]
+            return nodes + [node]
         else:
             for child in node.children:
-                nodes = nodes + self.nodes_at_max_depth(max_depth, child, depth + 1, nodes)
+                nodes = self.nodes_at_max_depth(max_depth, child, depth + 1, nodes)
         return nodes
 
 
