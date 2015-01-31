@@ -249,6 +249,8 @@ def replace_abundance_matrix(dataset, replacement):
 
 def discrete_value(row, value, threshold=0.5):
     row_sorted = sorted(row)
+    outliers = int(len(row_sorted) * 0.01)
+    row_sorted = row_sorted[:-outliers]
     b = max(row_sorted) * threshold
     if value < b:
         return 0
@@ -389,8 +391,12 @@ def plot_relationships(relative_values=True):
             print 'xs: %s', xs
             print 'ys: %s', ys
 
-        disc_x = max(xs) * 0.5
-        disc_y = max(ys) * 0.5
+        outliers = int(len(xs) * 0.01)
+        sorted_xs = sorted(xs)[:-outliers]
+        sorted_ys = sorted(ys)[:-outliers]
+
+        disc_x = max(sorted_xs) * 0.5
+        disc_y = max(sorted_ys) * 0.5
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]
         c, d = [0, max(xs)], [disc_y, disc_y]
@@ -413,6 +419,11 @@ def plot_relationships(relative_values=True):
         figtext(0.7, 0.65, from_depth, fontsize=10)
         figtext(0.7, 0.60, to_depth, fontsize=10)
 
+        same_lineage = 'False'
+        if tree.nodes_have_same_lineage(from_node, to_node):
+            same_lineage = ' True'
+        figtext(0.7, 0.55, 'Same lineage: ' + same_lineage, fontsize=10)
+
 
         # vals = vals[:-20]
         plot(xs, ys, 'g.', color='#0066FF')
@@ -423,5 +434,3 @@ def plot_relationships(relative_values=True):
         savefig(file_name)
         close()
 
-
-plot_relationships()

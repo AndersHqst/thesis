@@ -72,7 +72,7 @@ class Tree(object):
                 child.parent = node
                 child.depth = depth + 1
                 child.clades = '|'.join(clades[:depth+1])
-                self.nodes[name] = node
+                self.nodes[name] = child
                 node.children.append(child)
                 self.__add_clades(child, clades, abundances, depth + 1)
             else:
@@ -239,6 +239,15 @@ class Tree(object):
 
         return self.nodes[clade_name]
 
+
+    def nodes_have_same_lineage(self, node_a, node_b):
+        """
+        Returns true if node a and node b are in the same lineage
+        :param node_a:
+        :param node_b:
+        :return:
+        """
+        return node_a.name in node_b.clades or node_b.name in node_a.clades
 
     def has_clade(self, clade_name):
         return clade_name in self.nodes
