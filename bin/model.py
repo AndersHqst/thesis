@@ -447,10 +447,10 @@ class Model(object):
 
                 fr_x = self.fr(x)
                 if  abs(1 - fr_x) < float_precision:
-                    print 'fr_x was 1'
+                    # print 'fr_x was 1'
                     fr_x = 0.9999999999
                 if  abs(1 - estimate) < float_precision:
-                    print 'estimate was 1'
+                    # print 'estimate was 1'
                     p = 0.9999999999
 
 

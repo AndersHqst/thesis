@@ -67,7 +67,7 @@ def parse_argv(argv):
        sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print_help(s, k, z)
+            print_help(s, k, z, a)
             sys.exit()
 
         elif opt in ("-m"):

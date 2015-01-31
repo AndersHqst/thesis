@@ -136,6 +136,8 @@ class Tree(object):
 
         # Leaf node, return the abundance column
         if not (node.abundances is None):
+            if self.binary:
+                return (node.abundances > 0).astype(int)
             return node.abundances
 
         # This is not a leaf, so add all children
@@ -278,3 +280,33 @@ def test_tree():
     print sub_ds
 
 # test_tree()
+
+def run_discretization():
+    from parsers import bacteria_parser
+    ds = bacteria_parser.get_dataset()
+    from datasets.tree import Tree, Node
+    t = Tree(ds, True)
+    bin_ds = t.dataset_at_max_depth(3)
+    from utils.dataset_helpers import abundance_matrix
+    abundance = abundance_matrix(bin_ds)
+
+    abundance[0]
+    from itemsets import binary_vectors_to_ints
+    D = binary_vectors_to_ints(abundance)
+    from parsers.files import write_dat_file, write_tab_file
+    write_dat_file('stool_depth3_discrete.dat', D)
+    headers = []
+    for header in bin_ds[0][2:]:
+        vals = header.split('|')
+        if len(vals) > 1:
+            headers.append('|'.join(vals[-2:]))
+        else:
+            headers.append(vals[0])
+
+    with open('stool_depth3_discrete.headers', 'wb') as fd:
+        line = ' '.join(headers)
+        fd.write(line)
+
+
+
+
