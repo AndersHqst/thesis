@@ -9,7 +9,7 @@ with their abundance counts for each sample
 RESULTS
 
 Stool:
-    353 rows - 2 header rows = 351 samples.
+    354 rows - 2 header rows = 351 samples.
     Cleaning bacteria with only 2 or lower as max abundance -> 353, ie probably already cleaned
     removed all bacteria that never occur more than twice
     samples before cleaning:  355
@@ -19,20 +19,24 @@ Stool:
     bacteria after cleaning 130: threshold 10
     cleaned:  539
 
-    Full bacteria tree has 1054 nodes.
+    Full bacteria datasets has 1054 nodes.
     Bacteria, unclassified, Archaea as the roots.
     If we only take top 3 levels we are down to dept index 4, we only have 182 nodes
     depth index 3 gives 79 nodes
 
 
 """
-
+import os
+dir = os.path.dirname(__file__)
 import numpy as np
 import csv
 from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf, figtext
-from faust_parser import  stool_results
+from faust_parser import  results
 from scipy.stats import pearsonr, spearmanr
-
+from itemsets import binary_vectors_to_ints
+from files import write_tab_file
+from datasets.tree import Tree
+from utils.dataset_helpers import abundance_matrix
 
 COLUMN_TID = 0
 COLUMN_BODY_SITE = 1
@@ -76,12 +80,37 @@ def parse_dataset(csv_file):
     # we work with samples as rows
     return matrix.T
 
-def get_dataset(file_name):
+def dataset_at_bodyset(csv_file, bodysite):
+    dataset = parse_dataset(csv_file)
+    # Return row 1 with headers + sample at desired bodysite
+    return np.vstack([dataset[:1], dataset[dataset[:,COLUMN_BODY_SITE] == bodysite]])
+
+
+def save_sample(bodysite='Stool'):
+    """
+    Helper function to save a stool sub-sample file to the data folder
+    :return:
+    """
+    faust_file = os.path.join(dir, '../../data/hmp.lq.phylotype.filter.tab')
+    dataset = dataset_at_bodyset(faust_file, bodysite)
+
+    file_name = os.path.join(dir, '../../data/%s.tab' % bodysite)
+
+    fd = open(file_name, 'wb')
+
+    csv_writer = csv.writer(fd, delimiter='\t')
+    csv_writer.writerows(dataset)
+
+    fd.close()
+
+
+def get_dataset(bodysite='Stool'):
     """
     Read the daset from file
     :param file_name:
     :return:
     """
+    file_name = os.path.join(dir, '../../data/%s.tab' % bodysite)
     fd = open(file_name, 'rb')
     csv_reader = csv.reader(fd, delimiter='\t')
     # header rows
@@ -93,56 +122,6 @@ def get_dataset(file_name):
         new_row = np.array(id_cols + abundances)
         matrix = np.vstack([matrix, new_row])
     return matrix
-
-def dataset_at_bodyset(csv_file, bodysite):
-    dataset = parse_dataset(csv_file)
-    # Return row 1 with headers + sample at desired bodysite
-    return np.vstack([dataset[:1], dataset[dataset[:,COLUMN_BODY_SITE] == bodysite]])
-
-
-def bacteria_name(bacterial_clade):
-    """
-    Helper function to get the last descendent of a bacterial clade
-    ex:
-    Bacteria|Fusobacteria|Fusobacteria|Fusobacteriales|Fusobacteriaceae|Fusobacterium -> Fusobacterium
-    Bacteria|Proteobacteria|Alphaproteobacteria|Rhizobiales|Methylocystaceae|unclassified -> Methylocystaceae
-    :param bacterial_clade:
-    :return:
-    """
-
-    if bacterial_clade == '':
-        return bacterial_clade
-
-    s = bacterial_clade.split('|')
-
-    if s[-1] == 'unclassified' and len(s) > 1:
-        return s[-2]
-
-    return s[-1]
-
-def save_stool_samples():
-    """
-    Helper function to save a stool sub-sample file to the data folder
-    :return:
-    """
-
-    dataset = dataset_at_bodyset('../../data/hmp.lq.phylotype.filter.tab', 'Stool')
-
-    fd = open('../../data/Stool.tab', 'wb')
-
-    csv_writer = csv.writer(fd, delimiter='\t')
-    csv_writer.writerows(dataset)
-
-    fd.close()
-
-def get_stool_dataset():
-    """
-    Helper fundtion to specifically read the stool dataset
-    :return:
-    """
-
-    return get_dataset('../../data/Stool.tab')
-
 
 def data_cleaning(dataset):
     """
@@ -179,11 +158,6 @@ def data_cleaning(dataset):
 
     # Return the result, transposed to the original
     return np.array(cleaned_dataset).T
-
-def abundance_matrix(matrix):
-    """ Return the submatrix of abundance count.print 'rows before: ', len(dataset) - 2 """
-    # From row 1, from column 2
-    return matrix[1:, 2:].astype(np.int)
 
 
 def compute_relative_values(dataset):
@@ -230,7 +204,7 @@ def plot_bacteria_hist(dataset, file_prefix, mid_quantile=False):
         close()
 
 def run():
-    ds = get_stool_dataset()
+    ds = get_dataset()
     ds = data_cleaning(ds)
     # ds = compute_relative_values(ds)
 
@@ -257,22 +231,92 @@ def columns_for_clade(headers, clade_name):
     # print '\n'
     return indeces
 
-def plot_relationships():
-    ds = get_stool_dataset()
-    ds = data_cleaning(ds)
-    # ds = compute_relative_values(ds)
+def replace_abundance_matrix(dataset, replacement):
+    """
+    Replace the abundance matrix of a dataset
+    :param dataset: Dataset
+    :param replacement: Replacement for abundance matrix
+    :return:
+    """
+    clade_names = np.array(dataset[0][2:])
+    ds = np.vstack((clade_names, replacement))
 
-    faust_results = stool_results()
+    # Attach sample columns, on left side
+    left_columns = np.array(dataset)[:,0:2]
+    ds = np.hstack((left_columns, ds))
+
+    return ds
+
+def discrete_value(row, value, threshold=0.5):
+    row_sorted = sorted(row)
+    b = max(row_sorted) * threshold
+    if value < b:
+        return 0
+    return 1
+
+def discrete_abundances(row, threshold):
+
+    # sorted and remove highest values
+    # row_sorted = sorted(row)
+
+    # remove top 5 pct outliers
+    # outliers = -int((len(row)*0.05))
+
+    # row_sorted = row_sorted[:outliers]
+
+    discrete_row = []
+
+    for val in row:
+        discrete_row.append(discrete_value(row, val, threshold))
+
+    return discrete_row
+
+
+def discretize_binary(dataset, threshold):
+
+    # Get the abundance matrix and discretize it
+    abundances = abundance_matrix(dataset).T
+    discrete_matrix = []
+    for row in abundances:
+        discrete_matrix.append(discrete_abundances(row, threshold))
+    discrete_matrix = np.array(discrete_matrix).T
+
+    # Replace the abundance submatrix
+    discretized_dataset = replace_abundance_matrix(dataset, discrete_matrix)
+
+    return discretized_dataset
+
+# ds = get_dataset('Stool')
+# ds = data_cleaning(ds)
+# ds = compute_relative_values(ds)
+# ds = discretize_binary(ds, 0.15)
+# write_tab_file('../../data/Stool_disc.tab', ds)
+
+
+
+def plot_relationships(relative_values=True):
+
+    ds = get_dataset('Stool')
+    ds = data_cleaning(ds)
+    if relative_values:
+        ds = compute_relative_values(ds)
+
+    tree = Tree(ds)
+    faust_results = results('Stool')
+
     for faust_result in faust_results:
 
-        # if faust_result.number_of_supporting_methods < 5:
-        #     continue
+        if faust_result.number_of_supporting_methods < 5:
+            continue
 
-        clades1 = faust_result.clade_1.split('-')
-        origin = '|'.join(clades1)
+        # make sure the faust result is in the tree
+        # ex Clostridiales|IncertaeSedisXIV is not in the data set
+        if not (tree.has_clade(faust_result.clade_1) and tree.has_clade(faust_result.clade_2)):
+            continue
 
-        clades2 = faust_result.clade_2.split('-')
-        to = '|'.join(clades2)
+        # Get the nodes in the phylogenetic tree
+        from_node = tree.node_for_clade_name(faust_result.clade_1)
+        to_node = tree.node_for_clade_name(faust_result.clade_2)
 
         xlabel('from')
         ylabel('to')
@@ -281,17 +325,42 @@ def plot_relationships():
         # find from-to bacteria abundances
         xs = []
         ys = []
-        headers = ds[0][2:]
-        for row in ds[1:]:
-            # print 'FROM'
-            for from_col in columns_for_clade(headers, origin):
-                from_abundance = row[from_col]
-                # print 'TO'
-                for to_col in columns_for_clade(headers, to):
-                    to_abundance = row[to_col]
-                    xs.append(int(from_abundance))
-                    ys.append(int(to_abundance))
+        discrete_xs = []
+        discrete_ys = []
 
+        # Get the total abundance for hte clades in the tree
+        abundance_from = tree.abundance_column_in_subtree(from_node)
+        abundance_to = tree.abundance_column_in_subtree(to_node)
+
+        # List the in-sample values for each sample
+        for index, _row in enumerate(ds[1:]):
+            from_abundance = abundance_from[index]
+            to_abundance = abundance_to[index]
+
+            xs.append(from_abundance)
+            ys.append(to_abundance)
+
+            discrete_xs.append(discrete_value(abundance_from, from_abundance))
+            discrete_ys.append(discrete_value(abundance_to, to_abundance))
+
+            # Make values in the abundance row  numeric
+            # if relative_values:
+            #     row = [float(x) for x in _row[2:]]
+            # else:
+            #     row = [int(x) for x in _row[2:]]
+            #
+            # for from_col in columns_for_clade(headers, origin):
+            #     from_abundance = row[from_col]
+            #
+            #     for to_col in columns_for_clade(headers, to):
+            #         to_abundance = row[to_col]
+            #         xs.append(from_abundance)
+            #         ys.append(to_abundance)
+            #
+            #         discrete_xs.append(discrete_value(row, from_abundance))
+            #         discrete_ys.append(discrete_value(row, to_abundance))
+
+        # Uncomment to use log axis
         # fig = gcf()
         # ax = fig.gca()
         # ax.set_yscale('log')
@@ -306,20 +375,49 @@ def plot_relationships():
         try:
             pearson = pearsonr(xs, ys)
             spearman = spearmanr(xs, ys)
+
+            if pearson > 0.5:
+                pass
             correlation_coef = 'Pearson: (%.3f,%.3f), Spearman: (%.3f,%.3f)' % (pearson[0], pearson[1], spearman[0], spearman[1])
             correlation_coef += ' sample points: %d' % len(xs)
             figtext(0.01, 0.01, correlation_coef, fontsize=10)
         except Exception, e:
             print e
             print 'Faust result: ', faust_result.id
-            print 'clades1: ', clades1
-            print 'clades2: ', clades2
+            print 'clades1: ', from_node.name
+            print 'clades2: ', to_node.name
             print 'xs: %s', xs
             print 'ys: %s', ys
 
+        disc_x = max(xs) * 0.5
+        disc_y = max(ys) * 0.5
+        # plot discretization lines
+        a, b = [disc_x, disc_x], [0, max(ys)]
+        c, d = [0, max(xs)], [disc_y, disc_y]
+        plot(a,b,c='r')
+        plot(c,d,c='r')
+
+        # write discrete results onto plot
+        pairs = zip(discrete_ys, discrete_xs)
+        _00 = '00: ' + str(len([x for x in pairs if x == (0,0)]))
+        _01 = '01: ' + str(len([x for x in pairs if x == (0,1)]))
+        _10 = '10: ' + str(len([x for x in pairs if x == (1,0)]))
+        _11 = '11: ' + str(len([x for x in pairs if x == (1,1)]))
+        figtext(0.7, 0.85, _00, fontsize=10)
+        figtext(0.7, 0.80, _01, fontsize=10)
+        figtext(0.7, 0.75, _10, fontsize=10)
+        figtext(0.7, 0.70, _11, fontsize=10)
+
+        from_depth = 'From depth: %d' % from_node.depth
+        to_depth = 'To depth: %d' % to_node.depth
+        figtext(0.7, 0.65, from_depth, fontsize=10)
+        figtext(0.7, 0.60, to_depth, fontsize=10)
+
+
         # vals = vals[:-20]
         plot(xs, ys, 'g.', color='#0066FF')
-        file_name = '../../plots/plots/normalized/' +str(faust_result.id) + '_' + origin.replace('|', '-') + '---' + to.replace('|', '-') + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/stool_normalized_clade_5_indicators/' +str(faust_result.id) + '_' + from_node.name.replace('|', '-') + '---' + to_node.name.replace('|', '-') + '_' + str(faust_result.direction)
+        file_name = os.path.join(dir, file_name)
         # print '[RESULT] ', file_name
         # print vals
         savefig(file_name)
@@ -327,52 +425,3 @@ def plot_relationships():
 
 
 plot_relationships()
-
-
-###
-###  Class and functions to analyse the bacteria family tree
-###
-class Node(object):
-    def __init__(self):
-        super(Node, self).__init__()
-        self.children = []
-        self.name = ""
-    def __str__(self):
-        return self.name
-
-def add_recursively(node, names):
-    if len(names) > 0:
-        name = names.pop(0)
-        if not name in [n.name for n in node.children]:
-            child = Node()
-            child.name = name
-            node.children.append(child)
-            add_recursively(child, names)
-        else:
-            child = [n for n in node.children if n.name == name][0]
-            add_recursively(child, names)
-
-
-def build_bacteria_family_tree(ds):
-    bacteria_clades = ds[0][2:]
-    root = Node()
-    root.name = 'root'
-    for clade in bacteria_clades:
-        names = clade.split('|')
-        if len(names) > 0:
-            add_recursively(root, names)
-        else:
-            print 'bad column: ', names
-    return root
-
-def count_nodes(node, depth=0, count=0, count_depth=0):
-    for child in node.children:
-        count = count_nodes(child, depth+1, count, count_depth)
-    if depth <= count_depth:
-        return 1 + count
-    return count
-
-
-# ds = get_stool_dataset()
-# tree = build_bacteria_family_tree(ds)
-# print 'stree size : ', count_nodes(tree, count_depth=3)

@@ -1,4 +1,7 @@
 
+import os
+dir = os.path.dirname(__file__)
+
 COLUMN_NODE_IDENTIFIER_1 = "Node identifier 1"
 COLUMN_NODE_IDENTIFIER_2 = "Node  identifier 2" # Note double space is in the original file
 COLUMN_CLADE_1 = "Clade 1"
@@ -102,8 +105,9 @@ def faust_results(csv_file):
             faust_result.body_site_1 = row[headers.index(COLUMN_BODY_SITE_1)]
             faust_result.body_site_2 = row[headers.index(COLUMN_BODY_SITE_2)]
 
-            faust_result.clade_1 = row[headers.index(COLUMN_CLADE_1)]
-            faust_result.clade_2 = row[headers.index(COLUMN_CLADE_2)]
+            # Replace '-' with a '|' in the clade names, this is the format used elsewhre
+            faust_result.clade_1 = row[headers.index(COLUMN_CLADE_1)].replace('-', '|')
+            faust_result.clade_2 = row[headers.index(COLUMN_CLADE_2)].replace('-', '|')
 
             try:
                 faust_result.number_of_supporting_methods = int(row[headers.index(COLUMN_NUMBER_OF_SUPPORTING_METHODS)])
@@ -137,7 +141,10 @@ def faust_results(csv_file):
     return results
 
 def filtered_results(bodysite=None, same_bodysite_only=False):
-    filtered_results = faust_results('../../data/faust_results_dots.csv')
+
+    file_name = os.path.join(dir, '../../data/faust_results_dots.csv')
+
+    filtered_results = faust_results(file_name)
 
     if not (bodysite is None):
         filtered_results = filter(lambda faust_result: faust_result.body_site_1 == bodysite or faust_result.body_site_2 == bodysite, filtered_results)
@@ -147,10 +154,13 @@ def filtered_results(bodysite=None, same_bodysite_only=False):
 
     return filtered_results
 
-def stool_results():
+def results(bodysite='Stool'):
     """
     Helper method to get inter-site Stool results
     :return:
     """
-    return filtered_results(bodysite='Stool', same_bodysite_only=True)
+    return filtered_results(bodysite=bodysite, same_bodysite_only=True)
+
+
+
 

@@ -119,4 +119,4 @@ def association_rules(model, itemsets, use_observed_frequency=False):
 # for ar in disassociation_rules:
 #     print ar
 
-print 'done'
+# print 'done'
