@@ -19,6 +19,17 @@ class AssociationRule(object):
 
 
 
+def cached_query(model, itemset, cache):
+    p = 0.0
+
+    if itemset in cache:
+        return cache[itemset]
+    else:
+        p = model.query(itemset)
+        cache[itemset] = p
+
+    return p
+
 def association_rules(model, itemsets, use_observed_frequency=False):
     """
     Mines all association rules for a set of itemsets
@@ -36,6 +47,8 @@ def association_rules(model, itemsets, use_observed_frequency=False):
     # we may visit the same subsets X,Y several times
     # so we track visited nodes to avoid dublicates
     association_rules_set = set()
+
+    cache = {}
 
     # List of all possible rules
     # that come from all subsets of the
@@ -56,7 +69,7 @@ def association_rules(model, itemsets, use_observed_frequency=False):
                 if use_observed_frequency:
                     prob_X = model.fr(X)
                 else:
-                    prob_X = model.query(X)
+                    prob_X = cached_query(model, X, cache)
 
                 Ys = set(singletons) - set(comb)
 
@@ -75,8 +88,8 @@ def association_rules(model, itemsets, use_observed_frequency=False):
                                 prob_XY = model.fr(XY)
                                 prob_Y = model.fr(Y)
                             else:
-                                prob_XY = model.query(XY)
-                                prob_Y = model.query(Y)
+                                prob_XY = cached_query(model, XY, cache)
+                                prob_Y = cached_query(model, Y, cache)
 
                             if prob_X > float_precision and prob_Y > float_precision:
 
@@ -107,16 +120,16 @@ def association_rules(model, itemsets, use_observed_frequency=False):
 #
 # Debug code
 #
-# D= [15, 4, 6, 0, 0, 2, 4, 6, 4, 2, 0, 2, 4, 4, 6, 2, 2, 4, 0, 7, 4, 4, 4, 5, 0, 10, 0, 2, 0, 0, 6, 6, 13, 0, 0, 4, 0, 0, 7, 6, 6, 6, 3, 0, 2, 0, 0, 2, 2, 15, 0, 4, 10, 0, 0, 12, 4, 6, 0, 6, 6, 2, 6, 6, 6, 4, 14, 0, 5, 4, 4, 4, 6, 2, 1, 0, 0, 0, 0, 0, 2, 7, 2, 6, 0, 2, 0, 4, 6, 0, 3, 0, 0, 2, 2, 0, 0, 12, 4, 4, 6, 14, 2, 4, 6, 4, 0, 2, 0, 0, 2, 4, 2, 2, 4, 4, 0, 4, 2, 2, 2, 4, 4, 2, 2, 0, 2, 1, 0, 2, 5, 7, 4, 0, 0, 6, 2, 2, 2, 0, 0, 4, 2, 10, 2, 0, 4, 0, 4, 4, 0, 6, 0, 0, 0, 6, 3, 2, 2, 0, 2, 6, 0, 0, 0, 6, 0, 4, 2, 6, 2, 2, 0, 3, 2, 4, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 4, 0, 4, 4, 4, 4, 2, 0, 0, 4, 1, 2, 6, 2, 4, 6, 4, 0, 0, 0, 4, 0, 0, 0, 2, 0, 0, 4, 4, 0, 0, 4, 4, 0, 0, 4, 0, 10, 0, 0, 4, 0, 0, 0, 0, 6, 4, 0, 0, 6, 4, 0, 6, 12, 0, 4, 0, 2, 0, 0, 4, 2, 6, 4, 4, 12, 4, 2, 2, 4, 4, 4, 0, 0, 2, 2, 2, 6, 4, 0, 0, 4, 4, 0, 0, 4, 8, 4, 6, 6, 0, 2, 4, 4, 0, 6, 6, 4, 0, 4, 6, 0, 0, 0, 2, 4, 0, 4, 0, 4, 0, 4, 6, 4, 0, 2, 2, 0, 4, 0, 0, 6, 8, 2, 2, 0, 0, 4, 6, 6, 2, 2, 0, 0, 2, 6, 0, 0, 2, 0, 0, 0, 0, 4, 4, 0, 9, 6, 4, 4, 6, 0, 0, 0, 6, 4, 2, 4, 2, 7, 0, 0, 6, 4, 6, 4, 4, 4, 0, 0, 0, 0, 4, 6, 6, 0, 8, 6, 4, 4, 15, 6, 6, 0, 4, 4, 4, 6, 4, 4, 2, 2, 0, 6, 6, 2, 11, 6, 0, 4, 6, 6, 4, 0, 6, 13, 0, 6, 6, 0, 10, 9, 6, 7, 0, 12, 6, 6, 6, 5, 0, 2, 2, 7, 0, 5, 0, 1, 2, 9, 2, 4, 0, 0, 6, 0, 0, 0, 0, 6, 6, 2, 2, 0, 0, 2, 2, 0, 4, 0, 0, 4, 4, 4, 0, 4, 0, 6, 4, 0, 2, 2, 2, 2, 0, 6, 2, 14, 4, 0, 0, 4, 2, 6, 0, 6, 2, 0, 6, 0, 4, 4, 0, 0, 12, 4, 6, 0, 6, 6, 6, 4, 6, 4, 4, 4, 4, 4, 4, 4, 4, 6, 4, 0, 4, 6, 4, 0, 6, 4, 4, 2, 2, 0, 4, 0, 0, 0, 0, 4, 6, 4, 2, 0, 0, 6, 0, 4, 2, 0, 4, 0, 0, 4, 0, 6, 4, 4, 0, 6, 0, 4, 6, 6, 6, 4, 0, 2, 4, 0, 0, 6, 6, 4, 0, 4, 4, 0, 2, 6, 6, 0, 2, 6, 6, 6, 4, 6, 0, 6, 0, 6, 6, 6, 4, 6, 4, 6, 9, 6, 6, 2, 2, 4, 6, 6, 0, 0, 4, 6, 4, 0, 0, 4, 0, 4, 4, 0, 2, 2, 15, 4, 0, 4, 2, 0, 0, 4, 2, 2, 0, 0, 4]
-# model = Model(D, s=0.0)
-# model.mtv()
-# association_rules, disassociation_rules = association_rules(model, model.C)
-# print 'Association rules'
-# for ar in association_rules:
-#     print ar
-#
-# print '\nDisassociation rules'
-# for ar in disassociation_rules:
-#     print ar
+D= [15, 4, 6, 0, 0, 2, 4, 6, 4, 2, 0, 2, 4, 4, 6, 2, 2, 4, 0, 7, 4, 4, 4, 5, 0, 10, 0, 2, 0, 0, 6, 6, 13, 0, 0, 4, 0, 0, 7, 6, 6, 6, 3, 0, 2, 0, 0, 2, 2, 15, 0, 4, 10, 0, 0, 12, 4, 6, 0, 6, 6, 2, 6, 6, 6, 4, 14, 0, 5, 4, 4, 4, 6, 2, 1, 0, 0, 0, 0, 0, 2, 7, 2, 6, 0, 2, 0, 4, 6, 0, 3, 0, 0, 2, 2, 0, 0, 12, 4, 4, 6, 14, 2, 4, 6, 4, 0, 2, 0, 0, 2, 4, 2, 2, 4, 4, 0, 4, 2, 2, 2, 4, 4, 2, 2, 0, 2, 1, 0, 2, 5, 7, 4, 0, 0, 6, 2, 2, 2, 0, 0, 4, 2, 10, 2, 0, 4, 0, 4, 4, 0, 6, 0, 0, 0, 6, 3, 2, 2, 0, 2, 6, 0, 0, 0, 6, 0, 4, 2, 6, 2, 2, 0, 3, 2, 4, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 4, 0, 4, 4, 4, 4, 2, 0, 0, 4, 1, 2, 6, 2, 4, 6, 4, 0, 0, 0, 4, 0, 0, 0, 2, 0, 0, 4, 4, 0, 0, 4, 4, 0, 0, 4, 0, 10, 0, 0, 4, 0, 0, 0, 0, 6, 4, 0, 0, 6, 4, 0, 6, 12, 0, 4, 0, 2, 0, 0, 4, 2, 6, 4, 4, 12, 4, 2, 2, 4, 4, 4, 0, 0, 2, 2, 2, 6, 4, 0, 0, 4, 4, 0, 0, 4, 8, 4, 6, 6, 0, 2, 4, 4, 0, 6, 6, 4, 0, 4, 6, 0, 0, 0, 2, 4, 0, 4, 0, 4, 0, 4, 6, 4, 0, 2, 2, 0, 4, 0, 0, 6, 8, 2, 2, 0, 0, 4, 6, 6, 2, 2, 0, 0, 2, 6, 0, 0, 2, 0, 0, 0, 0, 4, 4, 0, 9, 6, 4, 4, 6, 0, 0, 0, 6, 4, 2, 4, 2, 7, 0, 0, 6, 4, 6, 4, 4, 4, 0, 0, 0, 0, 4, 6, 6, 0, 8, 6, 4, 4, 15, 6, 6, 0, 4, 4, 4, 6, 4, 4, 2, 2, 0, 6, 6, 2, 11, 6, 0, 4, 6, 6, 4, 0, 6, 13, 0, 6, 6, 0, 10, 9, 6, 7, 0, 12, 6, 6, 6, 5, 0, 2, 2, 7, 0, 5, 0, 1, 2, 9, 2, 4, 0, 0, 6, 0, 0, 0, 0, 6, 6, 2, 2, 0, 0, 2, 2, 0, 4, 0, 0, 4, 4, 4, 0, 4, 0, 6, 4, 0, 2, 2, 2, 2, 0, 6, 2, 14, 4, 0, 0, 4, 2, 6, 0, 6, 2, 0, 6, 0, 4, 4, 0, 0, 12, 4, 6, 0, 6, 6, 6, 4, 6, 4, 4, 4, 4, 4, 4, 4, 4, 6, 4, 0, 4, 6, 4, 0, 6, 4, 4, 2, 2, 0, 4, 0, 0, 0, 0, 4, 6, 4, 2, 0, 0, 6, 0, 4, 2, 0, 4, 0, 0, 4, 0, 6, 4, 4, 0, 6, 0, 4, 6, 6, 6, 4, 0, 2, 4, 0, 0, 6, 6, 4, 0, 4, 4, 0, 2, 6, 6, 0, 2, 6, 6, 6, 4, 6, 0, 6, 0, 6, 6, 6, 4, 6, 4, 6, 9, 6, 6, 2, 2, 4, 6, 6, 0, 0, 4, 6, 4, 0, 0, 4, 0, 4, 4, 0, 2, 2, 15, 4, 0, 4, 2, 0, 0, 4, 2, 2, 0, 0, 4]
+model = Model(D, s=0.0)
+model.mtv()
+association_rules, disassociation_rules = association_rules(model, model.C)
+print 'Association rules'
+for ar in association_rules:
+    print ar
 
-# print 'done'
+print '\nDisassociation rules'
+for ar in disassociation_rules:
+    print ar
+
+print 'done'

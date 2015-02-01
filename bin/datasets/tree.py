@@ -169,7 +169,7 @@ class Tree(object):
         return nodes
 
 
-    def data_set_for_all_nodes(self):
+    def dataset_for_all_nodes(self):
         """
         Builds a dataset for all nodes
         :return:
@@ -263,7 +263,7 @@ class Tree(object):
         return self.abundance_column_in_subtree(node)
 
 
-    def count_nodes(self, node, depth=0, count=0, count_depth=0):
+    def count_nodes(self, node, depth=0, count=0, count_depth=None):
         """
         Returns the number of nodes in the datasets
         :param node: Current node
@@ -274,7 +274,7 @@ class Tree(object):
         """
         for child in node.children:
             count = self.count_nodes(child, depth+1, count, count_depth)
-        if depth <= count_depth:
+        if count_depth is None or depth <= count_depth:
             return 1 + count
         return count
 

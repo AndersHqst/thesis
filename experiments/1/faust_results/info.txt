@@ -1,0 +1,6 @@
+Plots in this folder demonstrates what happens if we look at the Faust results at from depth 3.
+The node for each clade has been moved up to depth 3, when possible. It shows that the correlations are completely different 
+at this level, and that we would not be able to discover the same correlations as Faust did.
+
+Some Faust results are also from clades in the same Lineage, and we therefor have to do the same. That is, build the model with all
+nodes included.

@@ -6,8 +6,8 @@ class Component(object):
 
     def __init__(self):
         super(Component, self).__init__()
-        self.nodes = 0
         self.itemsets = []
+        self.model = None
 
     def __str__(self):
         return 'nodes: %s components: ' % (bin(self.nodes), self.components)
@@ -43,7 +43,6 @@ class GraphComponents(object):
         # Create new component as a merge of the added itemset
         # and intersecting components
         new_component = Component()
-        new_component.nodes = itemset
         new_component.itemsets = [itemset]
         for intersecting_component in intersecting_components:
                 new_component.nodes = new_component.nodes | intersecting_component.nodes
@@ -58,4 +57,3 @@ class GraphComponents(object):
         """
         for component in self.components:
             yield component.itemsets
-

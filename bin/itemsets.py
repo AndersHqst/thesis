@@ -101,8 +101,13 @@ def binary_vectors_to_ints(binary_matrix):
         val = 0
         pos = 0
         for bin_val in row[::-1]:
-            bit = 2 ** pos * bin_val
+            # the cast to int is necessay if the bin_val is
+            # a numpy int64 - the binary operand will fail for higher values
+            bit = 2 ** pos * int(bin_val)
             val = val | bit
             pos += 1
         values.append(val)
     return values
+
+
+

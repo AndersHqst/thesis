@@ -433,7 +433,7 @@ class Model(object):
         timer_start('Iterative scaling')
 
         iterations = 0
-        epsilon = 1e-5
+        epsilon = 1e-4
 
         while iterations < 100:
 
@@ -463,9 +463,8 @@ class Model(object):
 
                 max_error = max(max_error, 1 - min(fr_x, estimate) / max(fr_x, estimate))
 
-                counter_max('Iterative scaling max iterations', iterations)
-
             iterations += 1
+            counter_max('Iterative scaling max iterations', iterations)
 
             if max_error < epsilon:
                 break
@@ -571,8 +570,32 @@ class Model(object):
 
     def __str__(self):
 
-            str = u'Summary: {0:s} '.format(self.C)
-            str += u'U: {0:s} '.format(self.U)
-            str += u'u0: {0:f} '.format(self.u0)
+        str = u'Summary: {0:s} '.format(self.C)
+        str += u'U: {0:s} '.format(self.U)
+        str += u'u0: {0:f} '.format(self.u0)
 
-            return str
+        return str
+
+
+
+def precompute_models():
+    # Build a grap of dijoint components
+    # Each compoenent need to correspond to a C'
+    # run iterative scaling for each disjoint model
+    pass
+
+def get_merged_models():
+    # Some Y intersect several models, we need the merged blocks+models
+    # use a cache, or
+    # 1 Union the Cs in the models,
+    # 2 Compute blocks
+    # 3 iterative scaling
+    # cache merged block, key is sorted set of itemsets
+    # return merged models
+
+    # Create mtv object
+        # abstract away the fact that we have multiple Cs
+    # have a total order on the itemsets added to the models - print this in the end
+    # Running MTV, create a model for each disjoint graph_component
+    #
+    pass
