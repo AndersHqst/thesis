@@ -57,6 +57,8 @@ class Model(object):
         # Singletons
         self.I = itemsets.singletons(self.D)
 
+        self.singletons_restricted = None
+
         # Cached queries in FindBestItemSet
         self.query_cache = {}
 
@@ -210,7 +212,7 @@ class Model(object):
         return Z[0][0]
 
 
-    def find_best_itemset_rec(self, X, Y, Z, X_length=0):
+    def find_best_itemset_rec(self, X, Y, Z, X_length=0, singleton_restrictions=None):
         """
         :param X: itemset
         :param Y: remaining itemsets
@@ -244,6 +246,7 @@ class Model(object):
         b = max(h(fr_X, p_XY), h(fr_XY, p_X))
 
         if Z[0][0] == 0 or b > Z[-1][1]:
+
             if self.m == 0 or X_length < self.m:
                 while 0 < len(Y):
                     y = Y.pop()

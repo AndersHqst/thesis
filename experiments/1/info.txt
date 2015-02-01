@@ -1,0 +1,128 @@
+Discretized and normalized stool at clade level 3
+355 samples -> 264 rows after cleaning , ie removed zero rows
+188 caldes at level 3
+TODO: Find relative clades from faust results. Hmm can we actually do this? We will probably need to cut the tree
+at various levels.
+
+./mtv.py -f ../data/stool_depth3_discrete.dat -s 0.1 -k 20 --debug -o ../experiments/1/summary.dat -a 10
+
+26 items in 263 transactions
+
+Model predictions:
+query [9, 22, 23, 24] with fr 0.060837 query 0.060837 uX: 3.911316
+query [13, 14, 16] with fr 0.057034 query 0.057034 uX: 5.962669
+query [9, 16, 19] with fr 0.068441 query 0.068441 uX: 3.106831
+query [13, 16, 23, 24] with fr 0.057034 query 0.057034 uX: 2.514662
+query [9, 14, 23] with fr 0.057034 query 0.057034 uX: 2.164294
+query [9, 19, 24] with fr 0.053232 query 0.053232 uX: 2.361747
+query [11, 13] with fr 0.057034 query 0.057034 uX: 2.356891
+query [9, 13, 23] with fr 0.155894 query 0.155895 uX: 2.080590
+query [9, 22] with fr 0.117871 query 0.117871 uX: 4.718811
+query [9, 13, 22] with fr 0.053232 query 0.053232 uX: 0.192589
+query [1, 23] with fr 0.053232 query 0.053232 uX: 41.095434
+query [21, 23] with fr 0.053232 query 0.052725 uX: 38.974208
+query [13, 22, 23] with fr 0.087452 query 0.087453 uX: 2.285921
+query [9, 23, 24] with fr 0.106464 query 0.106464 uX: 2.850867
+query [19, 23] with fr 0.178707 query 0.178707 uX: 0.570721
+query [9, 16, 22] with fr 0.060837 query 0.060837 uX: 1.417041
+query [16, 23] with fr 0.209125 query 0.209125 uX: 0.368254
+query [13, 16, 23] with fr 0.140684 query 0.140686 uX: 1.909808
+query [13, 16, 19] with fr 0.053232 query 0.053232 uX: 0.643871
+query [9, 16, 23] with fr 0.125475 query 0.125475 uX: 1.714334
+
+k=20, m=0, s=0.050000
+
+MTV run time:  36.5695810318
+
+Summary: 
+Heuristic    BIC score   p       Itemsets
+x.xxxxxx     2825.516162     (No query)      I+seed
+0.109117     2791.617338     0.060837    [9, 22, 23, 24]
+0.055718     2773.780169     0.057034    [13, 14, 16]
+0.041214     2761.877131     0.068441    [9, 16, 19]
+0.029452     2753.604624     0.057034    [13, 16, 23, 24]
+0.009452     2751.806879     0.057034    [9, 14, 23]
+0.006123     2751.240634     0.053232    [9, 19, 24]
+0.005126     2751.204244     0.057034    [11, 13]
+0.004962     2750.782194     0.155895    [9, 13, 23]
+0.003967     2749.596082     0.117871    [9, 22]
+0.003907     2748.956642     0.053232    [9, 13, 22]
+0.003261     2745.689630     0.053232    [1, 23]
+0.003261     2742.431368     0.052725    [21, 23]
+0.002406     2742.699123     0.087453    [13, 22, 23]
+0.002266     2742.030843     0.106464    [9, 23, 24]
+0.002026     2742.399749     0.178707    [19, 23]
+0.001536     2744.155303     0.060837    [9, 16, 22]
+0.001258     2745.316863     0.209125    [16, 23]
+0.001522     2746.440895     0.140686    [13, 16, 23]
+0.001211     2748.387365     0.053232    [13, 16, 19]
+0.001056     2749.910995     0.125475    [9, 16, 23]
+
+[TIMER] Compute p: 5.097150
+[TIMER] Find best itemset: 1.588332
+[TIMER] Block weight: 26.747426
+[TIMER] Iterative scaling: 34.600211
+[TIMER] Cummulative weight: 3.972051
+[TIMER] Compute blocks: 0.351188
+[COUNTER] Independence estimates: 20953
+[COUNTER] Block queries: 33554
+[COUNTER] Total queries: 54507
+[COUNTER] Iterative scaling max iterations: 99
+Association rules:
+(conf:0.991, lift:1.337) [1] -> [23]
+(conf:0.990, lift:1.336) [21] -> [23]
+(conf:0.977, lift:1.318) [9, 22, 24] -> [23]
+(conf:0.967, lift:1.304) [13, 16, 24] -> [23]
+(conf:0.961, lift:1.297) [22, 24] -> [23]
+(conf:0.956, lift:1.289) [9, 24] -> [23]
+(conf:0.939, lift:1.266) [9, 14] -> [23]
+(conf:0.933, lift:1.259) [13, 24] -> [23]
+(conf:0.928, lift:2.905) [22, 23, 24] -> [9]
+(conf:0.923, lift:1.245) [16, 24] -> [23]
+Disassociation rules:
+(conf:0.241, lift:0.932) [23] -> [19]
+(conf:0.282, lift:0.976) [23] -> [16]
+(conf:0.691, lift:0.932) [19] -> [23]
+(conf:0.724, lift:0.976) [16] -> [23]
+
+heuristic = [0.109117,
+0.055718,
+0.041214,
+0.029452,
+0.009452,
+0.006123,
+0.005126,
+0.004962,
+0.003967,
+0.003907,
+0.003261,
+0.003261,
+0.002406,
+0.002266,
+0.002026,
+0.001536,
+0.001258,
+0.001522,
+0.001211,
+0.001056]
+
+BIC_SCORES = [2791.617338,
+2773.780169,
+2761.877131,
+2753.604624,
+2751.806879,
+2751.240634,
+2751.204244,
+2750.782194,
+2749.596082,
+2748.956642,
+2745.689630,
+2742.431368,
+2742.699123,
+2742.030843,
+2742.399749,
+2744.155303,
+2745.316863,
+2746.440895,
+2748.387365,
+2749.910995]

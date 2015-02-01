@@ -39,7 +39,6 @@ def print_help(s, k, z, a):
     print '-a Print a association and disassociation rules, default %d' % a
     print '--debug print debug and performance info'
     print '-H headers file. mtv.py will convert attribute name to header names'
-
     print ''
     print 'Ex:'
     print './mtv.py -f "../data/example.dat" -k 5 -s 0.2'

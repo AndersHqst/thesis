@@ -1,5 +1,171 @@
 #!/usr/bin/env pypy
 
 from parsers.bacteria_parser import *
+from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf, figtext
 plot_relationships()
+# run()
+
+
+def run_discretization():
+    """
+    TODO: Work in progress. Code to use a phylogenetic tree, and get a
+    daset at a particular depth.
+    """
+    from parsers import bacteria_parser
+    from datasets.tree import Tree, Node
+    from utils.dataset_helpers import abundance_matrix
+    from itemsets import binary_vectors_to_ints
+    from parsers.files import write_dat_file, write_tab_file
+
+    ds = bacteria_parser.get_dataset()
+    ds = bacteria_parser.discretize_binary(ds)
+    ds = bacteria_parser.remove_empty_samples(ds)
+    t = Tree(ds, True)
+    bin_ds = t.dataset_at_max_depth(3)
+
+    abundance = abundance_matrix(bin_ds)
+
+    D = binary_vectors_to_ints(abundance)
+
+    write_dat_file('../experiments/1/stool_depth3_discrete.dat', D)
+    headers = []
+    for header in bin_ds[0][2:]:
+        vals = header.split('|')
+        if len(vals) > 1:
+            headers.append('|'.join(vals[-2:]))
+        else:
+            headers.append(vals[0])
+
+    with open('../experiments/1/stool_depth3_discrete.headers', 'wb') as fd:
+        line = ' '.join(headers)
+        fd.write(line)
+
+# run_discretization()
+
+
+def faust_results_to_parent_clade():
+    # Find faust results and propagate clades up to some level
+    # clades at this level could then be compared
+    from parsers import faust_parser
+    from datasets import tree
+    from parsers import bacteria_parser
+
+    max_clade_depth = 3
+
+    results = faust_parser.results()
+    ds = bacteria_parser.get_dataset()
+    tree = tree.Tree(ds, False)
+
+    correlation_nodes = []
+    for faust_result in results:
+
+        # Get nodes if they exist
+        try:
+            from_node = tree.node_for_clade_name(faust_result.clade_1)
+            to_node = tree.node_for_clade_name(faust_result.clade_2)
+        except KeyError, ke:
+            continue
+
+        if from_node.depth < max_clade_depth or to_node.depth < max_clade_depth:
+            # No good
+            print 'Ignoring nodes:'
+            print from_node
+            print to_node
+            print 'faust_result: ', faust_result
+            continue
+
+        while from_node.depth > 3:
+            from_node = from_node.parent
+
+        while from_node.depth > 3:
+            to_node = to_node.parent
+
+        correlation_nodes.append((from_node, to_node))
+
+
+        xlabel('from')
+        ylabel('to')
+        title_text = 'Relationship: %d ' % faust_result.direction
+        title(title_text)
+        # find from-to bacteria abundances
+        xs = []
+        ys = []
+        discrete_xs = []
+        discrete_ys = []
+
+        # Get the total abundance for hte clades in the tree
+        abundance_from = tree.abundance_column_in_subtree(from_node)
+        abundance_to = tree.abundance_column_in_subtree(to_node)
+
+        # List the in-sample values for each sample
+        for index, _row in enumerate(ds[1:]):
+            from_abundance = abundance_from[index]
+            to_abundance = abundance_to[index]
+
+            xs.append(from_abundance)
+            ys.append(to_abundance)
+
+            discrete_xs.append(discrete_value(abundance_from, from_abundance))
+            discrete_ys.append(discrete_value(abundance_to, to_abundance))
+
+        try:
+            pearson = pearsonr(xs, ys)
+            spearman = spearmanr(xs, ys)
+
+            if pearson > 0.5:
+                pass
+            correlation_coef = 'Pearson: (%.3f,%.3f), Spearman: (%.3f,%.3f)' % (pearson[0], pearson[1], spearman[0], spearman[1])
+            correlation_coef += ' sample points: %d' % len(xs)
+            figtext(0.01, 0.01, correlation_coef, fontsize=10)
+        except Exception, e:
+            print e
+            print 'Faust result: ', faust_result.id
+            print 'clades1: ', from_node.name
+            print 'clades2: ', to_node.name
+            print 'xs: %s', xs
+            print 'ys: %s', ys
+
+
+        disc_x = discrete_relative_threshold(xs)
+        disc_y = discrete_relative_threshold(ys)
+        # plot discretization lines
+        a, b = [disc_x, disc_x], [0, max(ys)]
+        c, d = [0, max(xs)], [disc_y, disc_y]
+        plot(a, b, c='r')
+        plot(c, d, c='r')
+
+        # write discrete results onto plot
+        pairs = zip(discrete_ys, discrete_xs)
+        _00 = '00: ' + str(len([x for x in pairs if x == (0,0)]))
+        _01 = '01: ' + str(len([x for x in pairs if x == (0,1)]))
+        _10 = '10: ' + str(len([x for x in pairs if x == (1,0)]))
+        _11 = '11: ' + str(len([x for x in pairs if x == (1,1)]))
+        figtext(0.7, 0.85, _00, fontsize=10)
+        figtext(0.7, 0.80, _01, fontsize=10)
+        figtext(0.7, 0.75, _10, fontsize=10)
+        figtext(0.7, 0.70, _11, fontsize=10)
+
+        from_depth = 'From depth: %d' % from_node.depth
+        to_depth = 'To depth: %d' % to_node.depth
+        figtext(0.7, 0.65, from_depth, fontsize=10)
+        figtext(0.7, 0.60, to_depth, fontsize=10)
+
+        same_lineage = 'False'
+        if tree.nodes_have_same_lineage(from_node, to_node):
+            same_lineage = ' True'
+        figtext(0.7, 0.55, 'Same lineage: ' + same_lineage, fontsize=10)
+
+
+        # vals = vals[:-20]
+        plot(xs, ys, 'g.', color='#0066FF')
+        file_name = '../../experiments/1/faust_results/' +str(faust_result.id) + '_' + from_node.name.replace('|', '-') + '---' + to_node.name.replace('|', '-') + '_' + str(faust_result.direction)
+        file_name = os.path.join(dir, file_name)
+        # print '[RESULT] ', file_name
+        # print vals
+        savefig(file_name)
+        close()
+
+# faust_results_to_parent_clade()
+
+
 

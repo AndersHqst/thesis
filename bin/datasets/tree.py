@@ -169,18 +169,53 @@ class Tree(object):
         return nodes
 
 
+    def data_set_for_all_nodes(self):
+        """
+        Builds a dataset for all nodes
+        :return:
+        """
+        nodes = self.nodes.values()
+        return self.dataset_for_nodes(nodes)
+
+
     def dataset_at_max_depth(self, max_depth):
         """
         Returns a data w.r.t a max depth. Subtrees at max deth will have the
         abundances merge, and the clade name is create for the reached node.
         :param max_depth: Max depth in bacteria datasets.
         :return: Dataset at max_depth in the datasets
+        :return:
+        """
+        nodes = self.nodes_at_max_depth(max_depth, self.root)
+        return self.dataset_for_nodes(nodes)
+
+
+    def dataset_for_clades(self, clade_names):
+        """
+        Returns a dataset of merged abundances for the clade names provided
+        :param clade_names: A list of clade names.
+        :return:
+        """
+        nodes = []
+        for name in clade_names:
+            if name in self.nodes:
+                nodes.append(self.nodes[name])
+            else:
+                print 'Warning, no known clade with name: ', name
+
+        return self.dataset_for_nodes(nodes)
+
+
+    def dataset_for_nodes(self, nodes):
+        """
+        Returns a subset of the dataset used to build the tree, where leaf abundances are merged.
+        :return: Dataset
         """
 
         abundance_columns = None
         headers = []
 
-        for node in self.nodes_at_max_depth(max_depth, self.root):
+        for node in nodes:
 
             if not node.is_root():
 
@@ -246,7 +281,6 @@ class Tree(object):
 
     def node_for_clade_name(self, clade_name):
         assert clade_name and not (clade_name == ''), 'No clade name provided'
-        assert clade_name in self.nodes, 'No node for clade_name'
 
         return self.nodes[clade_name]
 
@@ -281,31 +315,7 @@ def test_tree():
 
 # test_tree()
 
-def run_discretization():
-    from parsers import bacteria_parser
-    ds = bacteria_parser.get_dataset()
-    from datasets.tree import Tree, Node
-    t = Tree(ds, True)
-    bin_ds = t.dataset_at_max_depth(3)
-    from utils.dataset_helpers import abundance_matrix
-    abundance = abundance_matrix(bin_ds)
 
-    abundance[0]
-    from itemsets import binary_vectors_to_ints
-    D = binary_vectors_to_ints(abundance)
-    from parsers.files import write_dat_file, write_tab_file
-    write_dat_file('stool_depth3_discrete.dat', D)
-    headers = []
-    for header in bin_ds[0][2:]:
-        vals = header.split('|')
-        if len(vals) > 1:
-            headers.append('|'.join(vals[-2:]))
-        else:
-            headers.append(vals[0])
-
-    with open('stool_depth3_discrete.headers', 'wb') as fd:
-        line = ' '.join(headers)
-        fd.write(line)
 
 
 

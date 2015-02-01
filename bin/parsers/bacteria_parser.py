@@ -35,6 +35,8 @@ from faust_parser import  results
 from scipy.stats import pearsonr, spearmanr
 from datasets.tree import Tree
 from utils.dataset_helpers import abundance_matrix
+from math import ceil
+from scipy.stats import tvar
 
 COLUMN_TID = 0
 COLUMN_BODY_SITE = 1
@@ -121,13 +123,7 @@ def get_dataset(bodysite='Stool'):
         matrix = np.vstack([matrix, new_row])
     return data_cleaning(matrix)
 
-def data_cleaning(dataset):
-    """
-    Remove bacteria with no abundance above 2
-    :param dataset:
-    :return:
-    """
-
+def remove_empty_samples(dataset):
     # remove 0 samples
     no_zero_samples = []
     for index, row in enumerate(dataset):
@@ -139,7 +135,11 @@ def data_cleaning(dataset):
             if max(sample_abundances) > 0:
                 no_zero_samples.append(row)
 
+    return no_zero_samples
 
+def data_cleaning(dataset):
+
+    no_zero_samples = remove_empty_samples(dataset)
 
     # Remove bacteria with abundance count <= 2
     # transpose the zero sample matrix to iterate
@@ -181,39 +181,6 @@ def compute_relative_values(dataset):
 
     return np.array(relative_matrix)
 
-def plot_bacteria_hist(dataset, file_prefix, mid_quantile=False):
-    """
-    Saves a histogram of abundances binned
-    :param dataset:
-    :return:
-    """
-    for row in dataset.T[2:]:
-        abundances = [float(x) for x in row[2:]]
-        if mid_quantile:
-            abundances.sort()
-            abundances = abundances[int(len(abundances)*0.25): -int(len(abundances)*0.25)]
-        print 'max abundance: ', max(abundances)
-        xlabel('relative abundance bin')
-        ylabel('#occurrences')
-        bacteria_name = row[0]
-        title(bacteria_name)
-        hist(abundances, color='#0066FF')
-        savefig('../../plots/hist/raw/' + file_prefix + '-' + bacteria_name.replace('/','-'))
-        close()
-
-def run():
-    ds = get_dataset()
-    # ds = compute_relative_values(ds)
-
-    # fd = open('../../data/Stool_normalized.tab', 'wb')
-    # csv_writer = csv.writer(fd, delimiter='\t')
-    # csv_writer.writerows(ds)
-    plot_bacteria_hist(ds, 'stool_raw')
-
-    # print 'samples: ', len(ds)
-    # print 'bacteria: ', len(ds[0])
-
-# run()
 
 ###
 ### Plot abundances for Faust results
@@ -244,21 +211,27 @@ def replace_abundance_matrix(dataset, replacement):
 
     return ds
 
-def discrete_value(row, value, threshold=0.5):
+def discrete_relative_threshold(row, threshold=0.5):
     row_sorted = sorted(row)
-    outliers = int(len(row_sorted) * 0.01)
-    row_sorted = row_sorted[:-outliers]
-    b = max(row_sorted) * threshold
-    if value < b:
+    outliers = int(ceil(len(row_sorted) * 0.05))
+    if outliers < len(row_sorted):
+        row_sorted = row_sorted[:-outliers]
+    return max(row_sorted) * threshold
+
+
+def discrete_value(row, value, threshold=0.5):
+    b = discrete_relative_threshold(row, threshold)
+    if value <= b:
         return 0
     return 1
 
-def discrete_abundances(row, threshold):
+def discrete_abundances(row, threshold=0.5):
 
     discrete_row = []
 
-    for val in row:
-        discrete_row.append(discrete_value(row, val, threshold))
+    if 0 < len(row):
+        for val in row:
+            discrete_row.append(discrete_value(row, val, threshold))
 
     return discrete_row
 
@@ -292,9 +265,12 @@ def plot_relationships(relative_values=True):
     if relative_values:
         ds = compute_relative_values(ds)
 
-    tree = Tree(ds)
-    faust_results = results('Stool')
+    # Use numeric Tree. We will discreteze relevant values ourselves
+    # and plot the numeric correlations
+    tree = Tree(ds, False)
 
+    # Plot all relations in the faust results
+    faust_results = results('Stool')
     for faust_result in faust_results:
 
         if faust_result.number_of_supporting_methods < 5:
@@ -334,23 +310,6 @@ def plot_relationships(relative_values=True):
             discrete_xs.append(discrete_value(abundance_from, from_abundance))
             discrete_ys.append(discrete_value(abundance_to, to_abundance))
 
-            # Make values in the abundance row  numeric
-            # if relative_values:
-            #     row = [float(x) for x in _row[2:]]
-            # else:
-            #     row = [int(x) for x in _row[2:]]
-            #
-            # for from_col in columns_for_clade(headers, origin):
-            #     from_abundance = row[from_col]
-            #
-            #     for to_col in columns_for_clade(headers, to):
-            #         to_abundance = row[to_col]
-            #         xs.append(from_abundance)
-            #         ys.append(to_abundance)
-            #
-            #         discrete_xs.append(discrete_value(row, from_abundance))
-            #         discrete_ys.append(discrete_value(row, to_abundance))
-
         # Uncomment to use log axis
         # fig = gcf()
         # ax = fig.gca()
@@ -380,17 +339,14 @@ def plot_relationships(relative_values=True):
             print 'xs: %s', xs
             print 'ys: %s', ys
 
-        outliers = int(len(xs) * 0.01)
-        sorted_xs = sorted(xs)[:-outliers]
-        sorted_ys = sorted(ys)[:-outliers]
 
-        disc_x = max(sorted_xs) * 0.5
-        disc_y = max(sorted_ys) * 0.5
+        disc_x = discrete_relative_threshold(xs)
+        disc_y = discrete_relative_threshold(ys)
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]
         c, d = [0, max(xs)], [disc_y, disc_y]
-        plot(a,b,c='r')
-        plot(c,d,c='r')
+        plot(a, b, c='r')
+        plot(c, d, c='r')
 
         # write discrete results onto plot
         pairs = zip(discrete_ys, discrete_xs)
@@ -422,4 +378,73 @@ def plot_relationships(relative_values=True):
         # print vals
         savefig(file_name)
         close()
+
+
+def plot_bacteria_hist(dataset, folder, mid_quantile=False):
+    """
+    Saves a histogram of abundances binned
+    :return:
+    """
+
+    # Get the transposed abundances matrix
+    abundances = abundance_matrix(dataset).T
+
+    # Get header names to priint on the plots
+    headers = dataset[0][2:]
+
+    for index, bacteria_column  in enumerate(abundances):
+
+        abundances = [float(x) for x in bacteria_column]
+
+        if mid_quantile:
+            abundances.sort()
+            abundances = abundances[int(len(abundances)*0.25): -int(len(abundances)*0.25)]
+
+        xlabel('relative abundance bin')
+        ylabel('#occurrences')
+
+        bacteria_name = headers[index]
+        title(bacteria_name)
+        bins, intervals, patches = hist(abundances, color='#0066FF')
+
+        # Write discretized values
+        threshold = 0.5
+        discretized_abundances = discrete_abundances(abundances, threshold=threshold)
+        _0 = '0: ' + str(len([x for x in discretized_abundances if x == 0]))
+        _1 = '1: ' + str(len([x for x in discretized_abundances if x == 1]))
+
+        relatve_threshold = discrete_relative_threshold(abundances, threshold)
+        threshold_text = 'Threshold: %f' % relatve_threshold
+        figtext(0.7, 0.90, threshold_text, fontsize=10)
+        figtext(0.7, 0.85, _0, fontsize=10)
+        figtext(0.7, 0.80, _1, fontsize=10)
+
+        # Draw threshold line
+        a, b = [relatve_threshold, relatve_threshold], [0, max(bins)]
+        plot(a, b, c='r')
+
+        # Write max and avg
+        max_abundance = 'max: %f' % max(abundances)
+        avg_abundance = 'avg: %f' % (sum(abundances) / float(len(abundances)))
+        figtext(0.7, 0.75, max_abundance, fontsize=10)
+        figtext(0.7, 0.70, avg_abundance, fontsize=10)
+
+        # write variance
+        variance = 'var: %f' % tvar(abundances)
+        figtext(0.7, 0.65, variance, fontsize=10)
+
+        # Save fig to folder
+        folder_path = os.path.join(dir, '../../experiments/' + folder)
+        if not (os.path.exists(folder_path)):
+            os.makedirs(folder_path)
+        savefig(folder_path + '-' + bacteria_name.replace('/','-').replace('|', '-'))
+
+        close()
+
+def run():
+    ds = get_dataset()
+    # ds = compute_relative_values(ds)
+    tree = Tree(ds, False)
+    ds = tree.dataset_at_max_depth(3)
+    plot_bacteria_hist(ds, '1/hists_absolute/')
 
