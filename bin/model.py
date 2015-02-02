@@ -46,6 +46,11 @@ class Model(object):
         # BIC scores for X in C at the time X was added
         self.BIC_scrores = {}
 
+        # Total weight of all singletons.
+        # We keep this as a property as we
+        # do not always need to recompute it
+        self.total_weight = 0
+
 
     def p(self, T, y):
         """
@@ -94,7 +99,7 @@ class Model(object):
         return closure
 
 
-    def query(self, y):
+    def query(self, y, total_weight_changed=False):
         """
         Query the probability on an itemset y.
         :param y: Itemset
@@ -107,6 +112,9 @@ class Model(object):
             return self.independence_estimate(y)
 
         counter_inc('Block queries')
+
+        if total_weight_changed:
+            self.compute_total_weight()
 
         T_c = self.compute_block_weights(y)
 
@@ -166,6 +174,12 @@ class Model(object):
             if not (c in T.itemsets):
                 return False
         return True
+
+
+    def compute_total_weight(self):
+        self.total_weight = 1
+        for i in self.I:
+            self.total_weight *= (1 + self.U[i])
 
 
     def compute_block_weights(self, y=0):
@@ -237,7 +251,7 @@ class Model(object):
 
             for x in _C:
 
-                estimate = self.query(x)
+                estimate = self.query(x, total_weight_changed=True)
 
                 if self.mtv.fr(x) == 0 or estimate == 0:
                     msg = 'itemset %d has frequency=%f and p=%f. It should not be added to the summary' % (x, self.mtv.fr(x), estimate)
