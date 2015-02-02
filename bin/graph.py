@@ -44,6 +44,7 @@ class Graph(object):
         # and intersecting components
         new_component = Component()
         new_component.itemsets = [itemset]
+        new_component.nodes = itemset
         for intersecting_component in intersecting_components:
                 new_component.nodes = new_component.nodes | intersecting_component.nodes
                 new_component.itemsets += intersecting_component.itemsets

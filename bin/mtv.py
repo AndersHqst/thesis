@@ -116,6 +116,8 @@ class MTV(object):
                 model.iterative_scaling()
                 self.models.append(model)
 
+        print 'Independent models: ', len(self.models)
+
 
     def query(self, y):
         """
