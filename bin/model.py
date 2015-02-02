@@ -352,7 +352,7 @@ class Model(object):
             u0 = self.u0
             D = self.mtv.D
 
-            return -1 * ((len(D)) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D))
+            return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D))
 
         except Exception, e:
             print 'Exception in score function, ', e

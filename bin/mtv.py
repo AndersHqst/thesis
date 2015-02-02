@@ -6,6 +6,7 @@ from utils.timer import *
 from graph import Graph
 from utils.timer import *
 from utils.counter import *
+from math import log
 
 class MTV(object):
 
@@ -38,12 +39,11 @@ class MTV(object):
         # Cached frequency counts in D
         self.fr_cache = {}
 
-        # Main model where everythin is added to.
-        # We use this to compute the overall run results
-        self.main_model = Model(self)
-        self.main_model.I = self.I
-        self.main_model.iterative_scaling()
-        self.main_model.C = initial_C
+        # Global summary
+        self.C = []
+
+        self.BIC_scores = {}
+        self.heuristics = {}
 
         self.models = []
 
@@ -81,21 +81,59 @@ class MTV(object):
         Run the mtv algorithm
         """
 
-        self.main_model.BIC_scrores['initial_score'] = self.main_model.score()
         self.build_independent_models()
+        self.initial_score()
 
         # Add itemsets until we have k
         # We ignore an increasing BIC score, and always mine k itemsets
-        while len(self.main_model.C) < self.k:
+        while len(self.C) < self.k:
 
             X = self.find_best_itemset()
 
             if not (self.validate_best_itemset(X)):
                 break
 
-            self.main_model.add_to_summary(X)
-            print 'C: ', len(self.main_model.C)
+            self.add_to_summary(X)
+
             self.build_independent_models()
+
+
+    def compute_nomalization(self):
+        u0 = 2 ** -len(self.I)
+        _C = self.I.union(self.C)
+
+        for i in range(1000):
+            for X in _C:
+                estimate = self.query(X)
+
+                fr_x = self.fr(X)
+
+                if  abs(1 - fr_x) < float_precision:
+                    # print 'fr_x was 1'
+                    fr_x = 0.9999999999
+                if  abs(1 - estimate) < float_precision:
+                    # print 'estimate was 1'
+                    p = 0.9999999999
+
+                u0 = u0 * (1 - fr_x) / (1 - estimate)
+
+        return u0
+
+    def initial_score(self):
+        self.BIC_scores['initial_score'] = self.models[0].score()
+
+    def score(self):
+        return 42
+
+    def add_to_summary(self, X):
+        heuristic = h(self.fr(X), self.query(X))
+
+        # Add X to global summary
+        self.C.append(X)
+        self.heuristics[X] = heuristic
+
+        # Compute score
+        self.BIC_scores[X] = self.score()
 
 
     def build_independent_models(self):
@@ -105,7 +143,7 @@ class MTV(object):
         self.models = []
 
         # If C is empty, we just need one empty model
-        if len(self.main_model.C) == 0:
+        if len(self.C) == 0:
             model = Model(self)
             model.I = model.I.union(self.I)
             model.iterative_scaling()
@@ -114,7 +152,7 @@ class MTV(object):
         # Create all disjoint models
         else:
             graph = Graph()
-            for itemset in self.main_model.C:
+            for itemset in self.C:
                 graph.add_node(itemset)
 
             I_copy = self.I.copy()
@@ -147,52 +185,25 @@ class MTV(object):
         if len(intersected_models) == 0:
             return self.models[0].query(y)
 
-        # 1 intersecting model, use that
-        if len(intersected_models) == 1:
-            return intersected_models[0].query(y)
 
+        # More than one model intersected, query independently
+        mask = y
+        p = 1.0
+        for intersected_model in intersected_models:
 
-        if True:
-            # More than one model intersected, query independently
-            mask = y
-            p = 1.0
-            for intersected_model in intersected_models:
+            # get intersection
+            intersection = intersected_model.union_of_C & mask
 
-                # get intersection
-                intersection = intersected_model.union_of_C & mask
+            # remove from mask
+            mask = intersection ^ mask
 
-                # remove from mask
-                mask = intersection ^ mask
+            # query the intersected
+            p *= intersected_model.query(intersection)
 
-                # query the intersected
-                p *= intersected_model.query(intersection)
+        # Add disjoint singletons
+        p *= self.models[0].query(mask)
 
-            # Add disjoint singletons
-            p *= self.models[0].query(mask)
-
-            return p
-
-        else:
-            # More than 1 model intersected
-            # Get itemsets in the Cs
-            coverage = []
-            for intersected_model in intersected_models:
-                coverage += intersected_model.C
-
-            # Check cache
-            coverage.sort()
-            key = tuple(coverage)
-            if key in self.model_cache:
-                return self.model_cache[key].query(y)
-
-            # Create new intersecting model, and cache it
-            merged_model = Model(self)
-            merged_model.C = coverage
-            merged_model.union_of_C = itemsets.union_of_itemsets(merged_model.C)
-            merged_model.iterative_scaling()
-            self.model_cache[key] = merged_model
-
-            return merged_model.query(y)
+        return p
 
 
     def cached_itemset_query(self, X):
@@ -205,9 +216,6 @@ class MTV(object):
         """
 
         estimate = 0.0
-
-        if X == 6:
-            pass
 
         if X in self.query_cache:
             estimate = self.query_cache[X]
