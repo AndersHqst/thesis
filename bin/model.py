@@ -27,6 +27,9 @@ class Model(object):
         # summary
         self.C = []
 
+        # Singletons
+        self.I = set()
+
         self.union_of_C = 0
 
         # Block w.r.t C
@@ -54,7 +57,7 @@ class Model(object):
         res = 1.0
 
         for x in self.C:
-            assert not (x in self.mtv.I), "Singletons are not in summary calling p()"
+            assert not (x in self.I), "Singletons are not in summary calling p()"
             if itemsets.contains(T.union_of_itemsets, x):
                 res = res * self.U[x]
 
@@ -208,7 +211,7 @@ class Model(object):
 
     def compute_block_sizes(self, T_c):
         for T in T_c:
-            T.cummulative_block_size = 2 ** (len(self.mtv.I) - len(to_chars(T.union_of_itemsets)))
+            T.cummulative_block_size = 2 ** (len(self.I) - len(to_chars(T.union_of_itemsets)))
         for i, Ti in enumerate(T_c):
             Ti.block_size = Ti.cummulative_block_size
             for Tj in T_c[:i]:
@@ -235,7 +238,7 @@ class Model(object):
         blocks = []
 
         total_weight = 1
-        for i in self.mtv.I:
+        for i in self.I:
             total_weight *= (1 + U[i])
 
         closure = self.closure(y)
@@ -276,7 +279,7 @@ class Model(object):
 
         # Initialize U and u0
         self.u0 = 2 ** -len(self.mtv.I)
-        _C = self.mtv.I.union(self.C)
+        _C = self.I.union(self.C)
         for c in _C:
             self.U[c] = 1.0
 
@@ -344,7 +347,7 @@ class Model(object):
 
     def score(self):
         try:
-            _C = self.mtv.I.union(self.C)
+            _C = self.I.union(self.C)
             U = self.U
             u0 = self.u0
             D = self.mtv.D

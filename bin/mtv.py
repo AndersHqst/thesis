@@ -41,6 +41,7 @@ class MTV(object):
         # Main model where everythin is added to.
         # We use this to compute the overall run results
         self.main_model = Model(self)
+        self.main_model.I = self.I
         self.main_model.iterative_scaling()
         self.main_model.C = initial_C
 
@@ -106,6 +107,7 @@ class MTV(object):
         # If C is empty, we just need one empty model
         if len(self.main_model.C) == 0:
             model = Model(self)
+            model.I = model.I.union(self.I)
             model.iterative_scaling()
             self.models.append(model)
 
@@ -114,12 +116,18 @@ class MTV(object):
             graph = Graph()
             for itemset in self.main_model.C:
                 graph.add_node(itemset)
+
+            I_copy = self.I.copy()
             for disjoint_C in graph.disjoint_itemsets():
                 model = Model(self)
                 model.C = disjoint_C
+                model.I = itemsets.singletons(model.C)
+                I_copy = I_copy - model.I
                 model.union_of_C = itemsets.union_of_itemsets(disjoint_C)
                 model.iterative_scaling()
                 self.models.append(model)
+            self.models[0].I = self.models[0].I.union(I_copy)
+            self.models[0].iterative_scaling()
 
         timer_start('Build independent models')
         counter_max('Independent models', len(self.models))
@@ -144,7 +152,7 @@ class MTV(object):
             return intersected_models[0].query(y)
 
 
-        if False:
+        if True:
             # More than one model intersected, query independently
             mask = y
             p = 1.0
@@ -157,10 +165,10 @@ class MTV(object):
                 mask = intersection ^ mask
 
                 # query the intersected
-                p *= intersected_model.query(mask)
+                p *= intersected_model.query(intersection)
 
             # Add disjoint singletons
-            p += self.models[0].query(mask)
+            p *= self.models[0].query(mask)
 
             return p
 
