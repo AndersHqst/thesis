@@ -11,6 +11,7 @@ from heurestic import h
 import sys
 sys.setrecursionlimit(1500)
 
+
 class Model(object):
 
     def __init__(self, mtv):
@@ -251,7 +252,7 @@ class Model(object):
                     p = 0.9999999999
 
                 self.U[x] = self.U[x] * (fr_x / estimate) * ((1 - estimate) / (1 - fr_x))
-                self.u0 = Decimal(self.u0) * Decimal((1 - fr_x) / (1 - estimate))
+                self.u0 = self.u0 * (1 - fr_x) / (1 - estimate)
 
                 max_error = max(max_error, 1 - min(fr_x, estimate) / max(fr_x, estimate))
 
