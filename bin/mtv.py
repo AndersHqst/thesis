@@ -85,7 +85,6 @@ class MTV(object):
         if y & self.union_of_C == 0:
             return self.models[0].query(y)
 
-
         # query intersected models independently
         mask = y
         p = 1.0
@@ -143,10 +142,9 @@ class MTV(object):
         self.union_of_C = itemsets.union_of_itemsets(self.C)
         self.heuristics[X] = heuristic
 
+        self.build_independent_models()
         # Compute score
         self.BIC_scores[X] = self.score()
-
-        self.build_independent_models()
 
 
     def build_independent_models(self):
@@ -186,9 +184,6 @@ class MTV(object):
 
         timer_start('Build independent models')
         counter_max('Independent models', len(self.models))
-
-
-
 
     def cached_itemset_query(self, X):
         """

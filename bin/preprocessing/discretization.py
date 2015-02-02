@@ -37,6 +37,31 @@ def find_threshold(vals):
 
     return highest_threshold
 
+def maxent_discretization(dataset):
+
+    # Get the abundance matrix and discretize it
+    abundances = abundance_matrix(dataset).T
+    discrete_matrix = []
+    for row in abundances:
+        threshold = find_threshold(row)
+        discrete_row = []
+        for val in row:
+            if val < threshold:
+                discrete_row.append(0)
+            else:
+                discrete_row.append(1)
+
+        discrete_matrix.append(discrete_row)
+
+    # transpose to dataset orientation
+    discrete_matrix = np.array(discrete_matrix).T
+
+    # Replace the abundance submatrix
+    discretized_dataset = replace_abundance_matrix(dataset, discrete_matrix)
+
+    return discretized_dataset
+
+
 def discrete_relative_threshold(row, threshold=0.5):
     return find_threshold(row)
 

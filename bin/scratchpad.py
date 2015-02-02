@@ -5,8 +5,13 @@
 from matplotlib.pylab import plot, ylabel, xlabel, savefig, close, title, figtext
 
 from plots.faust_result_discretized import plot_relationships
+from scipy.stats import pearsonr, spearmanr
+from preprocessing.tree import Tree
+from preprocessing.discretization import *
+from preprocessing.preprocessors import remove_empty_samples, compute_relative_values
+import os
 
-plot_relationships()
+# plot_relationships()
 # run()
 
 
@@ -22,8 +27,9 @@ def run_discretization():
     from utils.files import write_dat_file
 
     ds = parser.get_dataset()
-    ds = parser.discretize_binary(ds)
-    ds = parser.remove_empty_samples(ds)
+    ds = parser.compute_relative_values(ds)
+    # ds = parser.discretize_binary(ds)
+    ds = remove_empty_samples(ds)
     t = Tree(ds, True)
     bin_ds = t.dataset_at_max_depth(3)
 
@@ -55,19 +61,25 @@ def run_discretization_all_nodes():
     from itemsets import binary_vectors_to_ints
     from utils.files import write_dat_file
 
+    # Get the stool dataset and discretize it
     ds = parser.get_dataset()
-    ds = parser.discretize_binary(ds)
-    ds = parser.remove_empty_samples(ds)
+    ds = compute_relative_values(ds)
+    ds = maxent_discretization(ds)
+    ds = remove_empty_samples(ds)
+
+    # Build the phylogenetic tree, and
+    # create dataset for all nodes
     t = Tree(ds, True)
     bin_ds = t.dataset_for_all_nodes()
 
     print 'all nodes, number of attributes: ', len(bin_ds[0]) - 2
 
+    # Write .dat file
     abundance = abundance_matrix(bin_ds)
-
     D = binary_vectors_to_ints(abundance)
-
     write_dat_file('../experiments/2/stool_all_discrete.dat', D)
+
+    # Create a header file
     headers = []
     for header in bin_ds[0][2:]:
         vals = header.split('|')
@@ -80,7 +92,7 @@ def run_discretization_all_nodes():
         line = ' '.join(headers)
         fd.write(line)
 
-# run_discretization_all_nodes()
+run_discretization_all_nodes()
 
 def faust_results_to_parent_clade():
     # Find faust results and propagate clades up to some level
@@ -92,7 +104,7 @@ def faust_results_to_parent_clade():
 
     results = faust_parser.results()
     ds = parser.get_dataset()
-    tree = tree.Tree(ds, False)
+    tree = Tree(ds, False)
 
     correlation_nodes = []
     for faust_result in results:

@@ -11,7 +11,6 @@ from heurestic import h
 import sys
 sys.setrecursionlimit(1500)
 
-
 class Model(object):
 
     def __init__(self, mtv):
@@ -251,10 +250,8 @@ class Model(object):
                     # print 'estimate was 1'
                     p = 0.9999999999
 
-
                 self.U[x] = self.U[x] * (fr_x / estimate) * ((1 - estimate) / (1 - fr_x))
-
-                self.u0 = self.u0 * (1 - fr_x) / (1 - estimate)
+                self.u0 = Decimal(self.u0) * Decimal((1 - fr_x) / (1 - estimate))
 
                 max_error = max(max_error, 1 - min(fr_x, estimate) / max(fr_x, estimate))
 
@@ -268,6 +265,7 @@ class Model(object):
 
 
     def score(self):
+        print 'score called'
         try:
             _C = self.I.union(self.C)
             U = self.U
@@ -278,7 +276,19 @@ class Model(object):
 
         except Exception, e:
             print 'Exception in score function, ', e
-            print self
+            # print 'Singletons: ', self.I
+            for u in U:
+                if U[u] <= 0:
+                    'Negative U: ', u
+
+            for x in _C:
+                if self.mtv.fr(x) <= 0:
+                    'Itemset with 0 frequency: ', x
+
+            print 'len of C: ', len(_C)
+            print 'len of D: ', len(D)
+            print 'u0: ', u0
+
             exit()
 
 
@@ -300,8 +310,7 @@ class Model(object):
         self.iterative_scaling()
 
         # Compute score
-        cur_score = self.score()
-        self.BIC_scrores[itemset] = cur_score
+        self.BIC_scrores[itemset] = self.score()
 
 
     def is_in_sumamry(self, y):
