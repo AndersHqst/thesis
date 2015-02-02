@@ -2,13 +2,13 @@
 
 import getopt
 import sys
-from parsers.files import parse_dat_file, parse_header_file, write_dat_file
 
+from utils.files import parse_dat_file, parse_header_file, write_dat_file
 from settings import *
 import itemsets
 from utils.timer import *
 from utils.counter import *
-from rule_miner import association_rules, AssociationRule
+from rule_miner import association_rules
 from mtv import MTV
 
 

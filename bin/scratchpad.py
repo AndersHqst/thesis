@@ -2,8 +2,10 @@
 #   Scratchpad for working with implementation from the root folder.
 #
 
-from parsers.bacteria_parser import *
-from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf, figtext
+from matplotlib.pylab import plot, ylabel, xlabel, savefig, close, title, figtext
+
+from plots.faust_result_discretized import plot_relationships
+
 plot_relationships()
 # run()
 
@@ -13,15 +15,15 @@ def run_discretization():
     TODO: Work in progress. Code to use a phylogenetic tree, and get a
     daset at a particular depth.
     """
-    from parsers import bacteria_parser
-    from datasets.tree import Tree, Node
+    from preprocessing import parser
+    from preprocessing.tree import Tree
     from utils.dataset_helpers import abundance_matrix
     from itemsets import binary_vectors_to_ints
-    from parsers.files import write_dat_file, write_tab_file
+    from utils.files import write_dat_file
 
-    ds = bacteria_parser.get_dataset()
-    ds = bacteria_parser.discretize_binary(ds)
-    ds = bacteria_parser.remove_empty_samples(ds)
+    ds = parser.get_dataset()
+    ds = parser.discretize_binary(ds)
+    ds = parser.remove_empty_samples(ds)
     t = Tree(ds, True)
     bin_ds = t.dataset_at_max_depth(3)
 
@@ -47,15 +49,15 @@ def run_discretization_all_nodes():
     TODO: Work in progress. Code to use a phylogenetic tree, and get a
     daset for the entire phylogenetic tree
     """
-    from parsers import bacteria_parser
-    from datasets.tree import Tree, Node
+    from preprocessing import parser
+    from preprocessing.tree import Tree
     from utils.dataset_helpers import abundance_matrix
     from itemsets import binary_vectors_to_ints
-    from parsers.files import write_dat_file, write_tab_file
+    from utils.files import write_dat_file
 
-    ds = bacteria_parser.get_dataset()
-    ds = bacteria_parser.discretize_binary(ds)
-    ds = bacteria_parser.remove_empty_samples(ds)
+    ds = parser.get_dataset()
+    ds = parser.discretize_binary(ds)
+    ds = parser.remove_empty_samples(ds)
     t = Tree(ds, True)
     bin_ds = t.dataset_for_all_nodes()
 
@@ -83,14 +85,13 @@ def run_discretization_all_nodes():
 def faust_results_to_parent_clade():
     # Find faust results and propagate clades up to some level
     # clades at this level could then be compared
-    from parsers import faust_parser
-    from datasets import tree
-    from parsers import bacteria_parser
+    from preprocessing import faust_parser
+    from preprocessing import parser
 
     max_clade_depth = 3
 
     results = faust_parser.results()
-    ds = bacteria_parser.get_dataset()
+    ds = parser.get_dataset()
     tree = tree.Tree(ds, False)
 
     correlation_nodes = []

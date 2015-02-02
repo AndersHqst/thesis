@@ -64,6 +64,21 @@ class Model(object):
         return self.u0 * res * T.block_weight
 
 
+    def independence_estimate(self, y):
+        """
+        Return the indendence estiamte for y
+        :param y: Itemset
+        :return:
+        """
+        independence_estimate = 1.0
+        for i in itemsets.singletons_of_itemset(y):
+            independence_estimate *= self.U[i] / (1 + self.U[i])
+
+        counter_inc('Independence estimates')
+
+        return independence_estimate
+
+
     def closure(self, y):
         """
         Returns a closure of itemset in C that har subsets of y
@@ -77,16 +92,6 @@ class Model(object):
                 closure.add(itemset)
 
         return closure
-
-
-    def independence_estimate(self, y):
-        independence_estimate = 1.0
-        for i in itemsets.singletons_of_itemset(y):
-            independence_estimate *= self.U[i] / (1 + self.U[i])
-
-        counter_inc('Independence estimates')
-
-        return independence_estimate
 
 
     def query(self, y):
@@ -112,70 +117,6 @@ class Model(object):
         timer_stop('Compute p')
 
         return estimate
-
-
-    # def find_best_itemset_iter(self, X, I, Z, model, s, m, X_length=0):
-    #     """
-    #     :param X: itemset
-    #     :param Y: remaining itemsets
-    #     :param Z: currently best itemset
-    #     :param s: min support
-    #     :param m: max itemset size
-    #     :param X_length: number of items in X. No pretty, but since X is an int,
-    #                      this is the fastest way to know its length
-    #     :return: Best itemset Z
-    #     """
-    #
-    #     stack = []
-    #     stack.append((X, itemsets.union_of_itemsets(I), X_length))
-    #     d = set()
-    #     while 0 < len(stack):
-    #         X, Y, X_length = stack.pop()
-    #
-    #         if not (X, Y) in d:
-    #
-    #             d.add((X, Y))
-    #
-    #             if m is None or X_length < m:
-    #
-    #                 Initially all I
-                    # Ys_copy = Y
-                    #
-                    # If not bounded, add all Xy to the stach
-                    # for y in I:
-                    #
-                    #     if X & y == 0 and Ys_copy & y == y:
-                    #         Xy = X | y
-                    #         fr_X = self.mtv.fr(Xy)
-                    #         if fr_X < s:
-                    #             continue
-                    #         Ys_copy = Ys_copy ^ y
-                    #
-                    #         p_Xy = self.cached_itemset_stats(Xy)
-                    #
-                    #         fr_Z = self.mtv.fr(Z[0][0])
-                    #         p_Z = self.cached_itemset_stats(Z[0][0])
-                    #
-                    #         h_X = h(fr_X, p_Xy)
-                    #         h_Z = h(fr_Z, p_Z)
-                    #         if h_X > h_Z or len(Z) < 10:
-                    #             Z.append((Xy, h_X))
-                    #             Sort by descending  heuristic
-                                # Z.sort(lambda x, y: x[1] < y[1] and 1 or -1)
-                                # if 10 < len(Z):
-                                #     Z.pop()
-                            #
-                            # XY = Xy | Ys_copy
-                            # fr_XY = self.mtv.fr(XY)
-                            #
-                            # p_XY = self.cached_itemset_stats(XY)
-                            #
-                            # b = max(h(fr_X, p_XY), h(fr_XY, p_Xy))
-                            #
-                            # if Z[0][0] == 0 or b > h_Z:
-                            #     stack.append((Xy, Ys_copy, X_length + 1))
-        #
-        # return Z
 
 
     def compute_blocks(self):
@@ -326,25 +267,6 @@ class Model(object):
         timer_stop('Iterative scaling')
 
 
-    # def mtv(self):
-    #     """
-    #     Run the mtv algorithm with current parameterization of the model
-    #     """
-    #
-    #     self.BIC_scrores['initial_score'] = self.score()
-    #
-    #     # Add itemsets until we have k
-    #     # We ignore an increasing BIC score, and always mine k itemsets
-    #     while len(self.C) < self.k:
-    #
-    #         X = self.find_best_itemset()
-    #
-    #         if not (self.validate_best_itemset(X)):
-    #             break
-    #
-    #         self.add_to_summary(X)
-
-
     def score(self):
         try:
             _C = self.I.union(self.C)
@@ -391,6 +313,7 @@ class Model(object):
             if y == x:
                 return True
         return False
+
 
     def total_probability(self):
         """ Assert and print the total probability of the model """

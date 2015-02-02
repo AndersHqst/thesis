@@ -1,3 +1,7 @@
+#
+# Script to plot likelihood values for a coin toss
+#
+
 from matplotlib.pylab import *
 
 def likelihood(outcomes, p_head):

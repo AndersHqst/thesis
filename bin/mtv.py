@@ -41,6 +41,7 @@ class MTV(object):
 
         # Global summary
         self.C = []
+        self.union_of_C = 0
 
         self.BIC_scores = {}
         self.heuristics = {}
@@ -54,35 +55,13 @@ class MTV(object):
         self.query_cache = {}
 
 
-    def fr(self, x):
-        """
-        :param x: Itemset
-        :return: Frequency of x in D
-        """
-
-        if x in self.fr_cache:
-            return self.fr_cache[x]
-
-        p = 0.0
-        for xi in self.D:
-            if itemsets.contains(xi, x):
-                p += 1
-        p = p / len(self.D)
-
-        assert p <= 1.0
-
-        self.fr_cache[x] = p
-
-        return p
-
-
     def run(self):
         """
         Run the mtv algorithm
         """
 
         self.build_independent_models()
-        self.initial_score()
+        self.BIC_scores['initial_score'] = self.models[0].score()
 
         # Add itemsets until we have k
         # We ignore an increasing BIC score, and always mine k itemsets
@@ -93,50 +72,88 @@ class MTV(object):
             if not (self.validate_best_itemset(X)):
                 break
 
-            self.add_to_summary(X)
-
-            self.build_independent_models()
+            self.add_itemset(X)
 
 
-    def compute_nomalization(self):
-        u0 = 2 ** -len(self.I)
-        _C = self.I.union(self.C)
+    def query(self, y):
+        """
+        Query using necessary models w.r.t y
+        """
 
-        for i in range(1000):
-            for X in _C:
-                estimate = self.query(X)
+        # No intersection. Use models[0]
+        # which holds disjoint singletons
+        if y & self.union_of_C == 0:
+            return self.models[0].query(y)
 
-                fr_x = self.fr(X)
 
-                if  abs(1 - fr_x) < float_precision:
-                    # print 'fr_x was 1'
-                    fr_x = 0.9999999999
-                if  abs(1 - estimate) < float_precision:
-                    # print 'estimate was 1'
-                    p = 0.9999999999
+        # query intersected models independently
+        mask = y
+        p = 1.0
 
-                u0 = u0 * (1 - fr_x) / (1 - estimate)
+        for intersected_model in self.intersected_models(y):
 
-        return u0
+            # get intersection
+            intersection = intersected_model.union_of_C & mask
 
-    def initial_score(self):
-        self.BIC_scores['initial_score'] = self.models[0].score()
+            # remove from mask
+            mask = intersection ^ mask
+
+            # query the intersected model
+            p *= intersected_model.query(intersection)
+
+        # disjoint singletons
+        p *= self.models[0].query(mask)
+
+        return p
+
+
+    def intersected_models(self, y):
+        """
+        Returns a list of models intersected with y.
+        These would be the models needed to query y
+        :param y: Itemset
+        :return:
+        """
+        intersected_models = []
+
+        for model in self.models:
+            if y & model.union_of_C != 0:
+                intersected_models.append(model)
+
+        return intersected_models
 
     def score(self):
+        #TODO: how to do this?!?!
         return 42
 
-    def add_to_summary(self, X):
+
+    def add_itemset(self, X):
+        """
+        Add an itemset X to C and update MTV.
+        warning: Adding itemsets to C should always be
+         done with this methods, or MTV will be left in an
+         invalid state.
+        :param X: Itemset to be added to C
+        :return:
+        """
         heuristic = h(self.fr(X), self.query(X))
 
         # Add X to global summary
         self.C.append(X)
+        self.union_of_C = itemsets.union_of_itemsets(self.C)
         self.heuristics[X] = heuristic
 
         # Compute score
         self.BIC_scores[X] = self.score()
 
+        self.build_independent_models()
+
 
     def build_independent_models(self):
+        """
+        Builds model for each disjoint set of C
+        :return:
+        """
         timer_start('Build independent models')
 
         # Clear old models
@@ -171,39 +188,6 @@ class MTV(object):
         counter_max('Independent models', len(self.models))
 
 
-    def query(self, y):
-        """
-        Query using necessary models w.r.t y
-        """
-
-        intersected_models = []
-        for model in self.models:
-            if y & model.union_of_C != 0:
-                intersected_models.append(model)
-
-        # No intersection. Use any model
-        if len(intersected_models) == 0:
-            return self.models[0].query(y)
-
-
-        # More than one model intersected, query independently
-        mask = y
-        p = 1.0
-        for intersected_model in intersected_models:
-
-            # get intersection
-            intersection = intersected_model.union_of_C & mask
-
-            # remove from mask
-            mask = intersection ^ mask
-
-            # query the intersected
-            p *= intersected_model.query(intersection)
-
-        # Add disjoint singletons
-        p *= self.models[0].query(mask)
-
-        return p
 
 
     def cached_itemset_query(self, X):
@@ -295,6 +279,28 @@ class MTV(object):
         return Z
 
 
+    def fr(self, x):
+        """
+        :param x: Itemset
+        :return: Frequency of x in D
+        """
+
+        if x in self.fr_cache:
+            return self.fr_cache[x]
+
+        p = 0.0
+        for xi in self.D:
+            if itemsets.contains(xi, x):
+                p += 1
+        p = p / len(self.D)
+
+        assert p <= 1.0
+
+        self.fr_cache[x] = p
+
+        return p
+
+
     def validate_best_itemset(self, itemset):
         """
         Returns true if an itemset is valid to be added to C, or false.
@@ -313,4 +319,4 @@ class MTV(object):
                       'the provided thresholds. Exiting MTV'
             return False
 
-        return True 
+        return True

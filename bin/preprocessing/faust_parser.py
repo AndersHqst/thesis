@@ -1,3 +1,6 @@
+#
+# Specialized scripts to parse the Faust results file: faust_results_dots.csv
+#
 
 import os
 dir = os.path.dirname(__file__)
@@ -140,6 +143,7 @@ def faust_results(csv_file):
 
     return results
 
+
 def filtered_results(bodysite=None, same_bodysite_only=False):
 
     file_name = os.path.join(dir, '../../data/faust_results_dots.csv')
@@ -153,6 +157,7 @@ def filtered_results(bodysite=None, same_bodysite_only=False):
         filtered_results = filter(lambda faust_result: faust_result.body_site_1 == faust_result.body_site_2, filtered_results)
 
     return filtered_results
+
 
 def results(bodysite='Stool'):
     """

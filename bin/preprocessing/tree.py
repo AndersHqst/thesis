@@ -1,5 +1,5 @@
 """
-Class and spezialized functions to build and work with a bacteria family tree.
+Class and specialized functions to build and work with a bacteria family tree.
 """
 
 import numpy as np
