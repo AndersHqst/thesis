@@ -93,6 +93,7 @@ class MTV(object):
                 break
 
             self.main_model.add_to_summary(X)
+            print 'C: ', len(self.main_model.C)
             self.build_independent_models()
 
 
@@ -142,26 +143,48 @@ class MTV(object):
         if len(intersected_models) == 1:
             return intersected_models[0].query(y)
 
-        # More than 1 model intersected
-        # Get itemsets in the Cs
-        coverage = []
-        for intersected_model in intersected_models:
-            coverage += intersected_model.C
 
-        # Check cache
-        coverage.sort()
-        key = tuple(coverage)
-        if key in self.model_cache:
-            return self.model_cache[key].query(y)
+        if False:
+            # More than one model intersected, query independently
+            mask = y
+            p = 1.0
+            for intersected_model in intersected_models:
 
-        # Create new intersecting model, and cache it
-        merged_model = Model(self)
-        merged_model.C = coverage
-        merged_model.union_of_C = itemsets.union_of_itemsets(merged_model.C)
-        merged_model.iterative_scaling()
-        self.model_cache[key] = merged_model
+                # get intersection
+                intersection = intersected_model.union_of_C & mask
 
-        return merged_model.query(y)
+                # remove from mask
+                mask = intersection ^ mask
+
+                # query the intersected
+                p *= intersected_model.query(mask)
+
+            # Add disjoint singletons
+            p += self.models[0].query(mask)
+
+            return p
+
+        else:
+            # More than 1 model intersected
+            # Get itemsets in the Cs
+            coverage = []
+            for intersected_model in intersected_models:
+                coverage += intersected_model.C
+
+            # Check cache
+            coverage.sort()
+            key = tuple(coverage)
+            if key in self.model_cache:
+                return self.model_cache[key].query(y)
+
+            # Create new intersecting model, and cache it
+            merged_model = Model(self)
+            merged_model.C = coverage
+            merged_model.union_of_C = itemsets.union_of_itemsets(merged_model.C)
+            merged_model.iterative_scaling()
+            self.model_cache[key] = merged_model
+
+            return merged_model.query(y)
 
 
     def cached_itemset_query(self, X):
