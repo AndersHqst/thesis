@@ -100,16 +100,19 @@ class MTV(object):
 
         # If C is empty, we just need one empty model
         if len(self.main_model.C) == 0:
-            self.models.append(Model(self))
+            model = Model(self)
+            model.iterative_scaling()
+            self.models.append(model)
 
         # Create all disjoint models
         else:
             graph = Graph()
             for itemset in self.main_model.C:
                 graph.add_node(itemset)
-            for itemsets in graph.disjoint_itemsets():
+            for disjoint_C in graph.disjoint_itemsets():
                 model = Model(self)
-                model.C = itemsets
+                model.C = disjoint_C
+                model.union_of_C = itemsets.union_of_itemsets(disjoint_C)
                 model.iterative_scaling()
                 self.models.append(model)
 
@@ -139,7 +142,8 @@ class MTV(object):
             coverage += intersected_model.C
 
         # Check cache
-        key = tuple(coverage.sort())
+        coverage.sort()
+        key = tuple(coverage)
         if key in self.model_cache:
             return self.model_cache[key].query(y)
 
@@ -163,6 +167,9 @@ class MTV(object):
         """
 
         estimate = 0.0
+
+        if X == 6:
+            pass
 
         if X in self.query_cache:
             estimate = self.query_cache[X]
