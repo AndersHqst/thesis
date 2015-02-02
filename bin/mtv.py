@@ -4,6 +4,8 @@ from model import Model
 from heurestic import h
 from utils.timer import *
 from graph import Graph
+from utils.timer import *
+from utils.counter import *
 
 class MTV(object):
 
@@ -95,6 +97,8 @@ class MTV(object):
 
 
     def build_independent_models(self):
+        timer_start('Build independent models')
+
         # Clear old models
         self.models = []
 
@@ -116,7 +120,8 @@ class MTV(object):
                 model.iterative_scaling()
                 self.models.append(model)
 
-        print 'Independent models: ', len(self.models)
+        timer_start('Build independent models')
+        counter_max('Independent models', len(self.models))
 
 
     def query(self, y):
