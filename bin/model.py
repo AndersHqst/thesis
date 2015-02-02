@@ -1,6 +1,6 @@
 from __future__ import division
 from charitems import to_binary, to_chars
-from math import log
+from math import log, isnan
 from itertools import combinations
 from block import Block
 from utils.timer import *
@@ -10,6 +10,8 @@ import itemsets
 from heurestic import h
 import sys
 sys.setrecursionlimit(1500)
+from decimal import Decimal, getcontext
+getcontext().prec = 50
 
 
 class Model(object):
@@ -54,14 +56,21 @@ class Model(object):
         :param y: Itemset
         :return: Model estimate for y in T
         """
-        res = 1.0
+        res = Decimal(1.0)
 
         for x in self.C:
             assert not (x in self.I), "Singletons are not in summary calling p()"
             if itemsets.contains(T.union_of_itemsets, x):
-                res = res * self.U[x]
-
-        return self.u0 * res * T.block_weight
+                res = res * Decimal(self.U[x])
+        p_res = float(self.u0 * Decimal(res) * T.block_weight)
+        if isnan(p_res):
+            print 'p was nan'
+            print 'u0: ', self.u0
+            print 'res: ', res
+            print 'block weight: ', T.block_weight
+            print 'U: ', self.U.values()
+            exit()
+        return p_res
 
 
     def independence_estimate(self, y):
@@ -178,9 +187,9 @@ class Model(object):
         U = self.U
         blocks = []
 
-        total_weight = 1
+        total_weight = Decimal(1)
         for i in self.I:
-            total_weight *= (1 + U[i])
+            total_weight *= (Decimal(1) + Decimal(U[i]))
 
         closure = self.closure(y)
 
@@ -197,10 +206,10 @@ class Model(object):
                 mask = y & T.union_of_itemsets
                 ys = mask ^ y
                 for i in itemsets.singletons_of_itemset(ys):
-                    T.cummulative_block_weight *= U[i] / (1 + U[i])
+                    T.cummulative_block_weight *= Decimal(U[i]) / (Decimal(1) + Decimal(U[i]))
 
                 for i in T.singletons:
-                    T.cummulative_block_weight *= U[i] / (1 + U[i])
+                    T.cummulative_block_weight *= Decimal(U[i]) / (Decimal(1) + Decimal(U[i]))
 
         timer_stop('Cummulative weight')
 
@@ -219,7 +228,7 @@ class Model(object):
     def iterative_scaling(self):
 
         # Initialize U and u0
-        self.u0 = 2 ** -len(self.mtv.I)
+        self.u0 = Decimal(2 ** -len(self.mtv.I))
         _C = self.I.union(self.C)
         for c in _C:
             self.U[c] = 1.0
@@ -229,7 +238,7 @@ class Model(object):
         timer_start('Iterative scaling')
 
         iterations = 0
-        epsilon = 1e-4
+        epsilon = 1e-3
 
         while iterations < 100:
 
@@ -252,7 +261,8 @@ class Model(object):
                     p = 0.9999999999
 
                 self.U[x] = self.U[x] * (fr_x / estimate) * ((1 - estimate) / (1 - fr_x))
-                self.u0 = self.u0 * (1 - fr_x) / (1 - estimate)
+
+                self.u0 = self.u0 * Decimal((1 - fr_x) / (1 - estimate))
 
                 max_error = max(max_error, 1 - min(fr_x, estimate) / max(fr_x, estimate))
 
@@ -266,7 +276,7 @@ class Model(object):
 
 
     def score(self):
-        print 'score called'
+        return 42
         try:
             _C = self.I.union(self.C)
             U = self.U
@@ -338,6 +348,6 @@ class Model(object):
 
         str = u'Summary: {0:s} '.format(self.C)
         str += u'U: {0:s} '.format(self.U)
-        str += u'u0: {0:f} '.format(self.u0)
+        str += u'u0: {0:f} '.format(float(self.u0))
 
         return str

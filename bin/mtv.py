@@ -89,37 +89,24 @@ class MTV(object):
         mask = y
         p = 1.0
 
-        for intersected_model in self.intersected_models(y):
+        for model in self.models:
 
-            # get intersection
-            intersection = intersected_model.union_of_C & mask
+            # Check if y intersect the model
+            if y & model.union_of_C != 0:
 
-            # remove from mask
-            mask = intersection ^ mask
+                # get intersection
+                intersection = model.union_of_C & mask
 
-            # query the intersected model
-            p *= intersected_model.query(intersection)
+                # remove from mask
+                mask = intersection ^ mask
+
+                # query the intersected model
+                p *= model.query(intersection)
 
         # disjoint singletons
         p *= self.models[0].query(mask)
 
         return p
-
-
-    def intersected_models(self, y):
-        """
-        Returns a list of models intersected with y.
-        These would be the models needed to query y
-        :param y: Itemset
-        :return:
-        """
-        intersected_models = []
-
-        for model in self.models:
-            if y & model.union_of_C != 0:
-                intersected_models.append(model)
-
-        return intersected_models
 
     def score(self):
         #TODO: how to do this?!?!
@@ -194,6 +181,8 @@ class MTV(object):
         :return: Query result
         """
 
+        timer_start('Cached query')
+
         estimate = 0.0
 
         if X in self.query_cache:
@@ -201,6 +190,8 @@ class MTV(object):
         else:
             estimate = self.query(X)
             self.query_cache[X] = estimate
+
+        timer_stop('Cached query')
 
         return estimate
 
@@ -269,7 +260,9 @@ class MTV(object):
             if self.m == 0 or X_length < self.m:
                 while 0 < len(Y):
                     y = Y.pop()
-                    Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
+                    XY = X | y
+                    # if XY & self.union_of_C == 0:
+                    Z = self.find_best_itemset_rec(XY, Y.copy(), Z, X_length + 1)
 
         return Z
 
