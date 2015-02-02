@@ -4,7 +4,7 @@
 
 from parsers.bacteria_parser import *
 from matplotlib.pylab import plot, hist, ylabel, xlabel, show, savefig, close, title, axes, gcf, figtext
-# plot_relationships()
+plot_relationships()
 # run()
 
 
@@ -78,7 +78,7 @@ def run_discretization_all_nodes():
         line = ' '.join(headers)
         fd.write(line)
 
-run_discretization_all_nodes()
+# run_discretization_all_nodes()
 
 def faust_results_to_parent_clade():
     # Find faust results and propagate clades up to some level

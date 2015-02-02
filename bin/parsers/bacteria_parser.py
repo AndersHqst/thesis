@@ -211,12 +211,51 @@ def replace_abundance_matrix(dataset, replacement):
 
     return ds
 
+def find_threshold(vals):
+    from scipy.stats import entropy
+    candidates = vals
+    lowest_entropy = 999999999
+    lowest_threshold = None
+    highest_entropy = 0
+    highest_threshold = None
+    entropies = []
+    thresholds = []
+    for cand in candidates:
+        disc_vals = []
+        for val in vals:
+            if val < cand:
+                disc_vals.append(0)
+            else:
+                disc_vals.append(1)
+        prob_0 = [x for x in disc_vals if x == 0]
+        prob_1 = [x for x in disc_vals if x == 1]
+        prob_0 = [1/float(len(prob_0)) for x in prob_0]
+        prob_1 = [1/float(len(prob_1)) for x in prob_1]
+        if len(prob_0) > 10 and len(prob_1) > 10:
+            ent = entropy(prob_0 + prob_1)
+            if ent < lowest_entropy:
+                lowest_entropy = ent
+                lowest_threshold = cand
+            if ent > highest_entropy:
+                highest_entropy = ent
+                highest_threshold = cand
+            entropies.append(ent)
+            thresholds.append(cand)
+    # print 'discrete values 0: %d 1: %d' % (len(prob_0), len(prob_1))
+    # plot(thresholds, entropies)
+    # return lowest_threshold, lowest_entropy, highest_threshold, highest_entropy
+
+    return highest_threshold
+
+
 def discrete_relative_threshold(row, threshold=0.5):
-    row_sorted = sorted(row)
-    outliers = int(ceil(len(row_sorted) * 0.05))
-    if outliers < len(row_sorted):
-        row_sorted = row_sorted[:-outliers]
-    return max(row_sorted) * threshold
+    return find_threshold(row)
+
+    # row_sorted = sorted(row)
+    # outliers = int(ceil(len(row_sorted) * 0.05))
+    # if outliers < len(row_sorted):
+    #     row_sorted = row_sorted[:-outliers]
+    # return max(row_sorted) * threshold
 
 
 def discrete_value(row, value, threshold=0.5):
@@ -273,8 +312,8 @@ def plot_relationships(relative_values=True):
     faust_results = results('Stool')
     for faust_result in faust_results:
 
-        if faust_result.number_of_supporting_methods < 5:
-            continue
+        # if faust_result.number_of_supporting_methods < 5:
+        #     continue
 
         # make sure the faust result is in the tree
         # ex Clostridiales|IncertaeSedisXIV is not in the data set
@@ -292,8 +331,7 @@ def plot_relationships(relative_values=True):
         # find from-to bacteria abundances
         xs = []
         ys = []
-        discrete_xs = []
-        discrete_ys = []
+
 
         # Get the total abundance for hte clades in the tree
         abundance_from = tree.abundance_column_in_subtree(from_node)
@@ -307,9 +345,11 @@ def plot_relationships(relative_values=True):
             xs.append(from_abundance)
             ys.append(to_abundance)
 
-            discrete_xs.append(discrete_value(abundance_from, from_abundance))
-            discrete_ys.append(discrete_value(abundance_to, to_abundance))
+            # discrete_xs.append(discrete_value(abundance_from, from_abundance))
+            # discrete_ys.append(discrete_value(abundance_to, to_abundance))
 
+        # print 'xs: ', xs
+        # exit()
         # Uncomment to use log axis
         # fig = gcf()
         # ax = fig.gca()
@@ -340,8 +380,20 @@ def plot_relationships(relative_values=True):
             print 'ys: %s', ys
 
 
-        disc_x = discrete_relative_threshold(xs)
-        disc_y = discrete_relative_threshold(ys)
+        disc_x = find_threshold(xs)
+        disc_y = find_threshold(ys)
+        discrete_xs = []
+        for x in xs:
+            if x <= disc_x:
+                discrete_xs.append(0)
+            else:
+                discrete_xs.append(1)
+        discrete_ys = []
+        for x in ys:
+            if x <= disc_y:
+                discrete_ys.append(0)
+            else:
+                discrete_ys.append(1)
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]
         c, d = [0, max(xs)], [disc_y, disc_y]
@@ -372,7 +424,7 @@ def plot_relationships(relative_values=True):
 
         # vals = vals[:-20]
         plot(xs, ys, 'g.', color='#0066FF')
-        file_name = '../../plots/plots/stool_normalized_clade_5_indicators/' +str(faust_result.id) + '_' + from_node.name.replace('|', '-') + '---' + to_node.name.replace('|', '-') + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/stool_normalized_clade/' +str(faust_result.id) + '_' + from_node.name.replace('|', '-') + '---' + to_node.name.replace('|', '-') + '_' + str(faust_result.direction)
         file_name = os.path.join(dir, file_name)
         # print '[RESULT] ', file_name
         # print vals
