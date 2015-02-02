@@ -7,16 +7,16 @@ class Component(object):
     def __init__(self):
         super(Component, self).__init__()
         self.itemsets = []
-        self.model = None
+        self.nodes = 0
 
     def __str__(self):
         return 'nodes: %s components: ' % (bin(self.nodes), self.components)
 
 
-class GraphComponents(object):
+class Graph(object):
 
     def __init__(self):
-        super(GraphComponents, self).__init__()
+        super(Graph, self).__init__()
 
         # Nodes in a component
         self.components = []
@@ -51,7 +51,7 @@ class GraphComponents(object):
         self.components = disjoint_components + [new_component]
 
 
-    def disjoint_summaries(self):
+    def disjoint_itemsets(self):
         """
         Iterator for disjoint summaries C
         """

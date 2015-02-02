@@ -2,7 +2,6 @@ from __future__ import division
 from charitems import to_binary, to_chars
 from math import log
 from itertools import combinations
-from utils.memoisation import memoise
 from block import Block
 from utils.timer import *
 from utils.counter import *
@@ -15,57 +14,34 @@ sys.setrecursionlimit(1500)
 
 class Model(object):
 
-    def __init__(self, D, k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z):
+    def __init__(self, mtv):
         super(Model, self).__init__()
+
+        # Reference to MTV for run parameters
+        self.mtv = mtv
 
         # Model parameters
         self.u0 = 0
         self.U = {}
 
         # summary
-        self.C = list()
+        self.C = []
 
-        # Mine up to k itemsets
-        self.k = k
+        self.union_of_C = 0
 
-        # Maximum itemset size
-        self.m = m
+        # Block w.r.t C
+        self.T_c = []
 
-        # Support
-        self.s = s
+        # Cached queries in FindBestItemSet
+        self.query_cache = {}
 
-        # Number of candidate itemsets FindBestItemSet should search for
-        # Will result in a list of top-z highest heuristics
-        self.z = z
+        self.iterative_scaling()
 
         # Heurestics from h() for X in C at the time X was added
         self.heurestics = {}
 
         # BIC scores for X in C at the time X was added
         self.BIC_scrores = {}
-
-        # Block w.r.t C
-        self.T_c = []
-
-        # Dataset, is it right to always remove empty rows?
-        tmp = []
-        for i in D:
-            if i != 0:
-                tmp.append(i)
-        self.D = tmp
-
-        # Singletons
-        self.I = itemsets.singletons(self.D)
-
-        self.singletons_restricted = None
-
-        # Cached queries in FindBestItemSet
-        self.query_cache = {}
-
-        # Cached frequency counts in D
-        self.fr_cache = {}
-
-        self.iterative_scaling()
 
 
     def p(self, T, y):
@@ -78,21 +54,11 @@ class Model(object):
         res = 1.0
 
         for x in self.C:
-            assert not (x in self.I), "Singletons are not in summary calling p()"
+            assert not (x in self.mtv.I), "Singletons are not in summary calling p()"
             if itemsets.contains(T.union_of_itemsets, x):
                 res = res * self.U[x]
 
         return self.u0 * res * T.block_weight
-
-
-    def old_model(self, t):
-        res = 1.0
-
-        for x in self.C:
-            if itemsets.contains(t, x):
-                res = res * self.U[x]
-
-        return self.u0 * res
 
 
     def closure(self, y):
@@ -145,181 +111,71 @@ class Model(object):
         return estimate
 
 
-    def fr(self, x):
-        """
-        :param x: Itemset
-        :return: Frequency of x in D
-        """
-
-        if x in self.fr_cache:
-            return self.fr_cache[x]
-
-        p = 0.0
-        for xi in self.D:
-            if itemsets.contains(xi, x):
-                p += 1
-        p = p / len(self.D)
-
-        assert p <= 1.0
-
-        self.fr_cache[x] = p
-
-        return p
-
-
-    def cached_itemset_stats(self, X):
-        """
-        Helper function to cache queries.
-        Note this can only be used from e.g. FindBestItemSet
-        when the model parameters are not altered between cache hits.
-        :param X: Queried itemset
-        :return: Query result
-        """
-
-        estimate = 0.0
-
-        if X in self.query_cache:
-            estimate = self.query_cache[X]
-        else:
-            estimate = self.query(X)
-            self.query_cache[X] = estimate
-
-        return estimate
-
-
-    def find_best_itemset(self):
-        """
-        Find best itemset in the sample
-        space defined by I.
-        Subject to model parameters z, m, s and
-        the heuristic function h
-        :return:
-        """
-
-        # reset query cache
-        self.query_cache = {}
-
-        timer_start('Find best itemset')
-        Z = self.find_best_itemset_rec(0, self.I.copy(), [(0,0)])
-        timer_stop('Find best itemset')
-
-        # Edge case, where we only find singletons not exactly described by the model
-        # We search the top 10 Zs to see if there was a non singleton itemset
-        for z in Z:
-            if not (z in self.I) and z != 0:
-                return z[0]
-        print 'No valid z in Z: ', Z
-        return Z[0][0]
-
-
-    def find_best_itemset_rec(self, X, Y, Z, X_length=0, singleton_restrictions=None):
-        """
-        :param X: itemset
-        :param Y: remaining itemsets
-        :param Z: currently best itemset
-        :param s: min support
-        :param m: max itemset size
-        :param X_length: number of items in X. No pretty, but since X is an int,
-                         this is the fastest way to know its length
-        :return: Best itemsets Z
-        """
-
-        fr_X = self.fr(X)
-        if fr_X < self.s:
-            return Z
-
-        p_X = self.cached_itemset_stats(X)
-
-        h_X = h(fr_X, p_X)
-        if h_X > Z[-1][1] or len(Z) < self.z:
-            Z.append((X, h_X))
-
-            # Sort by descending  heuristic
-            Z.sort(lambda x, y: x[1] < y[1] and 1 or -1)
-            if self.z < len(Z):
-                Z.pop()
-
-        XY = X | itemsets.union_of_itemsets(Y)
-        fr_XY = self.fr(XY)
-        p_XY = self.cached_itemset_stats(XY)
-
-        b = max(h(fr_X, p_XY), h(fr_XY, p_X))
-
-        if Z[0][0] == 0 or b > Z[-1][1]:
-
-            if self.m == 0 or X_length < self.m:
-                while 0 < len(Y):
-                    y = Y.pop()
-                    Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
-
-        return Z
-
-
-    def find_best_itemset_iter(self, X, I, Z, model, s, m, X_length=0):
-        """
-        :param X: itemset
-        :param Y: remaining itemsets
-        :param Z: currently best itemset
-        :param s: min support
-        :param m: max itemset size
-        :param X_length: number of items in X. No pretty, but since X is an int,
-                         this is the fastest way to know its length
-        :return: Best itemset Z
-        """
-
-        stack = []
-        stack.append((X, itemsets.union_of_itemsets(I), X_length))
-        d = set()
-        while 0 < len(stack):
-            X, Y, X_length = stack.pop()
-
-            if not (X, Y) in d:
-
-                d.add((X, Y))
-
-                if m is None or X_length < m:
-
-                    # Initially all I
-                    Ys_copy = Y
-
+    # def find_best_itemset_iter(self, X, I, Z, model, s, m, X_length=0):
+    #     """
+    #     :param X: itemset
+    #     :param Y: remaining itemsets
+    #     :param Z: currently best itemset
+    #     :param s: min support
+    #     :param m: max itemset size
+    #     :param X_length: number of items in X. No pretty, but since X is an int,
+    #                      this is the fastest way to know its length
+    #     :return: Best itemset Z
+    #     """
+    #
+    #     stack = []
+    #     stack.append((X, itemsets.union_of_itemsets(I), X_length))
+    #     d = set()
+    #     while 0 < len(stack):
+    #         X, Y, X_length = stack.pop()
+    #
+    #         if not (X, Y) in d:
+    #
+    #             d.add((X, Y))
+    #
+    #             if m is None or X_length < m:
+    #
+    #                 Initially all I
+                    # Ys_copy = Y
+                    #
                     # If not bounded, add all Xy to the stach
-                    for y in I:
+                    # for y in I:
+                    #
+                    #     if X & y == 0 and Ys_copy & y == y:
+                    #         Xy = X | y
+                    #         fr_X = self.mtv.fr(Xy)
+                    #         if fr_X < s:
+                    #             continue
+                    #         Ys_copy = Ys_copy ^ y
+                    #
+                    #         p_Xy = self.cached_itemset_stats(Xy)
+                    #
+                    #         fr_Z = self.mtv.fr(Z[0][0])
+                    #         p_Z = self.cached_itemset_stats(Z[0][0])
+                    #
+                    #         h_X = h(fr_X, p_Xy)
+                    #         h_Z = h(fr_Z, p_Z)
+                    #         if h_X > h_Z or len(Z) < 10:
+                    #             Z.append((Xy, h_X))
+                    #             Sort by descending  heuristic
+                                # Z.sort(lambda x, y: x[1] < y[1] and 1 or -1)
+                                # if 10 < len(Z):
+                                #     Z.pop()
+                            #
+                            # XY = Xy | Ys_copy
+                            # fr_XY = self.mtv.fr(XY)
+                            #
+                            # p_XY = self.cached_itemset_stats(XY)
+                            #
+                            # b = max(h(fr_X, p_XY), h(fr_XY, p_Xy))
+                            #
+                            # if Z[0][0] == 0 or b > h_Z:
+                            #     stack.append((Xy, Ys_copy, X_length + 1))
+        #
+        # return Z
 
-                        if X & y == 0 and Ys_copy & y == y:
-                            Xy = X | y
-                            fr_X = self.fr(Xy)
-                            if fr_X < s:
-                                continue
-                            Ys_copy = Ys_copy ^ y
 
-                            p_Xy = self.cached_itemset_stats(Xy)
-
-                            fr_Z = self.fr(Z[0][0])
-                            p_Z = self.cached_itemset_stats(Z[0][0])
-
-                            h_X = h(fr_X, p_Xy)
-                            h_Z = h(fr_Z, p_Z)
-                            if h_X > h_Z or len(Z) < 10:
-                                Z.append((Xy, h_X))
-                                # Sort by descending  heuristic
-                                Z.sort(lambda x, y: x[1] < y[1] and 1 or -1)
-                                if 10 < len(Z):
-                                    Z.pop()
-
-                            XY = Xy | Ys_copy
-                            fr_XY = self.fr(XY)
-
-                            p_XY = self.cached_itemset_stats(XY)
-
-                            b = max(h(fr_X, p_XY), h(fr_XY, p_Xy))
-
-                            if Z[0][0] == 0 or b > h_Z:
-                                stack.append((Xy, Ys_copy, X_length + 1))
-
-        return Z
-
-
-    def compute_blocks(self, set_prob=False):
+    def compute_blocks(self):
         """
             Compute the set of blocks that C infer
             return: Topologically sorted blocks T_c
@@ -341,14 +197,10 @@ class Model(object):
                     T_unions.add(union)
                     T = Block()
                     T.union_of_itemsets = union
-                    if set_prob:
-                        self.C_masks[union] = comb
-                        self.cached_queries[union] = self.query(union)
                     T.singletons = itemsets.singletons_of_itemsets(comb)
                     T.itemsets = set(comb)
 
                     T_c.append(T)
-
 
         timer_stop('Compute blocks')
         return T_c
@@ -356,7 +208,7 @@ class Model(object):
 
     def compute_block_sizes(self, T_c):
         for T in T_c:
-            T.cummulative_block_size = 2 ** (len(self.I) - len(to_chars(T.union_of_itemsets)))
+            T.cummulative_block_size = 2 ** (len(self.mtv.I) - len(to_chars(T.union_of_itemsets)))
         for i, Ti in enumerate(T_c):
             Ti.block_size = Ti.cummulative_block_size
             for Tj in T_c[:i]:
@@ -383,7 +235,7 @@ class Model(object):
         blocks = []
 
         total_weight = 1
-        for i in self.I:
+        for i in self.mtv.I:
             total_weight *= (1 + U[i])
 
         closure = self.closure(y)
@@ -423,8 +275,8 @@ class Model(object):
     def iterative_scaling(self):
 
         # Initialize U and u0
-        self.u0 = 2 ** -len(self.I)
-        _C = self.I.union(self.C)
+        self.u0 = 2 ** -len(self.mtv.I)
+        _C = self.mtv.I.union(self.C)
         for c in _C:
             self.U[c] = 1.0
 
@@ -443,12 +295,11 @@ class Model(object):
 
                 estimate = self.query(x)
 
-                if self.fr(x) == 0 or estimate == 0:
-                    msg = 'itemset %d has frequency=%f and p=%f. It should not be added to the summary' % (x, self.fr(x), estimate)
+                if self.mtv.fr(x) == 0 or estimate == 0:
+                    msg = 'itemset %d has frequency=%f and p=%f. It should not be added to the summary' % (x, self.mtv.fr(x), estimate)
                     assert False, msg
-                    exit()
 
-                fr_x = self.fr(x)
+                fr_x = self.mtv.fr(x)
                 if  abs(1 - fr_x) < float_precision:
                     # print 'fr_x was 1'
                     fr_x = 0.9999999999
@@ -472,54 +323,33 @@ class Model(object):
         timer_stop('Iterative scaling')
 
 
-    def validate_best_itemset(self, itemset):
-        """
-        Returns true if an itemset is valid to be added to C, or false.
-        Singletons or the empty set should not be added to C, but this can happen
-        in cases where e.g. thresholds for support or min itemset size
-        are too strict
-        """
-        if itemset in self.I:
-            print 'X was a singleton! These should not be possible from the heurestic'
-            return False
-
-        if itemset == 0:
-            print 'Best itemset found was the empty set (0). This could ' \
-                      'mean the heurestic could not find any itemset ' \
-                      'not already predicted by the model, or above ' \
-                      'the provided thresholds. Exiting MTV'
-            return False
-
-        return True
-
-
-    def mtv(self):
-        """
-        Run the mtv algorithm with current parameterization of the model
-        """
-
-        self.BIC_scrores['initial_score'] = self.score()
-
-        # Add itemsets until we have k
-        # We ignore an increasing BIC score, and always mine k itemsets
-        while len(self.C) < self.k:
-
-            X = self.find_best_itemset()
-
-            if not (self.validate_best_itemset(X)):
-                break
-
-            self.add_to_summary(X)
+    # def mtv(self):
+    #     """
+    #     Run the mtv algorithm with current parameterization of the model
+    #     """
+    #
+    #     self.BIC_scrores['initial_score'] = self.score()
+    #
+    #     # Add itemsets until we have k
+    #     # We ignore an increasing BIC score, and always mine k itemsets
+    #     while len(self.C) < self.k:
+    #
+    #         X = self.find_best_itemset()
+    #
+    #         if not (self.validate_best_itemset(X)):
+    #             break
+    #
+    #         self.add_to_summary(X)
 
 
     def score(self):
         try:
-            _C = self.I.union(self.C)
+            _C = self.mtv.I.union(self.C)
             U = self.U
             u0 = self.u0
-            D = self.D
+            D = self.mtv.D
 
-            return -1 * ((len(D)) * (log(u0, 2) + sum([self.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D))
+            return -1 * ((len(D)) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D))
 
         except Exception, e:
             print 'Exception in score function, ', e
@@ -534,10 +364,11 @@ class Model(object):
         :param itemset: An itemset to be added to C
         :return:
         """
-        heuristic = h(self.fr(itemset), self.query(itemset))
+        heuristic = h(self.mtv.fr(itemset), self.query(itemset))
 
         # Add X to summary
         self.C.append(itemset)
+        self.union_of_C = itemsets.union_of_itemsets(self.C)
         self.heurestics[itemset] = heuristic
 
         # Update model
@@ -551,7 +382,6 @@ class Model(object):
     def is_in_sumamry(self, y):
         """
         :param y: Itemset to look for
-        :param C: Summary
         :return: Ture if y is in C
         """
         for x in self.C:
@@ -575,27 +405,3 @@ class Model(object):
         str += u'u0: {0:f} '.format(self.u0)
 
         return str
-
-
-
-def precompute_models():
-    # Build a grap of dijoint components
-    # Each compoenent need to correspond to a C'
-    # run iterative scaling for each disjoint model
-    pass
-
-def get_merged_models():
-    # Some Y intersect several models, we need the merged blocks+models
-    # use a cache, or
-    # 1 Union the Cs in the models,
-    # 2 Compute blocks
-    # 3 iterative scaling
-    # cache merged block, key is sorted set of itemsets
-    # return merged models
-
-    # Create mtv object
-        # abstract away the fact that we have multiple Cs
-    # have a total order on the itemsets added to the models - print this in the end
-    # Running MTV, create a model for each disjoint graph_component
-    #
-    pass
