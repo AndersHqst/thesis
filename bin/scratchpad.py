@@ -11,7 +11,7 @@ from preprocessing.discretization import *
 from preprocessing.preprocessors import remove_empty_samples, compute_relative_values
 import os
 
-# plot_relationships()
+plot_relationships()
 # run()
 
 

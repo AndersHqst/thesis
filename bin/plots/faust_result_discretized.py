@@ -4,6 +4,7 @@ from preprocessing.discretization import *
 from preprocessing.tree import Tree
 from preprocessing import faust_parser
 from scipy.stats import pearsonr, spearmanr
+from utils.correlation import phicoeff
 
 def plot_relationships(relative_values=True):
 
@@ -101,16 +102,18 @@ def plot_relationships(relative_values=True):
         figtext(0.7, 0.80, _01, fontsize=10)
         figtext(0.7, 0.75, _10, fontsize=10)
         figtext(0.7, 0.70, _11, fontsize=10)
+        phi = 'phi: %f' % phicoeff(discrete_xs, discrete_ys)
+        figtext(0.7, 0.65, phi, fontsize=10)
 
         from_depth = 'From depth: %d' % from_node.depth
         to_depth = 'To depth: %d' % to_node.depth
-        figtext(0.7, 0.65, from_depth, fontsize=10)
-        figtext(0.7, 0.60, to_depth, fontsize=10)
+        figtext(0.7, 0.60, from_depth, fontsize=10)
+        figtext(0.7, 0.55, to_depth, fontsize=10)
 
         same_lineage = 'False'
         if tree.nodes_have_same_lineage(from_node, to_node):
             same_lineage = ' True'
-        figtext(0.7, 0.55, 'Same lineage: ' + same_lineage, fontsize=10)
+        figtext(0.7, 0.50, 'Same lineage: ' + same_lineage, fontsize=10)
 
 
         # vals = vals[:-20]
