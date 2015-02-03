@@ -41,7 +41,7 @@ class MTV(object):
         self.fr_cache = {}
 
         # Global summary
-        self.C = []
+        self.C = initial_C
         self.union_of_C = 0
 
         self.BIC_scores = {}
