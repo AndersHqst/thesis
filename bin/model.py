@@ -192,12 +192,6 @@ class Model(object):
         U = self.U
         blocks = []
 
-
-        total_weight = 1
-        for i in self.I:
-            total_weight *= (1 + U[i])
-        # self.compute_total_weight()
-
         closure = self.closure(y)
 
         timer_start('Cummulative weight')
@@ -207,7 +201,7 @@ class Model(object):
 
                 blocks.append(T)
 
-                T.cummulative_block_weight = total_weight
+                T.cummulative_block_weight = self.total_weight
 
                 # Remove singletons from y already covered by the block
                 mask = y & T.union_of_itemsets
