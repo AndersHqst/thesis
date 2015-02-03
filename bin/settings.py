@@ -1,5 +1,5 @@
 # Default run parameters
-DEFAULT_K = 10
+DEFAULT_K = None
 DEFAULT_M = 0
 DEFAULT_S = 0.25
 DEFAULT_Z = 1

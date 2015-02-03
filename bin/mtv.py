@@ -63,9 +63,8 @@ class MTV(object):
         self.build_independent_models()
         self.BIC_scores['initial_score'] = self.models[0].score()
 
-        # Add itemsets until we have k
-        # We ignore an increasing BIC score, and always mine k itemsets
-        while len(self.C) < self.k:
+        # Run until we have converged
+        while not self.finished():
 
             X = self.find_best_itemset()
 
@@ -90,37 +89,26 @@ class MTV(object):
         mask = y
         p = 1.0
 
-        for intersected_model in self.intersected_models(y):
 
-            # get intersection
-            intersection = intersected_model.union_of_C & mask
+        for model in self.models:
 
-            # remove from mask
-            mask = intersection ^ mask
+            # Is this an intersected model?
+            if y & model.union_of_C != 0:
 
-            # query the intersected model
-            p *= intersected_model.query(intersection)
+                # get intersection
+                intersection = model.union_of_C & mask
+
+                # remove from mask
+                mask = intersection ^ mask
+
+                # query the intersected model
+                p *= model.query(intersection)
 
         # disjoint singletons
         p *= self.models[0].query(mask)
 
         return p
 
-
-    def intersected_models(self, y):
-        """
-        Returns a list of models intersected with y.
-        These would be the models needed to query y
-        :param y: Itemset
-        :return:
-        """
-        intersected_models = []
-
-        for model in self.models:
-            if y & model.union_of_C != 0:
-                intersected_models.append(model)
-
-        return intersected_models
 
     def score(self):
 
@@ -132,6 +120,22 @@ class MTV(object):
         total_score += 0.5 * len(self.C) * log(len(self.D), 2)
 
         return total_score
+
+
+    def finished(self):
+        """
+        Return True if the model has converged, or if k is provided, that k itemsets have been found.
+        :return:
+        """
+        if not (self.k is None):
+            return self.k < len(self.C)
+
+        if 1 < len(self.C):
+            # If previous score is lower, the model score has increased
+            # and we should finish.
+            return self.BIC_scores[self.C[-2]] < self.BIC_scores[self.C[-1]]
+
+        return False
 
 
     def add_itemset(self, X):
