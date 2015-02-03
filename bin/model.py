@@ -192,9 +192,11 @@ class Model(object):
         U = self.U
         blocks = []
 
+
         total_weight = 1
         for i in self.I:
             total_weight *= (1 + U[i])
+        # self.compute_total_weight()
 
         closure = self.closure(y)
 
@@ -233,7 +235,7 @@ class Model(object):
     def iterative_scaling(self):
 
         # Initialize U and u0
-        self.u0 = 2 ** -len(self.mtv.I)
+        self.u0 = 2 ** -len(self.I)
         _C = self.I.union(self.C)
         for c in _C:
             self.U[c] = 1.0
@@ -245,7 +247,7 @@ class Model(object):
         iterations = 0
         epsilon = 1e-4
 
-        while iterations < 100:
+        while iterations < 1000:
 
             max_error = 0
 
@@ -280,14 +282,16 @@ class Model(object):
 
 
     def score(self):
-        print 'score called'
+        # print 'score called'
         try:
-            _C = self.I.union(self.C)
+            # _C = self.I.union(self.C)
+            _C = self.C
             U = self.U
             u0 = self.u0
             D = self.mtv.D
 
-            return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D))
+            return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C])))
+            # return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D), 2)
 
         except Exception, e:
             print 'Exception in score function, ', e

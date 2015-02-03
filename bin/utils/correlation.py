@@ -1,4 +1,5 @@
 from math import sqrt
+
 def phicoeff(x, y):
     """
     a, b, c, d are frequency counts for the various paired levels of dichotomous variables.

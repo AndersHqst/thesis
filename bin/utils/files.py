@@ -13,6 +13,8 @@ def parse_dat_file(path):
     for line in open(path):
         clean_line = line.replace('\n', '')
         cmps = clean_line.split(' ')
+        if '' in cmps:
+            cmps.remove('')
         if 0 < len(cmps):
             bin_positions = [int(cmp) for cmp in cmps]
             val = 0

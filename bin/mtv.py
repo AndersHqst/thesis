@@ -85,6 +85,7 @@ class MTV(object):
         if y & self.union_of_C == 0:
             return self.models[0].query(y)
 
+
         # query intersected models independently
         mask = y
         p = 1.0
@@ -122,8 +123,15 @@ class MTV(object):
         return intersected_models
 
     def score(self):
-        #TODO: how to do this?!?!
-        return 42
+
+        total_score = 0
+
+        for model in self.models:
+            total_score += model.score()
+
+        total_score += 0.5 * len(self.C) * log(len(self.D), 2)
+
+        return total_score
 
 
     def add_itemset(self, X):
@@ -156,6 +164,17 @@ class MTV(object):
 
         # Clear old models
         self.models = []
+
+        # Hack to only use one model
+        # if True:
+        #     model = Model(self)
+        #     model.C = self.C
+        #     model.I = self.I
+        #     model.union_of_C = itemsets.union_of_itemsets(self.C)
+        #     model.iterative_scaling()
+        #     self.models.append(model)
+        #     return
+
 
         # If C is empty, we just need one empty model
         if len(self.C) == 0:

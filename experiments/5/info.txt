@@ -1,4 +1,4 @@
-Experiment with only bacteria at the lowest levels. These are at level 6. Do not include leafs at lower depths.
+Experiment with only bacteria at the lowest levels. These are at level 5. Do not include leafs at lower depths.
 
 
 Setup:
