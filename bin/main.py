@@ -25,12 +25,12 @@ dummy_data = [21415, 405699, 921899, 761510, 330665, 50970, 306223, 5199, 381774
 
 
 
-def print_help(s, k, z, a):
+def print_help(s, z, a):
     print 'Help:'
     print '-h print this help message'
     print '-m Maximum number of items per itemset, default=inf'
     print '-s Minimum itemset support, default: s=%f' % s
-    print '-k Mine top k itemsets, default is %d' % k
+    print '-k Mine top k itemsets, regardless of model score'
     print '-f Input file containing a dataset. See example.dat'
     print '-o Output file with resulting summary C'
     print '-c Input file with seed for the summary.'
@@ -62,11 +62,11 @@ def parse_argv(argv):
         opts, args = getopt.getopt(argv, "hm:s:k:vz:f:o:c:a:H:", ['debug'])
     except getopt.GetoptError:
        print 'Unknown arguments: ', args
-       print_help(s, k, z, a)
+       print_help(s, z, a)
        sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print_help(s, k, z, a)
+            print_help(s, z, a)
             sys.exit()
 
         elif opt in ("-m"):
@@ -143,7 +143,7 @@ def main(argv):
 
     # Print general run parameters and final summary C
     print ''
-    print 'k=%d, m=%d, s=%f' % (k, m, s)
+    print 'k=%s, m=%d, s=%f' % (str(k), m, s)
     print '\nMTV run time: ', time() - start
     print '\nSummary: '
     print 'Heuristic \t BIC score \t p \t\t Itemsets'

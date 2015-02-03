@@ -51,6 +51,10 @@ class FaustResult(object):
         # True if the relationship is in the same bodysite
         self.relationship_same_body_site = False
 
+
+    # def to_csv(self):
+        # return self.clade_1 + ',' +
+
     def __str__(self):
 
         s = 'Bodysites: %s-%s, ' % (self.body_site_1, self.body_site_2)

@@ -77,7 +77,7 @@ def run_discretization_all_nodes():
     # Write .dat file
     abundance = abundance_matrix(bin_ds)
     D = binary_vectors_to_ints(abundance)
-    write_dat_file('../experiments/2/stool_all_discrete.dat', D)
+    write_dat_file('../experiments/1/Stool_maxent_discretized_all_nodes.dat', D)
 
     # Create a header file
     headers = []

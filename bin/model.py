@@ -186,9 +186,9 @@ class Model(object):
 
 
     def compute_total_weight(self):
-        self.total_weight = 1
+        self.total_weight = Decimal(1)
         for i in self.I:
-            self.total_weight *= (1 + self.U[i])
+            self.total_weight *= (Decimal(1) + Decimal(self.U[i]))
 
 
     def compute_block_weights(self, y=0):
@@ -201,10 +201,6 @@ class Model(object):
         U = self.U
         blocks = []
 
-        total_weight = Decimal(1)
-        for i in self.I:
-            total_weight *= (Decimal(1) + Decimal(U[i]))
-
         closure = self.closure(y)
 
         timer_start('Cummulative weight')
@@ -214,7 +210,7 @@ class Model(object):
 
                 blocks.append(T)
 
-                T.cummulative_block_weight = total_weight
+                T.cummulative_block_weight = self.total_weight
 
                 # Remove singletons from y already covered by the block
                 mask = y & T.union_of_itemsets
@@ -242,7 +238,7 @@ class Model(object):
     def iterative_scaling(self):
 
         # Initialize U and u0
-        self.u0 = Decimal(2 ** -len(self.mtv.I))
+        self.u0 = Decimal(2 ** -len(self.I))
         _C = self.I.union(self.C)
         for c in _C:
             self.U[c] = 1.0
@@ -254,7 +250,7 @@ class Model(object):
         iterations = 0
         epsilon = 1e-3
 
-        while iterations < 100:
+        while iterations < 1000:
 
             max_error = 0
 
@@ -290,14 +286,15 @@ class Model(object):
 
 
     def score(self):
-        return 42
         try:
-            _C = self.I.union(self.C)
+            # _C = self.I.union(self.C)
+            _C = self.C
             U = self.U
             u0 = self.u0
             D = self.mtv.D
 
-            return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D))
+            return Decimal(-1) * (Decimal(len(D)) * (u0.log10() + Decimal(sum([self.mtv.fr(x) * log(U[x], 2) for x in _C]))))
+            # return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D), 2)
 
         except Exception, e:
             print 'Exception in score function, ', e
