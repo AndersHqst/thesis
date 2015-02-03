@@ -18,10 +18,10 @@ def phicoeff(x, y):
 
     xys = zip(x, y)
 
-    a = len([0 for (x,y) in xys if x == 0 and y == 0])
-    b = len([0 for (x,y) in xys if x == 1 and y == 0])
-    c = len([0 for (x,y) in xys if x == 0 and y == 1])
-    d = len([0 for (x,y) in xys if x == 1 and y == 1])
+    a = len([0 for (x,y) in xys if x == 0 and y == 0]) + 1
+    b = len([0 for (x,y) in xys if x == 1 and y == 0]) + 1
+    c = len([0 for (x,y) in xys if x == 0 and y == 1]) + 1
+    d = len([0 for (x,y) in xys if x == 1 and y == 1]) + 1
 
     return (a*d - b * c) / sqrt((a + b) * (c+d) * (a+c) * (b + d))
 

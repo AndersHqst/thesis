@@ -4,14 +4,36 @@
 
 from matplotlib.pylab import plot, ylabel, xlabel, savefig, close, title, figtext
 
-from plots.faust_result_discretized import plot_relationships
+from plots.faust_result_discretized import plot_faust_relationships, plot_clades_relationships
 from scipy.stats import pearsonr, spearmanr
 from preprocessing.tree import Tree
 from preprocessing.discretization import *
 from preprocessing.preprocessors import remove_empty_samples, compute_relative_values
 import os
 
-# plot_relationships()
+
+# clades = [['Burkholderiales|Alcaligenaceae', 'Synergistetes|Synergistia'],
+# ['Flavobacteriales|unclassified', 'Synergistetes|Synergistia'],
+# ['Veillonellaceae|Megamonas', 'Bacteria|Bacteroidetes'],
+# ['Porphyromonadaceae|unclassified', 'Actinobacteria|Actinobacteria'],
+# ['Actinomycetales|Corynebacteriaceae', 'Aeromonadales|Succinivibrionaceae'],
+# ['Porphyromonadaceae|unclassified', 'Actinomycetales|Corynebacteriaceae'],
+# ['Ruminococcaceae|Subdoligranulum', 'Ruminococcaceae|Ethanoligenens'],
+# ['Erysipelotrichaceae|Coprobacillus', 'Peptococcaceae|Peptococcus'],
+# ['Enterobacteriaceae|Escherichia/Shigella', 'Proteobacteria|Epsilonproteobacteria'],
+# ['Alphaproteobacteria|Sphingomonadales', 'Bacteria|Cyanobacteria'],
+# ['Ruminococcaceae|Subdoligranulum', 'Neisseriaceae|unclassified'],
+# ['Veillonellaceae|Acidaminococcus', 'Pasteurellaceae|Aggregatibacter'],
+# ['Victivallaceae|Victivallis', 'Coriobacteriaceae|unclassified'],
+# ['Proteobacteria|Betaproteobacteria', 'Verrucomicrobiaceae|Akkermansia'],
+# ['Anaeroplasmataceae|Asteroleplasma', 'Victivallaceae|Victivallis'],
+# ['Fusobacteria|Fusobacteria', 'Firmicutes|unclassified'],
+# ['Fusobacteria|Fusobacteria', 'Porphyromonadaceae|Dysgonomonas'],
+# ['Coriobacteriaceae|Enterorhabdus', 'Verrucomicrobiaceae|Akkermansia'],
+# ['Campylobacterales|Campylobacteraceae', 'Bacteria'],
+# ['Firmicutes|unclassified', 'Actinobacteria|Actinomycetales']]
+#
+# plot_clades_relationships(clades)
 # run()
 
 
