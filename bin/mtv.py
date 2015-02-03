@@ -41,7 +41,7 @@ class MTV(object):
 
         # Global summary
         self.C = initial_C
-        self.union_of_C = 0
+        self.union_of_C = itemsets.union_of_itemsets(self.C)
 
         self.BIC_scores = {}
         self.heuristics = {}

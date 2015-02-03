@@ -218,4 +218,16 @@ def faust_results_to_parent_clade():
 # faust_results_to_parent_clade()
 
 
+def load_model():
+    from mtv import MTV
+    from utils import files
+    import itemsets
+    headers = files.parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
+    C = files.parse_dat_file('../experiments/1/summary.dat')
+    D = files.parse_dat_file('../experiments/1/Stool_maxent_discretized_all_nodes.dat')
+    # print clade names
+    for X in C:
+        print itemsets.to_index_list(X, headers)
+
+
 

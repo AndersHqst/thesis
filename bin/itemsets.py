@@ -109,5 +109,17 @@ def binary_vectors_to_ints(binary_matrix):
         values.append(val)
     return values
 
+def itemset_from_binary_indeces(binaries):
+    """
+    Given a list of binaru indeces, returns an itemset as
+    its integer representation
+    :param binaries:
+    :return:
+    """
+    val = 0
+    for b in binaries:
+        val = val | 2 ** b
+    return val
+
 
 
