@@ -25,3 +25,7 @@ Report:
     Create scatter plots for summary, with discretization lines.
         Put representative plot
 
+
+
+1 attempt:
+./main.py -f ../experiments/1/Stool_maxent_discretized_all_nodes.dat -m 2 -k 10 -o ../experiments/1/summary.dat --debug
