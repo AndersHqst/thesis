@@ -68,6 +68,7 @@ class MTV(object):
         while not self.finished():
 
             X = self.find_best_itemset()
+            print 'Found: ', itemsets.to_index_list(X)
 
             if not (self.validate_best_itemset(X)):
                 break

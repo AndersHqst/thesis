@@ -3,6 +3,7 @@ A set of helper functions for working with itemsets represented as integers
 """
 
 from utils.memoisation import memoise
+from utils.timer import *
 
 def contains(a, b):
     """ True if a contains b """
@@ -85,15 +86,32 @@ def union_of_itemsets(itemsets):
 
 @memoise
 def singletons_of_itemset(itemset):
+    """
+    Returns a set of singleton values in the itemset.
+    This is a small modification of the bitCount algorithm
+    ex https://wiki.python.org/moin/BitManipulation
+    :param itemset:
+    :return:
+    """
+    timer_start('Singletons of itemsets')
+
     singletons = []
-    val = itemset
-    pos = 0
-    while val != 0:
-        if val & 1 == 1:
-            singletons.append(2 ** pos)
-        val = val >> 1
-        pos += 1
+    while itemset:
+
+        # Save the current itemset
+        prev = itemset
+
+        # Mask all bits but the lowest that is set
+        itemset &= itemset - 1
+
+        # Get the bit that was removed
+        removed = itemset ^ prev
+
+        singletons.append(removed)
+
+    timer_stop('Singletons of itemsets')
     return singletons
+
 
 def binary_vectors_to_ints(binary_matrix):
     values = []
@@ -111,3 +129,23 @@ def binary_vectors_to_ints(binary_matrix):
 
 
 
+# def test():
+#     from random import randint
+#     for i in range(100000):
+#         itemset = randint(0, 2**21)
+#         s1 = singletons_of_itemset(itemset)
+#         s2 = bitCount(itemset)
+#         for i1 in s1:
+#             if not i1 in s2:
+#                 print 'missing in s2: ', i1
+#                 print 'Wrong singletons for itemset: ', itemset
+#                 print 's1: ', s1
+#                 exit()
+#         for i2 in s2:
+#             if not i2 in s1:
+#                 print 'missing in s2: ', i2
+#                 print 'Wrong singletons for itemset: ', itemset
+#                 print 's2: ', s2
+#                 exit()
+
+# test()
