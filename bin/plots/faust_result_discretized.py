@@ -149,6 +149,7 @@ def plot_clades_relationships(clade_pairs):
         xs = []
         ys = []
 
+        # 'Veillonellaceae|Megamonas'
 
         # Get the total abundance for hte clades in the tree
         abundance_from = tree.abundance_column_in_subtree(from_node)

@@ -18,6 +18,9 @@ def compute_relative_values(dataset):
         total = sum(abundances)
         new_row = list(row[:2])
         for value in abundances:
+            val = value / float(total)
+            if val > 1:
+                pass
             new_row.append(value / float(total))
         relative_matrix.append(list(new_row))
 

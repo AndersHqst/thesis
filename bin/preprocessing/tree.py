@@ -138,11 +138,11 @@ class Tree(object):
         if not (node.abundances is None):
             if self.binary:
                 return (node.abundances > 0).astype(int)
-            return node.abundances
+            return column + node.abundances
 
         # This is not a leaf, so add all children
         for child in node.children:
-            column = column + self.abundance_column_in_subtree(child, column)
+            column = self.abundance_column_in_subtree(child, column)
 
         if self.binary:
             return (column > 0).astype(int)
@@ -303,6 +303,7 @@ def test_tree():
         ['TID', 'STSite', 'Bacteria|Firmicutes|Bacilli', 'Bacteria|Firmicutes|Erysipelotrichi', 'Bacteria|Fusobacteria', 'unclassified'],
         [700107520, 'Tongue_dorsum',   0               ,               1                       ,            2           ,     7         ],
         [700107521, 'Tongue_dorsum',   10              ,              11                       ,           12           ,    19         ],
+        [700107521, 'Tongue_dorsum',   20              ,              21                       ,           22           ,    99         ],
 
     ]
 

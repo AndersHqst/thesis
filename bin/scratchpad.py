@@ -12,28 +12,28 @@ from preprocessing.preprocessors import remove_empty_samples, compute_relative_v
 import os
 
 
-# clades = [['Burkholderiales|Alcaligenaceae', 'Synergistetes|Synergistia'],
-# ['Flavobacteriales|unclassified', 'Synergistetes|Synergistia'],
-# ['Veillonellaceae|Megamonas', 'Bacteria|Bacteroidetes'],
-# ['Porphyromonadaceae|unclassified', 'Actinobacteria|Actinobacteria'],
-# ['Actinomycetales|Corynebacteriaceae', 'Aeromonadales|Succinivibrionaceae'],
-# ['Porphyromonadaceae|unclassified', 'Actinomycetales|Corynebacteriaceae'],
-# ['Ruminococcaceae|Subdoligranulum', 'Ruminococcaceae|Ethanoligenens'],
-# ['Erysipelotrichaceae|Coprobacillus', 'Peptococcaceae|Peptococcus'],
-# ['Enterobacteriaceae|Escherichia/Shigella', 'Proteobacteria|Epsilonproteobacteria'],
-# ['Alphaproteobacteria|Sphingomonadales', 'Bacteria|Cyanobacteria'],
-# ['Ruminococcaceae|Subdoligranulum', 'Neisseriaceae|unclassified'],
-# ['Veillonellaceae|Acidaminococcus', 'Pasteurellaceae|Aggregatibacter'],
-# ['Victivallaceae|Victivallis', 'Coriobacteriaceae|unclassified'],
-# ['Proteobacteria|Betaproteobacteria', 'Verrucomicrobiaceae|Akkermansia'],
-# ['Anaeroplasmataceae|Asteroleplasma', 'Victivallaceae|Victivallis'],
-# ['Fusobacteria|Fusobacteria', 'Firmicutes|unclassified'],
-# ['Fusobacteria|Fusobacteria', 'Porphyromonadaceae|Dysgonomonas'],
-# ['Coriobacteriaceae|Enterorhabdus', 'Verrucomicrobiaceae|Akkermansia'],
-# ['Campylobacterales|Campylobacteraceae', 'Bacteria'],
-# ['Firmicutes|unclassified', 'Actinobacteria|Actinomycetales']]
-#
-# plot_clades_relationships(clades)
+clades = [['Burkholderiales|Alcaligenaceae', 'Synergistetes|Synergistia'],
+['Flavobacteriales|unclassified', 'Synergistetes|Synergistia'],
+['Veillonellaceae|Megamonas', 'Bacteria|Bacteroidetes'],
+['Porphyromonadaceae|unclassified', 'Actinobacteria|Actinobacteria'],
+['Actinomycetales|Corynebacteriaceae', 'Aeromonadales|Succinivibrionaceae'],
+['Porphyromonadaceae|unclassified', 'Actinomycetales|Corynebacteriaceae'],
+['Ruminococcaceae|Subdoligranulum', 'Ruminococcaceae|Ethanoligenens'],
+['Erysipelotrichaceae|Coprobacillus', 'Peptococcaceae|Peptococcus'],
+['Enterobacteriaceae|Escherichia/Shigella', 'Proteobacteria|Epsilonproteobacteria'],
+['Alphaproteobacteria|Sphingomonadales', 'Bacteria|Cyanobacteria'],
+['Ruminococcaceae|Subdoligranulum', 'Neisseriaceae|unclassified'],
+['Veillonellaceae|Acidaminococcus', 'Pasteurellaceae|Aggregatibacter'],
+['Victivallaceae|Victivallis', 'Coriobacteriaceae|unclassified'],
+['Proteobacteria|Betaproteobacteria', 'Verrucomicrobiaceae|Akkermansia'],
+['Anaeroplasmataceae|Asteroleplasma', 'Victivallaceae|Victivallis'],
+['Fusobacteria|Fusobacteria', 'Firmicutes|unclassified'],
+['Fusobacteria|Fusobacteria', 'Porphyromonadaceae|Dysgonomonas'],
+['Coriobacteriaceae|Enterorhabdus', 'Verrucomicrobiaceae|Akkermansia'],
+['Campylobacterales|Campylobacteraceae', 'Bacteria'],
+['Firmicutes|unclassified', 'Actinobacteria|Actinomycetales']]
+
+plot_clades_relationships(clades)
 # run()
 
 
@@ -114,7 +114,7 @@ def run_discretization_all_nodes():
         line = ' '.join(headers)
         fd.write(line)
 
-run_discretization_all_nodes()
+# run_discretization_all_nodes()
 
 def faust_results_to_parent_clade():
     # Find faust results and propagate clades up to some level
