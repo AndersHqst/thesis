@@ -1,7 +1,7 @@
 # Default run parameters
 DEFAULT_K = None
 DEFAULT_M = 0
-DEFAULT_S = 0.25
+DEFAULT_S = 0.05
 DEFAULT_Z = 1
 DEFAULT_A = 0
 DEFAULT_DEBUG = False

@@ -15,7 +15,7 @@ def plot_faust_relationships(relative_values=True):
 
     # Use numeric Tree. We will discreteze relevant values ourselves
     # and plot the numeric correlations
-    tree = Tree(ds, False)
+    tree = Tree(ds)
 
     # Plot all relations in the faust results
     faust_results = faust_parser.results('Stool')
@@ -33,14 +33,11 @@ def plot_faust_relationships(relative_values=True):
         from_node = tree.node_for_clade_name(faust_result.clade_1)
         to_node = tree.node_for_clade_name(faust_result.clade_2)
 
-        xlabel('from')
-        ylabel('to')
-        title_text = 'Relationship: %d ' % faust_result.direction
+        title_text = 'Relative clade abundances'
         title(title_text)
         # find from-to bacteria abundances
         xs = []
         ys = []
-
 
         # Get the total abundance for hte clades in the tree
         abundance_from = tree.abundance_column_in_subtree(from_node)
@@ -54,45 +51,24 @@ def plot_faust_relationships(relative_values=True):
             xs.append(from_abundance)
             ys.append(to_abundance)
 
-        try:
-            pearson = pearsonr(xs, ys)
-            spearman = spearmanr(xs, ys)
+        sample_points = 'Sample points: %d' % len(xs)
+        figtext(0.7, 0.90, sample_points, fontsize=10)
 
-            if pearson > 0.5:
-                pass
-            correlation_coef = 'Pearson: (%.3f,%.3f), Spearman: (%.3f,%.3f)' % (pearson[0], pearson[1], spearman[0], spearman[1])
-            correlation_coef += ' sample points: %d' % len(xs)
-            figtext(0.01, 0.01, correlation_coef, fontsize=10)
-        except Exception, e:
-            print e
-            print 'Faust result: ', faust_result.id
-            print 'clades1: ', from_node.name
-            print 'clades2: ', to_node.name
-            print 'xs: %s', xs
-            print 'ys: %s', ys
+        from_clade = from_node.name.replace('|', '-')
+        to_clade = to_node.name.replace('|', '-')
+        xlabel(from_clade, fontsize=10)
+        ylabel(to_clade, fontsize=10)
 
+        disc_x, discrete_xs = median_discretization_row(xs)
+        disc_y, discrete_ys = median_discretization_row(ys)
 
-        disc_x = find_threshold(xs)
-        disc_y = find_threshold(ys)
-        discrete_xs = []
-        for x in xs:
-            if x <= disc_x:
-                discrete_xs.append(0)
-            else:
-                discrete_xs.append(1)
-        discrete_ys = []
-        for x in ys:
-            if x <= disc_y:
-                discrete_ys.append(0)
-            else:
-                discrete_ys.append(1)
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]
         c, d = [0, max(xs)], [disc_y, disc_y]
         plot(a, b, c='r')
         plot(c, d, c='r')
 
-        # write discrete results onto plot
+        # Discrete bin sizes
         pairs = zip(discrete_ys, discrete_xs)
         _00 = '00: ' + str(len([x for x in pairs if x == (0,0)]))
         _01 = '01: ' + str(len([x for x in pairs if x == (0,1)]))
@@ -105,23 +81,52 @@ def plot_faust_relationships(relative_values=True):
         phi = 'phi: %f' % phicoeff(discrete_xs, discrete_ys)
         figtext(0.7, 0.65, phi, fontsize=10)
 
+        # Depth of nodes in the phylogenetic tree
         from_depth = 'From depth: %d' % from_node.depth
         to_depth = 'To depth: %d' % to_node.depth
         figtext(0.7, 0.60, from_depth, fontsize=10)
         figtext(0.7, 0.55, to_depth, fontsize=10)
 
+        # Discretization values
+        median_x = 'median x: %f' % disc_x
+        median_y = 'median y: %f' % disc_y
+        figtext(0.7, 0.50, median_x, fontsize=10)
+        figtext(0.7, 0.45, median_y, fontsize=10)
+
+        # Same lineage
         same_lineage = 'False'
         if tree.nodes_have_same_lineage(from_node, to_node):
             same_lineage = ' True'
-        figtext(0.7, 0.50, 'Same lineage: ' + same_lineage, fontsize=10)
+        figtext(0.7, 0.40, 'Same lineage: ' + same_lineage, fontsize=10)
 
+        # Faust et al result
+        faust = 'Faust result: %d' % faust_result.direction
+        figtext(0.7, 0.35, faust, fontsize=10)
 
-        # vals = vals[:-20]
+        # Pearson and spearman correlations
+        try:
+            pearson = pearsonr(xs, ys)
+            spearman = spearmanr(xs, ys)
+
+            pearson = 'Pearson: (%.3f,%.3f)' % (pearson[0], pearson[1])
+            spearman = 'Spearman: (%.3f,%.3f)' % (spearman[0], spearman[1])
+
+            figtext(0.7, 0.30, pearson, fontsize=10)
+            figtext(0.7, 0.25, spearman, fontsize=10)
+        except Exception, e:
+            print e
+            print 'Faust result: ', faust_result.id
+            print 'clades1: ', from_node.name
+            print 'clades2: ', to_node.name
+            print 'xs: %s', xs
+            print 'ys: %s', ys
+
+        # Plot values
         plot(xs, ys, 'g.', color='#0066FF')
-        file_name = '../../plots/plots/stool_normalized_clade/' +str(faust_result.id) + '_' + from_node.name.replace('|', '-') + '---' + to_node.name.replace('|', '-') + '_' + str(faust_result.direction)
+
+        # Save the figure to file
+        file_name = '../../plots/plots/stool_normalized_clade/' +str(faust_result.id) + '_' + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
         file_name = os.path.join(dir, file_name)
-        # print '[RESULT] ', file_name
-        # print vals
         savefig(file_name)
         close()
 

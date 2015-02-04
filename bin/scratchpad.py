@@ -86,24 +86,24 @@ def run_discretization_all_nodes():
     # Get the stool dataset and discretize it
     ds = parser.get_dataset()
     ds = compute_relative_values(ds)
-    ds = maxent_discretization(ds)
-    ds = remove_empty_samples(ds)
+    t = Tree(ds)
+    ds = t.dataset_for_all_nodes()
+    ds = median_discretization(ds)
 
     # Build the phylogenetic tree, and
     # create dataset for all nodes
-    t = Tree(ds, True)
-    bin_ds = t.dataset_for_all_nodes()
 
-    print 'all nodes, number of attributes: ', len(bin_ds[0]) - 2
+
+    print 'all nodes, number of attributes: ', len(ds[0]) - 2
 
     # Write .dat file
-    abundance = abundance_matrix(bin_ds)
+    abundance = abundance_matrix(ds)
     D = binary_vectors_to_ints(abundance)
     write_dat_file('../experiments/1/Stool_maxent_discretized_all_nodes.dat', D)
 
     # Create a header file
     headers = []
-    for header in bin_ds[0][2:]:
+    for header in ds[0][2:]:
         vals = header.split('|')
         if len(vals) > 1:
             headers.append('|'.join(vals[-2:]))
