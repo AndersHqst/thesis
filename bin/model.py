@@ -2,7 +2,6 @@ from __future__ import division
 from charitems import to_binary, to_chars
 from math import log
 from itertools import combinations
-from utils.memoisation import memoise
 from block import Block
 from utils.timer import *
 from utils.counter import *
@@ -15,28 +14,31 @@ sys.setrecursionlimit(1500)
 
 class Model(object):
 
-    def __init__(self, D, k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z):
+    def __init__(self, mtv):
         super(Model, self).__init__()
+
+        # Reference to MTV for run parameters
+        self.mtv = mtv
 
         # Model parameters
         self.u0 = 0
         self.U = {}
 
         # summary
-        self.C = list()
+        self.C = []
 
-        # Mine up to k itemsets
-        self.k = k
+        # Singletons
+        self.I = set()
 
-        # Maximum itemset size
-        self.m = m
+        self.union_of_C = 0
 
-        # Support
-        self.s = s
+        # Block w.r.t C
+        self.T_c = []
 
-        # Number of candidate itemsets FindBestItemSet should search for
-        # Will result in a list of top-z highest heuristics
-        self.z = z
+        # Cached queries in FindBestItemSet
+        self.query_cache = {}
+
+        self.iterative_scaling()
 
         # Heurestics from h() for X in C at the time X was added
         self.heurestics = {}
@@ -44,26 +46,10 @@ class Model(object):
         # BIC scores for X in C at the time X was added
         self.BIC_scrores = {}
 
-        # Block w.r.t C
-        self.T_c = []
-
-        # Dataset, is it right to always remove empty rows?
-        tmp = []
-        for i in D:
-            if i != 0:
-                tmp.append(i)
-        self.D = tmp
-
-        # Singletons
-        self.I = itemsets.singletons(self.D)
-
-        # Cached queries in FindBestItemSet
-        self.query_cache = {}
-
-        # Cached frequency counts in D
-        self.fr_cache = {}
-
-        self.iterative_scaling()
+        # Total weight of all singletons.
+        # We keep this as a property as we
+        # do not always need to recompute it
+        self.total_weight = 0
 
 
     def p(self, T, y):
@@ -83,14 +69,19 @@ class Model(object):
         return self.u0 * res * T.block_weight
 
 
-    def old_model(self, t):
-        res = 1.0
+    def independence_estimate(self, y):
+        """
+        Return the indendence estiamte for y
+        :param y: Itemset
+        :return:
+        """
+        independence_estimate = 1.0
+        for i in itemsets.singletons_of_itemset(y):
+            independence_estimate *= self.U[i] / (1 + self.U[i])
 
-        for x in self.C:
-            if itemsets.contains(t, x):
-                res = res * self.U[x]
+        counter_inc('Independence estimates')
 
-        return self.u0 * res
+        return independence_estimate
 
 
     def closure(self, y):
@@ -108,17 +99,7 @@ class Model(object):
         return closure
 
 
-    def independence_estimate(self, y):
-        independence_estimate = 1.0
-        for i in itemsets.singletons_of_itemset(y):
-            independence_estimate *= self.U[i] / (1 + self.U[i])
-
-        counter_inc('Independence estimates')
-
-        return independence_estimate
-
-
-    def query(self, y):
+    def query(self, y, total_weight_changed=False):
         """
         Query the probability on an itemset y.
         :param y: Itemset
@@ -132,6 +113,9 @@ class Model(object):
 
         counter_inc('Block queries')
 
+        if total_weight_changed:
+            self.compute_total_weight()
+
         T_c = self.compute_block_weights(y)
 
         timer_start('Compute p')
@@ -143,180 +127,7 @@ class Model(object):
         return estimate
 
 
-    def fr(self, x):
-        """
-        :param x: Itemset
-        :return: Frequency of x in D
-        """
-
-        if x in self.fr_cache:
-            return self.fr_cache[x]
-
-        p = 0.0
-        for xi in self.D:
-            if itemsets.contains(xi, x):
-                p += 1
-        p = p / len(self.D)
-
-        assert p <= 1.0
-
-        self.fr_cache[x] = p
-
-        return p
-
-
-    def cached_itemset_stats(self, X):
-        """
-        Helper function to cache queries.
-        Note this can only be used from e.g. FindBestItemSet
-        when the model parameters are not altered between cache hits.
-        :param X: Queried itemset
-        :return: Query result
-        """
-
-        estimate = 0.0
-
-        if X in self.query_cache:
-            estimate = self.query_cache[X]
-        else:
-            estimate = self.query(X)
-            self.query_cache[X] = estimate
-
-        return estimate
-
-
-    def find_best_itemset(self):
-        """
-        Find best itemset in the sample
-        space defined by I.
-        Subject to model parameters z, m, s and
-        the heuristic function h
-        :return:
-        """
-
-        # reset query cache
-        self.query_cache = {}
-
-        timer_start('Find best itemset')
-        Z = self.find_best_itemset_rec(0, self.I.copy(), [(0,0)])
-        timer_stop('Find best itemset')
-
-        # Edge case, where we only find singletons not exactly described by the model
-        # We search the top 10 Zs to see if there was a non singleton itemset
-        for z in Z:
-            if not (z in self.I) and z != 0:
-                return z[0]
-        print 'No valid z in Z: ', Z
-        return Z[0][0]
-
-
-    def find_best_itemset_rec(self, X, Y, Z, X_length=0):
-        """
-        :param X: itemset
-        :param Y: remaining itemsets
-        :param Z: currently best itemset
-        :param s: min support
-        :param m: max itemset size
-        :param X_length: number of items in X. No pretty, but since X is an int,
-                         this is the fastest way to know its length
-        :return: Best itemsets Z
-        """
-
-        fr_X = self.fr(X)
-        if fr_X < self.s:
-            return Z
-
-        p_X = self.cached_itemset_stats(X)
-
-        h_X = h(fr_X, p_X)
-        if h_X > Z[-1][1] or len(Z) < self.z:
-            Z.append((X, h_X))
-
-            # Sort by descending  heuristic
-            Z.sort(lambda x, y: x[1] < y[1] and 1 or -1)
-            if self.z < len(Z):
-                Z.pop()
-
-        XY = X | itemsets.union_of_itemsets(Y)
-        fr_XY = self.fr(XY)
-        p_XY = self.cached_itemset_stats(XY)
-
-        b = max(h(fr_X, p_XY), h(fr_XY, p_X))
-
-        if Z[0][0] == 0 or b > Z[-1][1]:
-            if self.m == 0 or X_length < self.m:
-                while 0 < len(Y):
-                    y = Y.pop()
-                    Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
-
-        return Z
-
-
-    def find_best_itemset_iter(self, X, I, Z, model, s, m, X_length=0):
-        """
-        :param X: itemset
-        :param Y: remaining itemsets
-        :param Z: currently best itemset
-        :param s: min support
-        :param m: max itemset size
-        :param X_length: number of items in X. No pretty, but since X is an int,
-                         this is the fastest way to know its length
-        :return: Best itemset Z
-        """
-
-        stack = []
-        stack.append((X, itemsets.union_of_itemsets(I), X_length))
-        d = set()
-        while 0 < len(stack):
-            X, Y, X_length = stack.pop()
-
-            if not (X, Y) in d:
-
-                d.add((X, Y))
-
-                if m is None or X_length < m:
-
-                    # Initially all I
-                    Ys_copy = Y
-
-                    # If not bounded, add all Xy to the stach
-                    for y in I:
-
-                        if X & y == 0 and Ys_copy & y == y:
-                            Xy = X | y
-                            fr_X = self.fr(Xy)
-                            if fr_X < s:
-                                continue
-                            Ys_copy = Ys_copy ^ y
-
-                            p_Xy = self.cached_itemset_stats(Xy)
-
-                            fr_Z = self.fr(Z[0][0])
-                            p_Z = self.cached_itemset_stats(Z[0][0])
-
-                            h_X = h(fr_X, p_Xy)
-                            h_Z = h(fr_Z, p_Z)
-                            if h_X > h_Z or len(Z) < 10:
-                                Z.append((Xy, h_X))
-                                # Sort by descending  heuristic
-                                Z.sort(lambda x, y: x[1] < y[1] and 1 or -1)
-                                if 10 < len(Z):
-                                    Z.pop()
-
-                            XY = Xy | Ys_copy
-                            fr_XY = self.fr(XY)
-
-                            p_XY = self.cached_itemset_stats(XY)
-
-                            b = max(h(fr_X, p_XY), h(fr_XY, p_Xy))
-
-                            if Z[0][0] == 0 or b > h_Z:
-                                stack.append((Xy, Ys_copy, X_length + 1))
-
-        return Z
-
-
-    def compute_blocks(self, set_prob=False):
+    def compute_blocks(self):
         """
             Compute the set of blocks that C infer
             return: Topologically sorted blocks T_c
@@ -338,14 +149,10 @@ class Model(object):
                     T_unions.add(union)
                     T = Block()
                     T.union_of_itemsets = union
-                    if set_prob:
-                        self.C_masks[union] = comb
-                        self.cached_queries[union] = self.query(union)
                     T.singletons = itemsets.singletons_of_itemsets(comb)
                     T.itemsets = set(comb)
 
                     T_c.append(T)
-
 
         timer_stop('Compute blocks')
         return T_c
@@ -369,6 +176,12 @@ class Model(object):
         return True
 
 
+    def compute_total_weight(self):
+        self.total_weight = 1
+        for i in self.I:
+            self.total_weight *= (1 + self.U[i])
+
+
     def compute_block_weights(self, y=0):
         """
         Returns blocks for T_c + y, or all blocks if no y is passed
@@ -379,10 +192,6 @@ class Model(object):
         U = self.U
         blocks = []
 
-        total_weight = 1
-        for i in self.I:
-            total_weight *= (1 + U[i])
-
         closure = self.closure(y)
 
         timer_start('Cummulative weight')
@@ -392,7 +201,7 @@ class Model(object):
 
                 blocks.append(T)
 
-                T.cummulative_block_weight = total_weight
+                T.cummulative_block_weight = self.total_weight
 
                 # Remove singletons from y already covered by the block
                 mask = y & T.union_of_itemsets
@@ -430,39 +239,35 @@ class Model(object):
         timer_start('Iterative scaling')
 
         iterations = 0
-        epsilon = 1e-5
+        epsilon = 1e-4
 
-        while iterations < 100:
+        while iterations < 1000:
 
             max_error = 0
 
             for x in _C:
 
-                estimate = self.query(x)
+                estimate = self.query(x, total_weight_changed=True)
 
-                if self.fr(x) == 0 or estimate == 0:
-                    msg = 'itemset %d has frequency=%f and p=%f. It should not be added to the summary' % (x, self.fr(x), estimate)
+                if self.mtv.fr(x) == 0 or estimate == 0:
+                    msg = 'itemset %d has frequency=%f and p=%f. It should not be added to the summary' % (x, self.mtv.fr(x), estimate)
                     assert False, msg
-                    exit()
 
-                fr_x = self.fr(x)
+                fr_x = self.mtv.fr(x)
                 if  abs(1 - fr_x) < float_precision:
-                    print 'fr_x was 1'
+                    # print 'fr_x was 1'
                     fr_x = 0.9999999999
                 if  abs(1 - estimate) < float_precision:
-                    print 'estimate was 1'
+                    # print 'estimate was 1'
                     p = 0.9999999999
 
-
                 self.U[x] = self.U[x] * (fr_x / estimate) * ((1 - estimate) / (1 - fr_x))
-
                 self.u0 = self.u0 * (1 - fr_x) / (1 - estimate)
 
                 max_error = max(max_error, 1 - min(fr_x, estimate) / max(fr_x, estimate))
 
-                counter_max('Iterative scaling max iterations', iterations)
-
             iterations += 1
+            counter_max('Iterative scaling max iterations', iterations)
 
             if max_error < epsilon:
                 break
@@ -470,58 +275,33 @@ class Model(object):
         timer_stop('Iterative scaling')
 
 
-    def validate_best_itemset(self, itemset):
-        """
-        Returns true if an itemset is valid to be added to C, or false.
-        Singletons or the empty set should not be added to C, but this can happen
-        in cases where e.g. thresholds for support or min itemset size
-        are too strict
-        """
-        if itemset in self.I:
-            print 'X was a singleton! These should not be possible from the heurestic'
-            return False
-
-        if itemset == 0:
-            print 'Best itemset found was the empty set (0). This could ' \
-                      'mean the heurestic could not find any itemset ' \
-                      'not already predicted by the model, or above ' \
-                      'the provided thresholds. Exiting MTV'
-            return False
-
-        return True
-
-
-    def mtv(self):
-        """
-        Run the mtv algorithm with current parameterization of the model
-        """
-
-        self.BIC_scrores['initial_score'] = self.score()
-
-        # Add itemsets until we have k
-        # We ignore an increasing BIC score, and always mine k itemsets
-        while len(self.C) < self.k:
-
-            X = self.find_best_itemset()
-
-            if not (self.validate_best_itemset(X)):
-                break
-
-            self.add_to_summary(X)
-
-
     def score(self):
+        # print 'score called'
         try:
-            _C = self.I.union(self.C)
+            # _C = self.I.union(self.C)
+            _C = self.C
             U = self.U
             u0 = self.u0
-            D = self.D
+            D = self.mtv.D
 
-            return -1 * ((len(D)) * (log(u0, 2) + sum([self.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D))
+            return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C])))
+            # return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D), 2)
 
         except Exception, e:
             print 'Exception in score function, ', e
-            print self
+            # print 'Singletons: ', self.I
+            for u in U:
+                if U[u] <= 0:
+                    'Negative U: ', u
+
+            for x in _C:
+                if self.mtv.fr(x) <= 0:
+                    'Itemset with 0 frequency: ', x
+
+            print 'len of C: ', len(_C)
+            print 'len of D: ', len(D)
+            print 'u0: ', u0
+
             exit()
 
 
@@ -532,30 +312,30 @@ class Model(object):
         :param itemset: An itemset to be added to C
         :return:
         """
-        heuristic = h(self.fr(itemset), self.query(itemset))
+        heuristic = h(self.mtv.fr(itemset), self.query(itemset))
 
         # Add X to summary
         self.C.append(itemset)
+        self.union_of_C = itemsets.union_of_itemsets(self.C)
         self.heurestics[itemset] = heuristic
 
         # Update model
         self.iterative_scaling()
 
         # Compute score
-        cur_score = self.score()
-        self.BIC_scrores[itemset] = cur_score
+        self.BIC_scrores[itemset] = self.score()
 
 
     def is_in_sumamry(self, y):
         """
         :param y: Itemset to look for
-        :param C: Summary
         :return: Ture if y is in C
         """
         for x in self.C:
             if y == x:
                 return True
         return False
+
 
     def total_probability(self):
         """ Assert and print the total probability of the model """
@@ -568,8 +348,8 @@ class Model(object):
 
     def __str__(self):
 
-            str = u'Summary: {0:s} '.format(self.C)
-            str += u'U: {0:s} '.format(self.U)
-            str += u'u0: {0:f} '.format(self.u0)
+        str = u'Summary: {0:s} '.format(self.C)
+        str += u'U: {0:s} '.format(self.U)
+        str += u'u0: {0:f} '.format(self.u0)
 
-            return str
+        return str

@@ -3,6 +3,7 @@ A set of helper functions for working with itemsets represented as integers
 """
 
 from utils.memoisation import memoise
+from utils.timer import *
 
 def contains(a, b):
     """ True if a contains b """
@@ -85,14 +86,30 @@ def union_of_itemsets(itemsets):
 
 @memoise
 def singletons_of_itemset(itemset):
+    """
+    Returns a set of singleton values in the itemset.
+    This is a small modification of the bitCount algorithm
+    ex https://wiki.python.org/moin/BitManipulation
+    :param itemset:
+    :return:
+    """
+    timer_start('Singletons of itemsets')
+
     singletons = []
-    val = itemset
-    pos = 0
-    while val != 0:
-        if val & 1 == 1:
-            singletons.append(2 ** pos)
-        val = val >> 1
-        pos += 1
+    while itemset:
+
+        # Save the current itemset
+        prev = itemset
+
+        # Mask all bits but the lowest that is set
+        itemset &= itemset - 1
+
+        # Get the bit that was removed
+        removed = itemset ^ prev
+
+        singletons.append(removed)
+
+    timer_stop('Singletons of itemsets')
     return singletons
 
 def binary_vectors_to_ints(binary_matrix):
@@ -101,8 +118,25 @@ def binary_vectors_to_ints(binary_matrix):
         val = 0
         pos = 0
         for bin_val in row[::-1]:
-            bit = 2 ** pos * bin_val
+            # the cast to int is necessay if the bin_val is
+            # a numpy int64 - the binary operand will fail for higher values
+            bit = 2 ** pos * int(bin_val)
             val = val | bit
             pos += 1
         values.append(val)
     return values
+
+def itemset_from_binary_indeces(binaries):
+    """
+    Given a list of binaru indeces, returns an itemset as
+    its integer representation
+    :param binaries:
+    :return:
+    """
+    val = 0
+    for b in binaries:
+        val = val | 2 ** b
+    return val
+
+
+
