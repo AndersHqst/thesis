@@ -138,11 +138,11 @@ class Tree(object):
         if not (node.abundances is None):
             if self.binary:
                 return (node.abundances > 0).astype(int)
-            return node.abundances
+            return column + node.abundances
 
         # This is not a leaf, so add all children
         for child in node.children:
-            column = column + self.abundance_column_in_subtree(child, column)
+            column = self.abundance_column_in_subtree(child, column)
 
         if self.binary:
             return (column > 0).astype(int)
