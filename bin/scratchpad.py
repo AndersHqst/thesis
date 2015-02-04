@@ -1,12 +1,9 @@
+#!/usr/bin/env pypy
 #
 #   Scratchpad for working with implementation from the root folder.
 #
 
 from matplotlib.pylab import plot, ylabel, xlabel, savefig, close, title, figtext
-
-from plots.faust_result_discretized import plot_faust_relationships
-from scipy.stats import pearsonr, spearmanr
-from preprocessing.tree import Tree
 from preprocessing.discretization import *
 from preprocessing.preprocessors import remove_empty_samples, compute_relative_values, discrete_dataset_cleaning
 import os
@@ -16,38 +13,38 @@ import os
 # run()
 
 
-def run_discretization():
-    """
-    TODO: Work in progress. Code to use a phylogenetic tree, and get a
-    daset at a particular depth.
-    """
-    from preprocessing import parser
-    from preprocessing.tree import Tree
-    from utils.dataset_helpers import abundance_matrix
-    from itemsets import binary_vectors_to_ints
-    from utils.files import write_dat_file
-
-    ds = parser.get_dataset()
-    ds = parser.compute_relative_values(ds)
-    t = Tree(ds)
-    bin_ds = t.dataset_at_max_depth(3)
-
-    abundance = abundance_matrix(bin_ds)
-
-    D = binary_vectors_to_ints(abundance)
-
-    write_dat_file('../experiments/1/stool_depth3_discrete.dat', D)
-    headers = []
-    for header in bin_ds[0][2:]:
-        vals = header.split('|')
-        if len(vals) > 1:
-            headers.append('|'.join(vals[-2:]))
-        else:
-            headers.append(vals[0])
-
-    with open('../experiments/1/stool_depth3_discrete.headers', 'wb') as fd:
-        line = ' '.join(headers)
-        fd.write(line)
+# def run_discretization():
+#     """
+#     TODO: Work in progress. Code to use a phylogenetic tree, and get a
+#     daset at a particular depth.
+#     """
+#     from preprocessing import parser
+#     from preprocessing.tree import Tree
+#     from utils.dataset_helpers import abundance_matrix
+#     from itemsets import binary_vectors_to_ints
+#     from utils.files import write_dat_file
+#
+#     ds = parser.get_dataset()
+#     ds = parser.compute_relative_values(ds)
+#     t = Tree(ds)
+#     bin_ds = t.dataset_at_max_depth(3)
+#
+#     abundance = abundance_matrix(bin_ds)
+#
+#     D = binary_vectors_to_ints(abundance)
+#
+#     write_dat_file('../experiments/1/stool_depth3_discrete.dat', D)
+#     headers = []
+#     for header in bin_ds[0][2:]:
+#         vals = header.split('|')
+#         if len(vals) > 1:
+#             headers.append('|'.join(vals[-2:]))
+#         else:
+#             headers.append(vals[0])
+#
+#     with open('../experiments/1/stool_depth3_discrete.headers', 'wb') as fd:
+#         line = ' '.join(headers)
+#         fd.write(line)
 
 def run_discretization_all_nodes():
     """
@@ -147,6 +144,9 @@ def load_model():
     D = parse_dat_file('../experiments/1/Stool_maxent_discretized_all_nodes.dat')
     headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
     summary = parse_dat_file('../experiments/1/summary.dat')
+    mtv = MTV(D, summary, s=0.05)
+    mtv.build_independent_models()
+
 
 
 
@@ -238,7 +238,7 @@ def evaluate_faust_in_model(mtv, body_site='Stool'):
 
         line += '%s,%s&' % (Y_X.confidence, Y_X.lift)
 
-        print line
+        print line + '\\\\'
 
 
 def clade_table(summary):
@@ -270,114 +270,3 @@ def clade_pair_abundances(summary):
         clades.append((clade1, clade2))
 
     plot_clades_relationships(clades, '../experiments/1/plots_top_10/')
-
-
-C = [[70, 125],
-     [125, 126],
-     [29, 72],
-     [11, 108],
-     [65, 170],
-     [2, 190],
-     [85, 97],
-     [85, 104],
-     [127, 186],
-     [103, 149],
-     [12, 195],
-     [39, 128],
-     [19, 124],
-     [12, 177],
-     [24, 141],
-     [98, 147],
-     [39, 195],
-     [87, 163],
-     [6, 8],
-     [22, 90],
-     [101, 107],
-     [22, 101],
-     [9, 71],
-     [31, 55],
-     [26, 86],
-     [31, 194],
-     [9, 26],
-     [74, 107],
-     [92, 129],
-     [145, 153],
-     [28, 49],
-     [113, 165],
-     [59, 137],
-     [34, 102],
-     [13, 167],
-     [56, 98],
-     [16, 59],
-     [127, 150],
-     [197, 198],
-     [30, 139],
-     [62, 131],
-     [25, 33],
-     [82, 181],
-     [10, 87],
-     [113, 192],
-     [60, 174],
-     [68, 178],
-     [15, 166],
-     [111, 197],
-     [48, 191],
-     [70, 108],
-     [19, 136],
-     [41, 123],
-     [24, 45],
-     [84, 144],
-     [10, 58],
-     [93, 154],
-     [56, 172],
-     [67, 79],
-     [109, 181],
-     [183, 187],
-     [100, 161],
-     [88, 110],
-     [152, 183],
-     [88, 152],
-     [103, 140],
-     [83, 185],
-     [83, 100],
-     [189, 199],
-     [15, 54],
-     [67, 148],
-     [144, 191],
-     [82, 173],
-     [165, 184],
-     [122, 138],
-     [73, 193],
-     [47, 78],
-     [21, 190],
-     [1, 168],
-     [103, 164],
-     [184, 197],
-     [63, 141],
-     [8, 176],
-     [13, 52],
-     [36, 49],
-     [143, 165],
-     [65, 133],
-     [16, 171],
-     [73, 121],
-     [34, 167],
-     [66, 117],
-     [114, 168],
-     [19, 40],
-     [113, 118],
-     [112, 179],
-     [28, 111],
-     [113, 116],
-     [25, 125],
-     [113, 115],
-     [132, 189],
-     [157, 179]]
-
-clade_pair_abundances(C[:10])
-
-
-
-
-
-
