@@ -241,7 +241,7 @@ class Model(object):
         iterations = 0
         epsilon = 1e-4
 
-        while iterations < 1000:
+        while iterations < 100:
 
             max_error = 0
 

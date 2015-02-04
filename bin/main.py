@@ -54,6 +54,7 @@ def parse_argv(argv):
     o = DEFAULT_O
     a = DEFAULT_A
     H = DEFAULT_H
+    v = DEFAULT_V
     debug = DEFAULT_DEBUG
 
     try:
@@ -96,14 +97,17 @@ def parse_argv(argv):
         elif opt in ("-H"):
             H = arg
 
+        elif opt in ("-v"):
+            v = True
+
         elif opt in ("--debug"):
             debug = True
 
-    return k, m, s, z, c, f, o, a, H, debug
+    return k, m, s, z, c, f, o, a, v, H, debug
 
 def main(argv):
 
-    k, m, s, z, c, f, o, a, H, debug = parse_argv(argv)
+    k, m, s, z, c, f, o, a, v, H, debug = parse_argv(argv)
     D = dummy_data
 
     # Input dataset
@@ -123,7 +127,7 @@ def main(argv):
         headers = parse_header_file(H)
 
     # Initialize MTV
-    mtv = MTV(D, initial_c, k=k, m=m, s=s, z=z)
+    mtv = MTV(D, initial_c, k=k, m=m, s=s, z=z, v=v, headers=headers)
 
     # Total run time
     start = time()
@@ -146,11 +150,11 @@ def main(argv):
     print 'k=%s, m=%d, s=%f' % (str(k), m, s)
     print '\nMTV run time: ', time() - start
     print '\nSummary: '
-    print 'Heuristic \t BIC score \t p \t\t Itemsets'
-    print 'x.xxxxxx \t %f \t (No query) \t I+seed' % mtv.BIC_scores['initial_score']
-    for x in mtv.C:
+    print 'Heuristic \t BIC score \t p \t\t |C|\t models  Time \t Itemsets'
+    print 'x.xxxxxx \t %f \t (No query) \t 0 \t 0 \t 0 \t I+seed' % mtv.BIC_scores['initial_score']
+    for index, x in enumerate(mtv.C):
         if x in mtv.BIC_scores:
-            print '%f \t %f \t %f \t %s' % (mtv.heuristics[x], mtv.BIC_scores[x], mtv.query(x), itemsets.to_index_list(x, headers))
+            print '%f \t %f \t %f \t %d \t %d \t %.2f \t %s' % (mtv.heuristics[x], mtv.BIC_scores[x], mtv.query(x), mtv.largest_summary[index], mtv.disjoint_components[index], mtv.loop_times[index], itemsets.to_index_list(x, headers))
     print ''
 
     if debug:

@@ -67,6 +67,7 @@ def to_index_list(itemset, headers=None):
 
     return l
 
+
 def to_index_lists(itemsets):
     """
     Use to_index_list on every itemset in the passed in
@@ -77,12 +78,24 @@ def to_index_lists(itemsets):
         l.append(to_index_list(itemset))
     return l
 
+
 def union_of_itemsets(itemsets):
     """Union of items in itemsets"""
     result = 0
     for c in itemsets:
         result = c | result
     return result
+
+
+def itemset_for_headers(itemset_headers, headers):
+
+    itemset = 0
+
+    for itemset_header in itemset_headers:
+        itemset = itemset | headers.index(itemset_header)
+
+    return itemset
+
 
 @memoise
 def singletons_of_itemset(itemset):
@@ -112,6 +125,7 @@ def singletons_of_itemset(itemset):
     timer_stop('Singletons of itemsets')
     return singletons
 
+
 def binary_vectors_to_ints(binary_matrix):
     values = []
     for row in binary_matrix:
@@ -125,6 +139,7 @@ def binary_vectors_to_ints(binary_matrix):
             pos += 1
         values.append(val)
     return values
+
 
 def itemset_from_binary_indeces(binaries):
     """

@@ -52,7 +52,7 @@ def plot_faust_relationships(relative_values=True):
             ys.append(to_abundance)
 
         sample_points = 'Sample points: %d' % len(xs)
-        figtext(0.7, 0.90, sample_points, fontsize=10)
+        figtext(0.7, 0.85, sample_points, fontsize=10)
 
         from_clade = from_node.name.replace('|', '-')
         to_clade = to_node.name.replace('|', '-')
@@ -74,34 +74,34 @@ def plot_faust_relationships(relative_values=True):
         _01 = '01: ' + str(len([x for x in pairs if x == (0,1)]))
         _10 = '10: ' + str(len([x for x in pairs if x == (1,0)]))
         _11 = '11: ' + str(len([x for x in pairs if x == (1,1)]))
-        figtext(0.7, 0.85, _00, fontsize=10)
-        figtext(0.7, 0.80, _01, fontsize=10)
-        figtext(0.7, 0.75, _10, fontsize=10)
-        figtext(0.7, 0.70, _11, fontsize=10)
+        figtext(0.7, 0.82, _00, fontsize=10)
+        figtext(0.7, 0.79, _01, fontsize=10)
+        figtext(0.7, 0.76, _10, fontsize=10)
+        figtext(0.7, 0.73, _11, fontsize=10)
         phi = 'phi: %f' % phicoeff(discrete_xs, discrete_ys)
-        figtext(0.7, 0.65, phi, fontsize=10)
+        figtext(0.7, 0.70, phi, fontsize=10)
 
         # Depth of nodes in the phylogenetic tree
         from_depth = 'From depth: %d' % from_node.depth
         to_depth = 'To depth: %d' % to_node.depth
-        figtext(0.7, 0.60, from_depth, fontsize=10)
-        figtext(0.7, 0.55, to_depth, fontsize=10)
+        figtext(0.7, 0.67, from_depth, fontsize=10)
+        figtext(0.7, 0.64, to_depth, fontsize=10)
 
         # Discretization values
         median_x = 'median x: %f' % disc_x
         median_y = 'median y: %f' % disc_y
-        figtext(0.7, 0.50, median_x, fontsize=10)
-        figtext(0.7, 0.45, median_y, fontsize=10)
+        figtext(0.7, 0.61, median_x, fontsize=10)
+        figtext(0.7, 0.58, median_y, fontsize=10)
 
         # Same lineage
         same_lineage = 'False'
         if tree.nodes_have_same_lineage(from_node, to_node):
             same_lineage = ' True'
-        figtext(0.7, 0.40, 'Same lineage: ' + same_lineage, fontsize=10)
+        figtext(0.7, 0.55, 'Same lineage: ' + same_lineage, fontsize=10)
 
         # Faust et al result
         faust = 'Faust result: %d' % faust_result.direction
-        figtext(0.7, 0.35, faust, fontsize=10)
+        figtext(0.7, 0.52, faust, fontsize=10)
 
         # Pearson and spearman correlations
         try:
@@ -111,8 +111,8 @@ def plot_faust_relationships(relative_values=True):
             pearson = 'Pearson: (%.3f,%.3f)' % (pearson[0], pearson[1])
             spearman = 'Spearman: (%.3f,%.3f)' % (spearman[0], spearman[1])
 
-            figtext(0.7, 0.30, pearson, fontsize=10)
-            figtext(0.7, 0.25, spearman, fontsize=10)
+            figtext(0.7, 0.49, pearson, fontsize=10)
+            figtext(0.7, 0.46, spearman, fontsize=10)
         except Exception, e:
             print e
             print 'Faust result: ', faust_result.id
@@ -127,113 +127,5 @@ def plot_faust_relationships(relative_values=True):
         # Save the figure to file
         file_name = '../../plots/plots/stool_normalized_clade/' +str(faust_result.id) + '_' + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
         file_name = os.path.join(dir, file_name)
-        savefig(file_name)
-        close()
-
-def plot_clades_relationships(clade_pairs):
-
-    ds = get_dataset('Stool')
-    ds = compute_relative_values(ds)
-
-    # Use numeric Tree. We will discreteze relevant values ourselves
-    # and plot the numeric correlations
-    tree = Tree(ds, False)
-
-    for clade_1, clade_2 in clade_pairs:
-
-
-        # Get the nodes in the phylogenetic tree
-        from_node = tree.node_for_clade_name(clade_1)
-        to_node = tree.node_for_clade_name(clade_2)
-
-        xlabel('from')
-        ylabel('to')
-        title_text = '%s --- %s' % (clade_1, clade_2)
-        title(title_text)
-        # find from-to bacteria abundances
-        xs = []
-        ys = []
-
-        # 'Veillonellaceae|Megamonas'
-
-        # Get the total abundance for hte clades in the tree
-        abundance_from = tree.abundance_column_in_subtree(from_node)
-        abundance_to = tree.abundance_column_in_subtree(to_node)
-
-        # List the in-sample values for each sample
-        for index, _row in enumerate(ds[1:]):
-            from_abundance = abundance_from[index]
-            to_abundance = abundance_to[index]
-
-            xs.append(from_abundance)
-            ys.append(to_abundance)
-
-        try:
-            pearson = pearsonr(xs, ys)
-            spearman = spearmanr(xs, ys)
-
-            if pearson > 0.5:
-                pass
-            correlation_coef = 'Pearson: (%.3f,%.3f), Spearman: (%.3f,%.3f)' % (pearson[0], pearson[1], spearman[0], spearman[1])
-            correlation_coef += ' sample points: %d' % len(xs)
-            figtext(0.01, 0.01, correlation_coef, fontsize=10)
-        except Exception, e:
-            print e
-            print 'clades1: ', from_node.name
-            print 'clades2: ', to_node.name
-            print 'xs: %s', xs
-            print 'ys: %s', ys
-
-
-        disc_x = find_threshold(xs)
-        disc_y = find_threshold(ys)
-        discrete_xs = []
-        for x in xs:
-            if x <= disc_x:
-                discrete_xs.append(0)
-            else:
-                discrete_xs.append(1)
-        discrete_ys = []
-        for x in ys:
-            if x <= disc_y:
-                discrete_ys.append(0)
-            else:
-                discrete_ys.append(1)
-        # plot discretization lines
-        a, b = [disc_x, disc_x], [0, max(ys)]
-        c, d = [0, max(xs)], [disc_y, disc_y]
-        plot(a, b, c='r')
-        plot(c, d, c='r')
-
-        # write discrete results onto plot
-        pairs = zip(discrete_ys, discrete_xs)
-        _00 = '00: ' + str(len([x for x in pairs if x == (0,0)]))
-        _01 = '01: ' + str(len([x for x in pairs if x == (0,1)]))
-        _10 = '10: ' + str(len([x for x in pairs if x == (1,0)]))
-        _11 = '11: ' + str(len([x for x in pairs if x == (1,1)]))
-        figtext(0.7, 0.85, _00, fontsize=10)
-        figtext(0.7, 0.80, _01, fontsize=10)
-        figtext(0.7, 0.75, _10, fontsize=10)
-        figtext(0.7, 0.70, _11, fontsize=10)
-        phi = 'phi: %f' % phicoeff(discrete_xs, discrete_ys)
-        figtext(0.7, 0.65, phi, fontsize=10)
-
-        from_depth = 'From depth: %d' % from_node.depth
-        to_depth = 'To depth: %d' % to_node.depth
-        figtext(0.7, 0.60, from_depth, fontsize=10)
-        figtext(0.7, 0.55, to_depth, fontsize=10)
-
-        same_lineage = 'False'
-        if tree.nodes_have_same_lineage(from_node, to_node):
-            same_lineage = ' True'
-        figtext(0.7, 0.50, 'Same lineage: ' + same_lineage, fontsize=10)
-
-
-        # vals = vals[:-20]
-        plot(xs, ys, 'g.', color='#0066FF')
-        file_name = '../../experiments/1/plots/' + from_node.name.replace('|', '-').replace('/', '%') + '---' + to_node.name.replace('|', '-').replace('/', '%')
-        file_name = os.path.join(dir, file_name)
-        # print '[RESULT] ', file_name
-        # print vals
         savefig(file_name)
         close()

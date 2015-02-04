@@ -117,6 +117,42 @@ def association_rules(mtv, itemsets, use_observed_frequency=False):
     return association_rules, disassociation_rules
 
 
+def association_rule(mtv, X, Y,):
+    """
+    Returns association rules for X -> Y, Y -> X
+    :param model: Mtv object to query probabilities
+    :param X: An itemset
+    :param Y: An itemset
+    :return: Tuple of association rules (X->Y, Y->X)
+    """
+
+    prob_X = mtv.query(X)
+    prob_Y = mtv.query(Y)
+    prob_XY = mtv.query(X|Y)
+
+    # X -> Y
+    confX_Y = prob_XY / prob_X
+    liftX_Y = confX_Y / prob_Y
+
+    ruleX_Y = AssociationRule()
+    ruleX_Y.X = X
+    ruleX_Y.Y = Y
+    ruleX_Y.confidence = confX_Y
+    ruleX_Y.lift = liftX_Y
+        
+    # Y -> X
+    confY_X = prob_XY / prob_Y
+    liftY_X = confY_X / prob_X
+
+    ruleY_X = AssociationRule()
+    ruleY_X.X = X
+    ruleY_X.Y = Y
+    ruleY_X.confidence = confY_X
+    ruleY_X.lift = liftY_X
+
+    return (ruleX_Y, ruleY_X)
+
+
 #
 # Debug code
 #

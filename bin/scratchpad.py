@@ -8,7 +8,7 @@ from plots.faust_result_discretized import plot_faust_relationships, plot_clades
 from scipy.stats import pearsonr, spearmanr
 from preprocessing.tree import Tree
 from preprocessing.discretization import *
-from preprocessing.preprocessors import remove_empty_samples, compute_relative_values
+from preprocessing.preprocessors import remove_empty_samples, compute_relative_values, discrete_dataset_cleaning
 import os
 
 
@@ -33,7 +33,7 @@ import os
 # ['Campylobacterales|Campylobacteraceae', 'Bacteria'],
 # ['Firmicutes|unclassified', 'Actinobacteria|Actinomycetales']]
 
-plot_faust_relationships()
+# plot_faust_relationships()
 # run()
 
 
@@ -50,9 +50,7 @@ def run_discretization():
 
     ds = parser.get_dataset()
     ds = parser.compute_relative_values(ds)
-    # ds = parser.discretize_binary(ds)
-    ds = remove_empty_samples(ds)
-    t = Tree(ds, True)
+    t = Tree(ds)
     bin_ds = t.dataset_at_max_depth(3)
 
     abundance = abundance_matrix(bin_ds)
@@ -87,14 +85,16 @@ def run_discretization_all_nodes():
     ds = parser.get_dataset()
     ds = compute_relative_values(ds)
     t = Tree(ds)
+    print 'tree nodes before: ', t.count_nodes()
+    print 'tree leafs before: ', t.count_leafs()
     ds = t.dataset_for_all_nodes()
     ds = median_discretization(ds)
+    ds = discrete_dataset_cleaning(ds)
 
-    # Build the phylogenetic tree, and
-    # create dataset for all nodes
-
-
-    print 'all nodes, number of attributes: ', len(ds[0]) - 2
+    t2 = Tree(ds)
+    print 'number of attributes: ', len(ds[0]) - 2
+    print 'tree nodes after: ', t2.count_nodes()
+    print 'tree leafs after: ', t2.count_leafs()
 
     # Write .dat file
     abundance = abundance_matrix(ds)
@@ -114,7 +114,7 @@ def run_discretization_all_nodes():
         line = ' '.join(headers)
         fd.write(line)
 
-# run_discretization_all_nodes()
+run_discretization_all_nodes()
 
 def faust_results_to_parent_clade():
     # Find faust results and propagate clades up to some level
@@ -251,5 +251,37 @@ def load_model():
     for X in C:
         print itemsets.to_index_list(X, headers)
 
+
+
+def plot_BIC_score(BIC_SCORE, path):
+    xlabel('|C|')
+    ylabel('BIC score')
+    plot(BIC_SCORE)
+    savefig(path)
+
+def plot_heuristic(heuristic, path):
+    xlabel('|C|')
+    ylabel('h')
+    plot(heuristic)
+    savefig(path)
+
+
+
+def build_summary_table():
+    # Construct summary table
+    pass
+
+
+def evaluate_faust_in_model(model, body_site='Stool'):
+    from preprocessing import faust_parser
+
+    faust_results = faust_parser.results(body_site)
+
+    # For each result in faust
+    # translate clade names, to indeces
+    #   create mtv query(headers) as a convenience
+    #   let it throw a key error if header is unknown
+    # crate table row with
+    # key -/+ relationship faust pearson, spearman, association rules, in summary, agree? model phi
 
 

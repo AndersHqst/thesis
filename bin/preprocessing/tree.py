@@ -257,7 +257,7 @@ class Tree(object):
         return self.abundance_column_in_subtree(node)
 
 
-    def count_nodes(self, node, depth=0, count=0, count_depth=None):
+    def count_nodes(self, node=None, depth=0, count=0, count_depth=None):
         """
         Returns the number of nodes in the datasets
         :param node: Current node
@@ -266,10 +266,31 @@ class Tree(object):
         :param count_depth: Optional max depth for the count
         :return: Number of nodes in the datasets
         """
+        if node is None:
+            node = self.root
+
         for child in node.children:
             count = self.count_nodes(child, depth+1, count, count_depth)
         if count_depth is None or depth <= count_depth:
             return 1 + count
+        return count
+
+    def count_leafs(self, node=None, count=0):
+        """
+        Returns the number of leafs
+        :param node: Current node
+        :param count: Current count
+        :return: Number of leafs in the datasets
+        """
+        if node is None:
+            node = self.root
+
+        if node.is_leaf():
+            return 1 + count
+        else :
+            for child in node.children:
+                count = self.count_leafs(child, count)
+
         return count
 
 
