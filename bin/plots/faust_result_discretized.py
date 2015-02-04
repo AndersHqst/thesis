@@ -4,7 +4,7 @@ from preprocessing.discretization import *
 from preprocessing.tree import Tree
 from preprocessing import faust_parser
 from scipy.stats import pearsonr, spearmanr
-from utils.correlation import phicoeff
+from utils.correlation import phicoeff_lists
 
 def plot_faust_relationships(relative_values=True):
 
@@ -26,6 +26,7 @@ def plot_faust_relationships(relative_values=True):
 
         # make sure the faust result is in the tree
         # ex Clostridiales|IncertaeSedisXIV is not in the data set
+
         if not (tree.has_clade(faust_result.clade_1) and tree.has_clade(faust_result.clade_2)):
             continue
 
@@ -78,7 +79,7 @@ def plot_faust_relationships(relative_values=True):
         figtext(0.7, 0.79, _01, fontsize=10)
         figtext(0.7, 0.76, _10, fontsize=10)
         figtext(0.7, 0.73, _11, fontsize=10)
-        phi = 'phi: %f' % phicoeff(discrete_xs, discrete_ys)
+        phi = 'phi: %f' % phicoeff_lists(discrete_xs, discrete_ys)
         figtext(0.7, 0.70, phi, fontsize=10)
 
         # Depth of nodes in the phylogenetic tree

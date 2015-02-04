@@ -243,6 +243,7 @@ class MTV(object):
                 model.union_of_C = itemsets.union_of_itemsets(disjoint_C)
                 model.iterative_scaling()
                 self.models.append(model)
+
             self.disjoint_components.append(count)
             self.largest_summary.append(largest_C)
             self.models[0].I = self.models[0].I.union(I_copy)

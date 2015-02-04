@@ -4,34 +4,13 @@
 
 from matplotlib.pylab import plot, ylabel, xlabel, savefig, close, title, figtext
 
-from plots.faust_result_discretized import plot_faust_relationships, plot_clades_relationships
+from plots.faust_result_discretized import plot_faust_relationships
 from scipy.stats import pearsonr, spearmanr
 from preprocessing.tree import Tree
 from preprocessing.discretization import *
 from preprocessing.preprocessors import remove_empty_samples, compute_relative_values, discrete_dataset_cleaning
 import os
 
-
-# clades = [['Burkholderiales|Alcaligenaceae', 'Synergistetes|Synergistia'],
-# ['Flavobacteriales|unclassified', 'Synergistetes|Synergistia'],
-# ['Veillonellaceae|Megamonas', 'Bacteria|Bacteroidetes'],
-# ['Porphyromonadaceae|unclassified', 'Actinobacteria|Actinobacteria'],
-# ['Actinomycetales|Corynebacteriaceae', 'Aeromonadales|Succinivibrionaceae'],
-# ['Porphyromonadaceae|unclassified', 'Actinomycetales|Corynebacteriaceae'],
-# ['Ruminococcaceae|Subdoligranulum', 'Ruminococcaceae|Ethanoligenens'],
-# ['Erysipelotrichaceae|Coprobacillus', 'Peptococcaceae|Peptococcus'],
-# ['Enterobacteriaceae|Escherichia/Shigella', 'Proteobacteria|Epsilonproteobacteria'],
-# ['Alphaproteobacteria|Sphingomonadales', 'Bacteria|Cyanobacteria'],
-# ['Ruminococcaceae|Subdoligranulum', 'Neisseriaceae|unclassified'],
-# ['Veillonellaceae|Acidaminococcus', 'Pasteurellaceae|Aggregatibacter'],
-# ['Victivallaceae|Victivallis', 'Coriobacteriaceae|unclassified'],
-# ['Proteobacteria|Betaproteobacteria', 'Verrucomicrobiaceae|Akkermansia'],
-# ['Anaeroplasmataceae|Asteroleplasma', 'Victivallaceae|Victivallis'],
-# ['Fusobacteria|Fusobacteria', 'Firmicutes|unclassified'],
-# ['Fusobacteria|Fusobacteria', 'Porphyromonadaceae|Dysgonomonas'],
-# ['Coriobacteriaceae|Enterorhabdus', 'Verrucomicrobiaceae|Akkermansia'],
-# ['Campylobacterales|Campylobacteraceae', 'Bacteria'],
-# ['Firmicutes|unclassified', 'Actinobacteria|Actinomycetales']]
 
 # plot_faust_relationships()
 # run()
@@ -114,130 +93,7 @@ def run_discretization_all_nodes():
         line = ' '.join(headers)
         fd.write(line)
 
-run_discretization_all_nodes()
-
-def faust_results_to_parent_clade():
-    # Find faust results and propagate clades up to some level
-    # clades at this level could then be compared
-    from preprocessing import faust_parser
-    from preprocessing import parser
-
-    max_clade_depth = 3
-
-    results = faust_parser.results()
-    ds = parser.get_dataset()
-    tree = Tree(ds, False)
-
-    correlation_nodes = []
-    for faust_result in results:
-
-        # Get nodes if they exist
-        try:
-            from_node = tree.node_for_clade_name(faust_result.clade_1)
-            to_node = tree.node_for_clade_name(faust_result.clade_2)
-        except KeyError, ke:
-            continue
-
-        if from_node.depth < max_clade_depth or to_node.depth < max_clade_depth:
-            # No good
-            print 'Ignoring nodes:'
-            print from_node
-            print to_node
-            print 'faust_result: ', faust_result
-            continue
-
-        while from_node.depth > 3:
-            from_node = from_node.parent
-
-        while to_node.depth > 3:
-            to_node = to_node.parent
-
-        correlation_nodes.append((from_node, to_node))
-
-
-        xlabel('from')
-        ylabel('to')
-        title_text = 'Relationship: %d ' % faust_result.direction
-        title(title_text)
-        # find from-to bacteria abundances
-        xs = []
-        ys = []
-        discrete_xs = []
-        discrete_ys = []
-
-        # Get the total abundance for hte clades in the tree
-        abundance_from = tree.abundance_column_in_subtree(from_node)
-        abundance_to = tree.abundance_column_in_subtree(to_node)
-
-        # List the in-sample values for each sample
-        for index, _row in enumerate(ds[1:]):
-            from_abundance = abundance_from[index]
-            to_abundance = abundance_to[index]
-
-            xs.append(from_abundance)
-            ys.append(to_abundance)
-
-            discrete_xs.append(discrete_value(abundance_from, from_abundance))
-            discrete_ys.append(discrete_value(abundance_to, to_abundance))
-
-        try:
-            pearson = pearsonr(xs, ys)
-            spearman = spearmanr(xs, ys)
-
-            if pearson > 0.5:
-                pass
-            correlation_coef = 'Pearson: (%.3f,%.3f), Spearman: (%.3f,%.3f)' % (pearson[0], pearson[1], spearman[0], spearman[1])
-            correlation_coef += ' sample points: %d' % len(xs)
-            figtext(0.01, 0.01, correlation_coef, fontsize=10)
-        except Exception, e:
-            print e
-            print 'Faust result: ', faust_result.id
-            print 'clades1: ', from_node.name
-            print 'clades2: ', to_node.name
-            print 'xs: %s', xs
-            print 'ys: %s', ys
-
-
-        disc_x = discrete_relative_threshold(xs)
-        disc_y = discrete_relative_threshold(ys)
-        # plot discretization lines
-        a, b = [disc_x, disc_x], [0, max(ys)]
-        c, d = [0, max(xs)], [disc_y, disc_y]
-        plot(a, b, c='r')
-        plot(c, d, c='r')
-
-        # write discrete results onto plot
-        pairs = zip(discrete_ys, discrete_xs)
-        _00 = '00: ' + str(len([x for x in pairs if x == (0,0)]))
-        _01 = '01: ' + str(len([x for x in pairs if x == (0,1)]))
-        _10 = '10: ' + str(len([x for x in pairs if x == (1,0)]))
-        _11 = '11: ' + str(len([x for x in pairs if x == (1,1)]))
-        figtext(0.7, 0.85, _00, fontsize=10)
-        figtext(0.7, 0.80, _01, fontsize=10)
-        figtext(0.7, 0.75, _10, fontsize=10)
-        figtext(0.7, 0.70, _11, fontsize=10)
-
-        from_depth = 'From depth: %d' % from_node.depth
-        to_depth = 'To depth: %d' % to_node.depth
-        figtext(0.7, 0.65, from_depth, fontsize=10)
-        figtext(0.7, 0.60, to_depth, fontsize=10)
-
-        same_lineage = 'False'
-        if tree.nodes_have_same_lineage(from_node, to_node):
-            same_lineage = ' True'
-        figtext(0.7, 0.55, 'Same lineage: ' + same_lineage, fontsize=10)
-
-
-        # vals = vals[:-20]
-        plot(xs, ys, 'g.', color='#0066FF')
-        file_name = '../../experiments/1/faust_results/' +str(faust_result.id) + '_' + from_node.name.replace('|', '-') + '---' + to_node.name.replace('|', '-') + '_' + str(faust_result.direction)
-        file_name = os.path.join(dir, file_name)
-        # print '[RESULT] ', file_name
-        # print vals
-        savefig(file_name)
-        close()
-
-# faust_results_to_parent_clade()
+# run_discretization_all_nodes()
 
 
 def load_model():
@@ -265,17 +121,48 @@ def plot_heuristic(heuristic, path):
     plot(heuristic)
     savefig(path)
 
+def plot_independent_models(independent_models, path):
+    xlabel('|C|')
+    ylabel('Independent models')
+    plot(independent_models)
+    savefig(path)
+
+def plot_running_time(running_time, offset, path):
+    xlabel('|C|')
+    ylabel('MTV iteration in secs.')
+    plot([x+offset for x in range(len(running_time[offset:]))], running_time[offset:])
+    savefig(path)
+
 
 
 def build_summary_table():
     # Construct summary table
     pass
 
+def load_model():
+    from mtv import MTV
+    from utils.files import parse_dat_file
+    from utils.files import parse_header_file
 
-def evaluate_faust_in_model(model, body_site='Stool'):
+    D = parse_dat_file('../experiments/1/Stool_maxent_discretized_all_nodes.dat')
+    headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
+    summary = parse_dat_file('../experiments/1/summary.dat')
+
+
+
+def evaluate_faust_in_model(mtv, body_site='Stool'):
     from preprocessing import faust_parser
+    from matplotlib.pylab import plot, hist, ylabel, xlabel, savefig, close, title, figtext
+    from preprocessing.parser import *
+    from preprocessing.discretization import *
+    from preprocessing.tree import Tree
+    from preprocessing import faust_parser
+    from scipy.stats import pearsonr, spearmanr
+    from utils.correlation import phicoeff
+    import itemsets
+    from rule_miner import association_rule
 
-    faust_results = faust_parser.results(body_site)
+
 
     # For each result in faust
     # translate clade names, to indeces
@@ -283,5 +170,214 @@ def evaluate_faust_in_model(model, body_site='Stool'):
     #   let it throw a key error if header is unknown
     # crate table row with
     # key -/+ relationship faust pearson, spearman, association rules, in summary, agree? model phi
+
+    faust_results = faust_parser.results(body_site)
+
+    ds = get_dataset('Stool')
+    ds = compute_relative_values(ds)
+
+    # Construct a tree to get abundances for faust results
+    tree = Tree(ds)
+
+    header = 'relation ship & faust & pearson & spearman & pearson-phi & X -> & Y -> X & in C'
+
+    for faust_result in faust_results:
+
+        # make sure the faust result is in the tree
+        # ex Clostridiales|IncertaeSedisXIV is not in the data set
+        if not (tree.has_clade(faust_result.clade_1) and tree.has_clade(faust_result.clade_2)):
+            continue
+
+        clade_1 = faust_result.clade_1
+        clade_2 = faust_result.clade_2
+
+        # Get the nodes in the phylogenetic tree
+        from_node = tree.node_for_clade_name(clade_1)
+        to_node = tree.node_for_clade_name(clade_2)
+
+        # Get the total abundance for the clades in the tree
+        xs = tree.abundance_column_in_subtree(from_node)
+        ys = tree.abundance_column_in_subtree(to_node)
+
+        # Get disc correlation
+        # disc_x, discrete_xs = median_discretization_row(xs)
+        # disc_y, discrete_ys = median_discretization_row(ys)
+        # phi = phicoeff(xs, ys)
+
+        # Get faust correlations
+        pearson = pearsonr(xs, ys)[0]
+        spearman = spearmanr(xs, ys)[0]
+
+        # Association rules
+        # First, get the corresponding itemsets for the clades
+        itemset_1 = itemsets.itemset_for_headers(clade_1, mtv.headers)
+        itemset_2 = itemsets.itemset_for_headers(clade_2, mtv.headers)
+        # Get association rules
+        X_Y, Y_X = association_rule(mtv, itemset_1, itemset_2)
+
+        # Get phi from model
+        # that is, we need the counts for 00, 01, 10, 11. We will get these by the probabilities
+        intersection = mtv.query_headers([clade_2, clade_1])
+        _00 = len(mtv.D) * (1 - intersection)
+        _01 = len(mtv.D) * (mtv.query_headers(clade_1) - intersection)
+        _10 = len(mtv.D) * (mtv.query_headers(clade_2) - intersection)
+        _11 = len(mtv.D) * (intersection)
+        phi = phicoeff(_00, _01, _10, _11)
+
+        line = '%s - %s &' % (clade_1, clade_2)
+
+        line += '%d &' % faust_result.direction
+
+        line += '%f&' % pearson
+
+        line += '%f&' % spearman
+
+        line += '%f&' % phi
+
+        line += '%f,%f&' % (X_Y.confidence, X_Y.lift)
+
+        line += '%s,%s&' % (Y_X.confidence, Y_X.lift)
+
+        print line
+
+
+def clade_table(summary):
+    from utils.files import parse_header_file
+    from itemsets import to_index_list
+    headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
+
+    clades = []
+    for binindex1, binindex2 in summary:
+        clade1 = to_index_list(2**binindex1, headers)[0]
+        clade2 = to_index_list(2**binindex2, headers)[0]
+        clades.append((clade1, clade2))
+
+    print 'clade 1 & clade 2'
+
+    for clade1, clade2 in clades:
+        print '%s & %s\\\\' % (clade1, clade2)
+
+def clade_pair_abundances(summary):
+    from utils.files import parse_header_file
+    from itemsets import to_index_list
+    from plots.clade_correlation import plot_clades_relationships
+    headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
+
+    clades = []
+    for binindex1, binindex2 in summary:
+        clade1 = to_index_list(2**binindex1, headers)[0]
+        clade2 = to_index_list(2**binindex2, headers)[0]
+        clades.append((clade1, clade2))
+
+    plot_clades_relationships(clades, '../experiments/1/plots_top_10/')
+
+
+C = [[70, 125],
+     [125, 126],
+     [29, 72],
+     [11, 108],
+     [65, 170],
+     [2, 190],
+     [85, 97],
+     [85, 104],
+     [127, 186],
+     [103, 149],
+     [12, 195],
+     [39, 128],
+     [19, 124],
+     [12, 177],
+     [24, 141],
+     [98, 147],
+     [39, 195],
+     [87, 163],
+     [6, 8],
+     [22, 90],
+     [101, 107],
+     [22, 101],
+     [9, 71],
+     [31, 55],
+     [26, 86],
+     [31, 194],
+     [9, 26],
+     [74, 107],
+     [92, 129],
+     [145, 153],
+     [28, 49],
+     [113, 165],
+     [59, 137],
+     [34, 102],
+     [13, 167],
+     [56, 98],
+     [16, 59],
+     [127, 150],
+     [197, 198],
+     [30, 139],
+     [62, 131],
+     [25, 33],
+     [82, 181],
+     [10, 87],
+     [113, 192],
+     [60, 174],
+     [68, 178],
+     [15, 166],
+     [111, 197],
+     [48, 191],
+     [70, 108],
+     [19, 136],
+     [41, 123],
+     [24, 45],
+     [84, 144],
+     [10, 58],
+     [93, 154],
+     [56, 172],
+     [67, 79],
+     [109, 181],
+     [183, 187],
+     [100, 161],
+     [88, 110],
+     [152, 183],
+     [88, 152],
+     [103, 140],
+     [83, 185],
+     [83, 100],
+     [189, 199],
+     [15, 54],
+     [67, 148],
+     [144, 191],
+     [82, 173],
+     [165, 184],
+     [122, 138],
+     [73, 193],
+     [47, 78],
+     [21, 190],
+     [1, 168],
+     [103, 164],
+     [184, 197],
+     [63, 141],
+     [8, 176],
+     [13, 52],
+     [36, 49],
+     [143, 165],
+     [65, 133],
+     [16, 171],
+     [73, 121],
+     [34, 167],
+     [66, 117],
+     [114, 168],
+     [19, 40],
+     [113, 118],
+     [112, 179],
+     [28, 111],
+     [113, 116],
+     [25, 125],
+     [113, 115],
+     [132, 189],
+     [157, 179]]
+
+clade_pair_abundances(C[:10])
+
+
+
+
 
 
