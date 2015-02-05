@@ -208,22 +208,28 @@ class MTV(object):
             self.graph.add_node(X, Model(self))
 
         # initialize independent models
+        # and removed singletons from singleton model
         for model in self.graph.independent_models():
             model.iterative_scaling()
+            self.singleton_model.I -= model.I
 
+        # finally initialize the singleton model
         self.singleton_model.iterative_scaling()
+
 
     def update_graph(self, X):
         """
-        Builds model for each disjoint set of C
-        :return:
+        Updates the graph with a new itemset X. This will always results in a new
+        model being initialized. The new model's C corresponds to a new graph
+        component, that may contain a merge of one or more existing
+        graph components.
         """
         timer_start('Build independent models')
 
         new_model, components = self.graph.add_node(X, Model(self))
         new_model.iterative_scaling()
 
-        # Update the model holding the singletons
+        # Update the singleton model
         self.singleton_model.I -= new_model.I
         self.singleton_model.iterative_scaling()
 
@@ -233,49 +239,6 @@ class MTV(object):
         for component in components:
             largest_C = max(largest_C, len(component.model.C))
         self.largest_summary.append(largest_C)
-
-        # Hack to only use one model
-        # if True:
-        #     model = Model(self)
-        #     model.C = self.C
-        #     model.I = self.I
-        #     model.union_of_C = itemsets.union_of_itemsets(self.C)
-        #     model.iterative_scaling()
-        #     self.models.append(model)
-        #     return
-
-
-        # If C is empty, we just need one empty model
-        # if len(self.C) == 0:
-        #     model = Model(self)
-        #     model.I = model.I.union(self.I)
-        #     model.iterative_scaling()
-        #     self.models.append(model)
-
-        # Create all disjoint models
-        # else:
-        #     graph = Graph()
-        #     for itemset in self.C:
-        #         graph.add_node(itemset)
-
-            # I_copy = self.I.copy()
-            # count = 0
-            # largest_C = 0
-            # for disjoint_C in graph.disjoint_itemsets():
-            #     count += 1
-            #     model = Model(self)
-            #     model.C = disjoint_C
-            #     largest_C = max(largest_C, len(model.C))
-            #     model.I = itemsets.singletons(model.C)
-            #     I_copy = I_copy - model.I
-            #     model.union_of_C = itemsets.union_of_itemsets(disjoint_C)
-            #     model.iterative_scaling()
-            #     self.models.append(model)
-
-            # self.independent_components.append(count)
-            # self.largest_summary.append(largest_C)
-            # self.models[0].I = self.models[0].I.union(I_copy)
-            # self.models[0].iterative_scaling()
 
         timer_start('Build independent models')
         counter_max('Independent models', len(components))

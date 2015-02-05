@@ -10,7 +10,7 @@ class Component(object):
         self.model = None
 
     def __str__(self):
-        return 'nodes: %s components: ' % (bin(self.nodes), self.components)
+        return 'model: %s' % str(self.model)
 
 
 class Graph(object):
@@ -36,7 +36,7 @@ class Graph(object):
         :return: The new model updated according to the graph component
         """
 
-        # Find all intersecting or disjoint components
+        # Find all intersecting and disjoint components
         intersecting_components = []
         disjoint_components = []
         while 0 < len(self.components):
@@ -46,7 +46,7 @@ class Graph(object):
             else:
                 disjoint_components.append(component)
 
-        # Create new component as a merge of C of all intersectin
+        # Create a new component as a merge of C of all intersecting
         # components with the new model
         new_component = Component()
         new_component.model = new_model
@@ -70,6 +70,7 @@ class Graph(object):
         """
         for component in self.components:
             yield component.model.C
+
 
     def independent_models(self):
         """

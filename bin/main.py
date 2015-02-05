@@ -150,7 +150,7 @@ def main(argv):
     print 'k=%s, m=%d, s=%f' % (str(k), m, s)
     print '\nMTV run time: ', time() - start
     print '\nSummary: '
-    print 'Heuristic \t BIC score \t p \t\t |C|\t models  Time \t Itemsets'
+    print 'Heuristic \t BIC score \t p \t\t |c| \t models  Time \t Itemsets'
     print 'x.xxxxxx \t %f \t (No query) \t 0 \t 0 \t 0 \t I+seed' % mtv.BIC_scores['initial_score']
     for index, x in enumerate(mtv.C):
         if x in mtv.BIC_scores:

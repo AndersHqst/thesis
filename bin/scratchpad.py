@@ -147,14 +147,13 @@ def load_model():
     mtv = MTV(D, summary, s=0.05)
     mtv.build_independent_models()
 
+    return mtv
 
 
 
-def evaluate_faust_in_model(mtv, body_site='Stool'):
-    from preprocessing import faust_parser
-    from matplotlib.pylab import plot, hist, ylabel, xlabel, savefig, close, title, figtext
+
+def evaluate_faust_in_model(body_site='Stool'):
     from preprocessing.parser import *
-    from preprocessing.discretization import *
     from preprocessing.tree import Tree
     from preprocessing import faust_parser
     from scipy.stats import pearsonr, spearmanr
@@ -162,7 +161,7 @@ def evaluate_faust_in_model(mtv, body_site='Stool'):
     import itemsets
     from rule_miner import association_rule
 
-
+    mtv = load_model()
 
     # For each result in faust
     # translate clade names, to indeces
@@ -179,7 +178,7 @@ def evaluate_faust_in_model(mtv, body_site='Stool'):
     # Construct a tree to get abundances for faust results
     tree = Tree(ds)
 
-    header = 'relation ship & faust & pearson & spearman & pearson-phi & X -> & Y -> X & in C'
+    header = 'ID & relation ship & faust & pearson & spearman & pearson-phi & X -> & Y -> X & in C'
 
     for faust_result in faust_results:
 
@@ -198,11 +197,6 @@ def evaluate_faust_in_model(mtv, body_site='Stool'):
         # Get the total abundance for the clades in the tree
         xs = tree.abundance_column_in_subtree(from_node)
         ys = tree.abundance_column_in_subtree(to_node)
-
-        # Get disc correlation
-        # disc_x, discrete_xs = median_discretization_row(xs)
-        # disc_y, discrete_ys = median_discretization_row(ys)
-        # phi = phicoeff(xs, ys)
 
         # Get faust correlations
         pearson = pearsonr(xs, ys)[0]
@@ -224,7 +218,9 @@ def evaluate_faust_in_model(mtv, body_site='Stool'):
         _11 = len(mtv.D) * (intersection)
         phi = phicoeff(_00, _01, _10, _11)
 
-        line = '%s - %s &' % (clade_1, clade_2)
+        line = '%d&' % faust_result.row
+
+        line += '%s - %s &' % (clade_1, clade_2)
 
         line += '%d &' % faust_result.direction
 
