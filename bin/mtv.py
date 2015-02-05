@@ -307,10 +307,13 @@ class MTV(object):
         :return: Best itemsets Z
         """
         counter_inc('FindBestItemset')
+
+
         fr_X = self.fr(X)
         if fr_X < self.s:
             return Z
 
+        timer_start('FindBestItemset A')
         p_X = self.cached_itemset_query(X)
 
         h_X = h(fr_X, p_X)
@@ -322,6 +325,9 @@ class MTV(object):
             if self.z < len(Z):
                 Z.pop()
 
+        timer_stop('FindBestItemset A')
+
+        timer_start('FindBestItemset B')
         XY = X | itemsets.union_of_itemsets(Y)
         fr_XY = self.fr(XY)
         p_XY = self.cached_itemset_query(XY)
@@ -334,6 +340,7 @@ class MTV(object):
                 while 0 < len(Y):
                     y = Y.pop()
                     Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
+        timer_stop('FindBestItemset B')
 
         return Z
 
