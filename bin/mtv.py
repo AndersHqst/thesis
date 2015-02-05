@@ -283,7 +283,7 @@ class MTV(object):
         self.model_cache = {}
 
         timer_start('Find best itemset')
-        Z = self.find_best_itemset_rec(0, self.I.copy(), [(0,0)])
+        Z = self.find_best_itemset_iter(0, self.I.copy(), [(0,0)])
         timer_stop('Find best itemset')
 
         # Edge case, where we only find singletons not exactly described by the model
@@ -341,6 +341,72 @@ class MTV(object):
                     y = Y.pop()
                     Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
         timer_stop('FindBestItemset B')
+
+        return Z
+
+
+    def find_best_itemset_iter(self, X, I, Z, X_length=0):
+        """
+        :param X: itemset
+        :param Y: remaining itemsets
+        :param Z: currently best itemset
+        :param s: min support
+        :param m: max itemset size
+        :param X_length: number of items in X. No pretty, but since X is an int,
+                         this is the fastest way to know its length
+        :return: Best itemset Z
+        """
+        m = self.m
+        s = self.s
+        timer_start('Iterative FindBestItemset')
+        stack = []
+        stack.append((X, itemsets.union_of_itemsets(I), X_length))
+        d = set()
+        while 0 < len(stack):
+            X, Y, X_length = stack.pop()
+
+            if not (X, Y) in d:
+
+                d.add((X, Y))
+
+                if m is None or X_length < m:
+
+                    # Initially all I
+                    Ys_copy = Y
+
+                    # If not bounded, add all Xy to the stach
+                    for y in I:
+
+                        if X & y == 0 and Ys_copy & y == y:
+                            Xy = X | y
+                            fr_X = self.fr(Xy)
+                            if fr_X < s:
+                                continue
+                            Ys_copy = Ys_copy ^ y
+
+                            p_Xy = self.cached_itemset_query(Xy)
+
+                            h_X = h(fr_X, p_Xy)
+                            h_Z = Z[0][1]
+                            if h_X > h_Z: # or len(Z) < 10:
+                                Z = [(Xy, h_X)]
+                                h_Z = h_X
+                                # Sort by descending  heuristic
+                                # Z.sort(lambda x, y: x[1] < y[1] and 1 or -1)
+                                # if 10 < len(Z):
+                                #     Z.pop()
+
+                            XY = Xy | Ys_copy
+                            fr_XY = self.fr(XY)
+
+                            p_XY = self.cached_itemset_query(XY)
+
+                            b = max(h(fr_X, p_XY), h(fr_XY, p_Xy))
+
+                            if Z[0][0] == 0 or b > h_Z:
+                                stack.append((Xy, Ys_copy, X_length + 1))
+
+        timer_stop('Iterative FindBestItemset')
 
         return Z
 
