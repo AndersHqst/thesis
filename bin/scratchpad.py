@@ -46,6 +46,28 @@ from plots.faust_result_discretized import plot_faust_relationships
 #         line = ' '.join(headers)
 #         fd.write(line)
 
+def write_dataset_to_experiment(experiment, ds):
+    from itemsets import binary_vectors_to_ints
+    from utils.files import write_dat_file
+    # Write .dat file
+    abundance = abundance_matrix(ds)
+    D = binary_vectors_to_ints(abundance)
+    write_dat_file('../experiments/5/Stool_maxent_discretized_faust_nodes_and_leafs.dat', D)
+
+    # Create a header file
+    headers = []
+    for header in ds[0][2:]:
+        vals = header.split('|')
+        if len(vals) > 1:
+            headers.append('|'.join(vals[-2:]))
+        else:
+            headers.append(vals[0])
+
+    with open('../experiments/5/Stool_maxent_discretized_faust_nodes_and_leafs.headers', 'wb') as fd:
+        line = ' '.join(headers)
+        fd.write(line)
+
+
 def run_discretization_all_nodes():
     """
     TODO: Work in progress. Code to use a phylogenetic tree, and get a
@@ -54,9 +76,6 @@ def run_discretization_all_nodes():
     from preprocessing import parser
     from preprocessing.tree import Tree
     from utils.dataset_helpers import abundance_matrix
-    from itemsets import binary_vectors_to_ints
-    from utils.files import write_dat_file
-    import itemsets
 
     # Get the stool dataset and discretize it
     ds = parser.get_dataset()
@@ -73,26 +92,74 @@ def run_discretization_all_nodes():
     print 'tree nodes after: ', t2.count_nodes()
     print 'tree leafs after: ', t2.count_leafs()
 
-    # Write .dat file
-    abundance = abundance_matrix(ds)
-    D = binary_vectors_to_ints(abundance)
-    write_dat_file('../experiments/1/Stool_maxent_discretized_all_nodes.dat', D)
+    write_dataset_to_experiment(1, ds)
 
-    # Create a header file
-    headers = []
-    for header in ds[0][2:]:
-        vals = header.split('|')
-        if len(vals) > 1:
-            headers.append('|'.join(vals[-2:]))
-        else:
-            headers.append(vals[0])
-
-    with open('../experiments/1/Stool_maxent_discretized_all_nodes.headers', 'wb') as fd:
-        line = ' '.join(headers)
-        fd.write(line)
 
 # run_discretization_all_nodes()
 
+
+def run_discretization_faust_nodes_and_leafs():
+    """
+    TODO: This currently result in only 37 attributes, and 32 after cleaning..
+    Is this enough? Can we search the tree differently?
+    """
+    from preprocessing import parser
+    from preprocessing.tree import Tree
+    from utils.dataset_helpers import abundance_matrix
+    from itemsets import binary_vectors_to_ints
+    from utils.files import write_dat_file
+    from preprocessing import faust_parser
+    import itemsets
+
+    # Get the Faust result clade names
+    faust_results = faust_parser.results()
+    faust_clades = []
+    for faust_result in faust_results:
+        faust_clades.append(faust_result.clade_1)
+        faust_clades.append(faust_result.clade_2)
+
+    # Get the stool dataset and discretize it
+    ds = parser.get_dataset()
+    ds = compute_relative_values(ds)
+    t = Tree(ds)
+
+    ds = t.dataset_for_clades_or_leaf(faust_clades)
+    print 'Attributes: ', len(ds[0][2:])
+    ds = median_discretization(ds)
+    ds = discrete_dataset_cleaning(ds)
+    print 'Attributes after cleaning: ', len(ds[0][2:])
+
+    write_dataset_to_experiment(2, ds)
+
+
+def run_discretization_for_tree_depth(depth):
+    """
+    Experiment with all nodes at a given depth
+    Cleaning:
+    Attributes:  166
+    discrete dataset cleaning, removed bacteria:  65
+    Attributes after cleaning:  101
+    """
+    from preprocessing import parser
+    from preprocessing.tree import Tree
+    from preprocessing import faust_parser
+    import itemsets
+
+    # Get the stool dataset and discretize it
+    ds = parser.get_dataset()
+    ds = compute_relative_values(ds)
+    t = Tree(ds)
+    ds = t.dataset_at_depth(depth)
+
+    print 'Attributes: ', len(ds[0][2:])
+    ds = median_discretization(ds)
+    ds = discrete_dataset_cleaning(ds)
+    print 'Attributes after cleaning: ', len(ds[0][2:])
+
+    write_dataset_to_experiment(4, ds)
+
+
+run_discretization_for_tree_depth(6)
 
 def load_model():
     from mtv import MTV
@@ -182,7 +249,7 @@ def clade_pair_abundances():
 
     plot_clades_relationships(clades, '../experiments/1/plots_top_10/')
 
-clade_pair_abundances()
+# clade_pair_abundances()
 
 def format_stats(f):
     """

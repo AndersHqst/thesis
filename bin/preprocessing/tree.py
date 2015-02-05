@@ -199,6 +199,23 @@ class Tree(object):
 
         return column
 
+    def nodes_at_depth(self, node, depth, nodes=None):
+        """
+        Return nodes at at a given depth. Leafs at lower depth are ignored
+        :param node: Current node
+        :param depth: Depth of desired nodes
+        :return: Nodes at a given depth
+        """
+        if nodes is None:
+            nodes = []
+
+        if depth == 0:
+            return nodes + [node]
+        else:
+            for child in node.children:
+                nodes = self.nodes_at_depth(child, depth - 1, nodes)
+        return nodes
+
 
     def nodes_at_max_depth(self, max_depth, node, depth=0, nodes=None):
         """
@@ -240,6 +257,16 @@ class Tree(object):
             for child in node.children:
                 nodes = self.nodes_for_clades_or_leaf(clade_names, child, nodes)
         return nodes
+
+
+    def dataset_at_depth(self, depth):
+        """
+        Return a dataset at at a given depth. Leafs at lower depths are ignored
+        :param depth: Depth of desired nodes
+        :return: Dataset with nodes at desired depth
+        """
+        nodes = self.nodes_at_depth(self.root, depth)
+        return self.dataset_for_nodes(nodes)
 
 
     def dataset_for_clades_or_leaf(self, clade_names):

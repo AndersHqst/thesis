@@ -15,7 +15,7 @@ class AssociationRule(object):
         self.lift = 0
 
     def __str__(self):
-        return '(conf:%.3f, lift:%.3f) %s -> %s' % (self.confidence, self.lift, to_index_list(self.X), to_index_list(self.Y))
+        return '(conf:%f, lift:%f) %s -> %s' % (self.confidence, self.lift, to_index_list(self.X), to_index_list(self.Y))
 
 
 
@@ -145,8 +145,8 @@ def association_rule(mtv, X, Y):
     liftY_X = confY_X / prob_X
 
     ruleY_X = AssociationRule()
-    ruleY_X.X = X
-    ruleY_X.Y = Y
+    ruleY_X.X = Y
+    ruleY_X.Y = X
     ruleY_X.confidence = confY_X
     ruleY_X.lift = liftY_X
 

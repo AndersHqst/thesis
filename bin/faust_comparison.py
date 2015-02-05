@@ -51,10 +51,14 @@ def faust_comparison(body_site='Stool'):
 
     # Construct a tree to get abundances for faust results
     tree = Tree(ds)
-
-    header = 'ID & relation ship & faust & pearson & spearman & pearson-phi & X -> & Y -> X & in C'
-
+    count = 0
+    # header = 'ID & relation ship & faust & pearson & spearman & phi & $X \\rightarrow Y$ & $Y \\rightarrow Y$ & in C\\\\'
+    header = 'ID & faust & pearson & spearman & phi & $X \\rightarrow Y$ & $Y \\rightarrow Y$ & in C\\\\'
+    print header
     for faust_result in faust_results:
+        count += 1
+        if abs(faust_result.direction) < 3:
+            continue
 
         # make sure the faust result is in the tree
         # ex Clostridiales|IncertaeSedisXIV is not in the data set
@@ -88,28 +92,36 @@ def faust_comparison(body_site='Stool'):
         intersection = mtv.query_headers([clade_2, clade_1])
         X_estiamte = mtv.query_headers([clade_1])
         Y_estiamte = mtv.query_headers([clade_2])
-        _00 = len(mtv.D) * (1 - intersection)
+        _00 = len(mtv.D) * (1 - X_estiamte - Y_estiamte + intersection)
         _01 = len(mtv.D) * (X_estiamte - intersection)
         _10 = len(mtv.D) * (Y_estiamte - intersection)
         _11 = len(mtv.D) * (intersection)
         phi = phicoeff(_00, _01, _10, _11)
 
-        line = '%d&' % faust_result.row
+        line = '$%d$ & ' % faust_result.id
 
-        line += '%s - %s &' % (clade_1, clade_2)
+        # line += '%s - %s & ' % (clade_1.replace('---', '|'), clade_2.replace('---', '|'))
 
-        line += '%d &' % faust_result.direction
+        line += '$%d$ & ' % faust_result.direction
 
-        line += '%f&' % pearson
+        line += '$%.3f$ & ' % pearson
 
-        line += '%f&' % spearman
+        line += '$%.3f$ & ' % spearman
 
-        line += '%f&' % phi
+        line += '$%.3f$ & ' % phi
 
-        line += '%f,%f&' % (X_Y.confidence, X_Y.lift)
+        line += '$%.3f,%.3f$ & ' % (X_Y.confidence, X_Y.lift)
 
-        line += '%s,%s&' % (Y_X.confidence, Y_X.lift)
+        line += '$%.3f,%.3f$ & ' % (Y_X.confidence, Y_X.lift)
+
+        in_C = 'N'
+        if itemset_1|itemset_2 in mtv.C:
+            in_C = 'Y'
+        line +=in_C
 
         print line + '\\\\'
+
+        # 67 faust results in total
+        print 'count: ', count
 
 faust_comparison()
