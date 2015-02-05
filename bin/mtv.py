@@ -56,10 +56,10 @@ class MTV(object):
         # will be in this model
         self.singleton_model = Model(self)
         self.singleton_model.I = self.I.copy()
-        self.singleton_model.iterative_scaling()
 
         # Graph of independent models
         self.graph = Graph()
+        self.__init_graph()
 
         # Cache for merged models
         self.model_cache = {}
@@ -109,6 +109,7 @@ class MTV(object):
         Query using models intersected by y
         """
 
+        timer_start('mtv_query')
         # query intersected models independently
         mask = y
         p = 1.0
@@ -128,6 +129,8 @@ class MTV(object):
 
         # disjoint singletons
         p *= self.singleton_model.query(mask)
+
+        timer_stop('mtv_query')
 
         return p
 
@@ -167,7 +170,7 @@ class MTV(object):
         :return:
         """
         if not (self.k is None):
-            return self.k < len(self.C)
+            return self.k <= len(self.C)
 
         if 1 < len(self.C):
             # If previous score is lower, the model score has increased
@@ -196,6 +199,7 @@ class MTV(object):
         self.update_graph(X)
         # Compute score
         self.BIC_scores[X] = self.score()
+
 
     def __init_graph(self):
         """
@@ -252,7 +256,7 @@ class MTV(object):
         :param X: Queried itemset
         :return: Query result
         """
-
+        timer_start('Cached query')
         estimate = 0.0
 
         if X in self.query_cache:
@@ -261,6 +265,7 @@ class MTV(object):
             estimate = self.query(X)
             self.query_cache[X] = estimate
 
+        timer_stop('Cached query')
         return estimate
 
 
@@ -290,7 +295,7 @@ class MTV(object):
         return Z[0][0]
 
 
-    def find_best_itemset_rec(self, X, Y, Z, X_length=0, singleton_restrictions=None):
+    def find_best_itemset_rec(self, X, Y, Z, X_length=0):
         """
         :param X: itemset
         :param Y: remaining itemsets
@@ -301,7 +306,7 @@ class MTV(object):
                          this is the fastest way to know its length
         :return: Best itemsets Z
         """
-
+        counter_inc('FindBestItemset')
         fr_X = self.fr(X)
         if fr_X < self.s:
             return Z

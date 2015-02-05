@@ -73,12 +73,14 @@ class Model(object):
         :param y: Itemset
         :return:
         """
+
+        timer_start('independence_estimate')
         independence_estimate = 1.0
-        for i in itemsets.singletons_of_itemset(y):
+        for i in itemsets.iterate_singletons_of_itemset(y):
             independence_estimate *= self.U[i] / (1 + self.U[i])
 
         counter_inc('Independence estimates')
-
+        timer_stop('independence_estimate')
         return independence_estimate
 
 
@@ -204,7 +206,7 @@ class Model(object):
                 # Remove singletons from y already covered by the block
                 mask = y & T.union_of_itemsets
                 ys = mask ^ y
-                for i in itemsets.singletons_of_itemset(ys):
+                for i in itemsets.iterate_singletons_of_itemset(ys):
                     T.cummulative_block_weight *= U[i] / (1 + U[i])
 
                 for i in T.singletons:

@@ -81,9 +81,11 @@ def to_index_lists(itemsets):
 
 def union_of_itemsets(itemsets):
     """Union of items in itemsets"""
+    timer_start('union_of_itemsets')
     result = 0
     for c in itemsets:
         result = c | result
+    timer_stop('union_of_itemsets')
     return result
 
 
@@ -124,6 +126,27 @@ def singletons_of_itemset(itemset):
 
     timer_stop('Singletons of itemsets')
     return singletons
+
+
+def iterate_singletons_of_itemset(itemset):
+    """
+    Iterate the singletons in an itemset.
+    This is a small modification of the bitCount algorithm
+    ex https://wiki.python.org/moin/BitManipulation
+    :param itemset:
+    :return:
+    """
+
+    while itemset:
+
+        # Save the current itemset
+        prev = itemset
+
+        # Mask all bits but the lowest that is set
+        itemset &= itemset - 1
+
+        # Return bit that was removed
+        yield itemset ^ prev
 
 
 def binary_vectors_to_ints(binary_matrix):
