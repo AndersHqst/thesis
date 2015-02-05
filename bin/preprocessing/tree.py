@@ -18,6 +18,37 @@ class Node(object):
         self.abundances = None
 
 
+    def to_xml(self):
+        xml = ''
+        size = 1
+        if self.is_root():
+
+            tag_name = 'Root'
+            # Attributes on root node?
+            xml = '<%s name="nullRoot" size="%s">' % (tag_name, size)
+            for child in self.children:
+                xml += child.to_xml()
+            xml += '</%s>' % tag_name
+
+            return xml
+
+        elif self.is_leaf():
+            short_name = self.name.split('|')[-1]
+            tag_name = 'depth_%d' % self.depth
+            xml = '<%s name="%s" path="%s" size="%s" />' % (tag_name, short_name, self.clades, size)
+            return xml
+
+        else:
+            short_name = self.name.split('|')[-1]
+            tag_name = 'depth_%d' % self.depth
+            xml = '<%s name="%s" path="%s" size="%s">' % (tag_name, short_name, self.clades, size)
+            for child in self.children:
+                xml += child.to_xml()
+            xml += '</%s>' % tag_name
+
+            return xml
+
+
     def is_leaf(self):
         """
         Note: only leaf nodes hold a abundance column
