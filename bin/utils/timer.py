@@ -19,3 +19,17 @@ def timer_stop(flag):
 def timer_print_timings():
     for flag in timings:
         print '[TIMER] %s: %f' % (flag, timings[flag])
+
+def timer_stopwatch(flag):
+    global start
+    global starts
+
+    starts[flag] = time()
+
+def timer_stopwatch_time(flag):
+    global starts
+
+    lap = time() - starts[flag]
+    starts[flag] = time()
+
+    return  lap

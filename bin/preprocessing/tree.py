@@ -67,19 +67,17 @@ class Node(object):
 
 class Tree(object):
 
-    def __init__(self, ds, binary):
+    def __init__(self, ds):
         """
-        Initialize a binary or numeric Tree for a give n dataset.
-        :param ds: Dataset to build phylogenetic Tree from
-        :param binary: If True, abundances will be binary
-        :return:
+        Initialize a phylogenetic Tree for a given dataset.
+        :param ds: Dataset
+        :return: An initialized Tree
         """
         super(Tree, self).__init__()
         self.root = Node()
         self.root.name = 'Root'
         "Dataset related to the datasets"
         self.ds = ds
-        self.binary = binary
         # Submatrix of ds with bacteria abundances
         self.bacteria_abundances = None
         self.nodes = {}
@@ -167,16 +165,12 @@ class Tree(object):
 
         # Leaf node, return the abundance column
         if not (node.abundances is None):
-            if self.binary:
-                return (node.abundances > 0).astype(int)
             return column + node.abundances
 
         # This is not a leaf, so add all children
         for child in node.children:
             column = self.abundance_column_in_subtree(child, column)
 
-        if self.binary:
-            return (column > 0).astype(int)
         return column
 
 
@@ -294,7 +288,7 @@ class Tree(object):
         return self.abundance_column_in_subtree(node)
 
 
-    def count_nodes(self, node, depth=0, count=0, count_depth=None):
+    def count_nodes(self, node=None, depth=0, count=0, count_depth=None):
         """
         Returns the number of nodes in the datasets
         :param node: Current node
@@ -303,10 +297,31 @@ class Tree(object):
         :param count_depth: Optional max depth for the count
         :return: Number of nodes in the datasets
         """
+        if node is None:
+            node = self.root
+
         for child in node.children:
             count = self.count_nodes(child, depth+1, count, count_depth)
         if count_depth is None or depth <= count_depth:
             return 1 + count
+        return count
+
+    def count_leafs(self, node=None, count=0):
+        """
+        Returns the number of leafs
+        :param node: Current node
+        :param count: Current count
+        :return: Number of leafs in the datasets
+        """
+        if node is None:
+            node = self.root
+
+        if node.is_leaf():
+            return 1 + count
+        else :
+            for child in node.children:
+                count = self.count_leafs(child, count)
+
         return count
 
 

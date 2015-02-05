@@ -7,10 +7,11 @@ from graph import Graph
 from utils.timer import *
 from utils.counter import *
 from math import log
+from time import time
 
 class MTV(object):
 
-    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z):
+    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, headers=None):
         super(MTV, self).__init__()
 
         # Mine up to k itemsets
@@ -21,6 +22,10 @@ class MTV(object):
 
         # Support
         self.s = s
+
+        self.v = v
+
+        self.headers = headers
 
         # Number of candidate itemsets FindBestItemSet should search for
         # Will result in a list of top-z highest heuristics
@@ -54,11 +59,22 @@ class MTV(object):
         # Cached queries
         self.query_cache = {}
 
+        # List to track history of disjoint components
+        self.disjoint_components = []
+
+        # List to track history of C size
+        self.largest_summary = []
+
+        # List to track history of timings of a loop in mtv
+        self.loop_times = []
+
 
     def run(self):
         """
         Run the mtv algorithm
         """
+
+        timer_stopwatch('run')
 
         self.build_independent_models()
         self.BIC_scores['initial_score'] = self.models[0].score()
@@ -66,12 +82,19 @@ class MTV(object):
         # Run until we have converged
         while not self.finished():
 
+            start = time()
+
             X = self.find_best_itemset()
 
             if not (self.validate_best_itemset(X)):
                 break
 
             self.add_itemset(X)
+
+            self.loop_times.append(time()-start)
+
+            if self.v:
+                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, max(|C|): %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X, self.headers), self.BIC_scores[X], self.disjoint_components[-1], self.largest_summary[-1])
 
 
     def query(self, y):
@@ -84,11 +107,9 @@ class MTV(object):
         if y & self.union_of_C == 0:
             return self.models[0].query(y)
 
-
         # query intersected models independently
         mask = y
         p = 1.0
-
 
         for model in self.models:
 
@@ -108,6 +129,22 @@ class MTV(object):
         p *= self.models[0].query(mask)
 
         return p
+
+    def query_headers(self, itemset_headers):
+        """
+        Query an itemset by its header names.
+        This method will give a ValueError if the
+        queried headers are not in the headers property
+        of MTV
+        :param itemset_headers: A list of headers
+        :return: model query of the queried itemset
+        """
+
+        # itemset for the provided header names, will throw ValueError
+        # if a header name is not in the self.headers property
+        itemset = itemsets.itemset_for_headers(self.headers, itemset_headers)
+
+        return self.query(itemset)
 
 
     def score(self):
@@ -194,19 +231,27 @@ class MTV(object):
                 graph.add_node(itemset)
 
             I_copy = self.I.copy()
+            count = 0
+            largest_C = 0
             for disjoint_C in graph.disjoint_itemsets():
+                count += 1
                 model = Model(self)
                 model.C = disjoint_C
+                largest_C = max(largest_C, len(model.C))
                 model.I = itemsets.singletons(model.C)
                 I_copy = I_copy - model.I
                 model.union_of_C = itemsets.union_of_itemsets(disjoint_C)
                 model.iterative_scaling()
                 self.models.append(model)
+
+            self.disjoint_components.append(count)
+            self.largest_summary.append(largest_C)
             self.models[0].I = self.models[0].I.union(I_copy)
             self.models[0].iterative_scaling()
 
         timer_start('Build independent models')
         counter_max('Independent models', len(self.models))
+
 
     def cached_itemset_query(self, X):
         """
