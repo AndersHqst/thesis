@@ -86,7 +86,7 @@ def run_discretization_all_nodes():
         else:
             headers.append(vals[0])
 
-    with open('../experiments/2/stool_all_discrete.headers', 'wb') as fd:
+    with open('../experiments/1/stool_all_discrete.headers', 'wb') as fd:
         line = ' '.join(headers)
         fd.write(line)
 
@@ -136,105 +136,7 @@ def build_summary_table():
     # Construct summary table
     pass
 
-def load_model():
-    from mtv import MTV
-    from utils.files import parse_dat_file
-    from utils.files import parse_header_file
 
-    D = parse_dat_file('../experiments/1/Stool_maxent_discretized_all_nodes.dat')
-    headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
-    summary = parse_dat_file('../experiments/1/summary.dat')
-    mtv = MTV(D, summary, s=0.05)
-    mtv.build_independent_models()
-
-    return mtv
-
-
-
-
-def evaluate_faust_in_model(body_site='Stool'):
-    from preprocessing.parser import *
-    from preprocessing.tree import Tree
-    from preprocessing import faust_parser
-    from scipy.stats import pearsonr, spearmanr
-    from utils.correlation import phicoeff
-    import itemsets
-    from rule_miner import association_rule
-
-    mtv = load_model()
-
-    # For each result in faust
-    # translate clade names, to indeces
-    #   create mtv query(headers) as a convenience
-    #   let it throw a key error if header is unknown
-    # crate table row with
-    # key -/+ relationship faust pearson, spearman, association rules, in summary, agree? model phi
-
-    faust_results = faust_parser.results(body_site)
-
-    ds = get_dataset('Stool')
-    ds = compute_relative_values(ds)
-
-    # Construct a tree to get abundances for faust results
-    tree = Tree(ds)
-
-    header = 'ID & relation ship & faust & pearson & spearman & pearson-phi & X -> & Y -> X & in C'
-
-    for faust_result in faust_results:
-
-        # make sure the faust result is in the tree
-        # ex Clostridiales|IncertaeSedisXIV is not in the data set
-        if not (tree.has_clade(faust_result.clade_1) and tree.has_clade(faust_result.clade_2)):
-            continue
-
-        clade_1 = faust_result.clade_1
-        clade_2 = faust_result.clade_2
-
-        # Get the nodes in the phylogenetic tree
-        from_node = tree.node_for_clade_name(clade_1)
-        to_node = tree.node_for_clade_name(clade_2)
-
-        # Get the total abundance for the clades in the tree
-        xs = tree.abundance_column_in_subtree(from_node)
-        ys = tree.abundance_column_in_subtree(to_node)
-
-        # Get faust correlations
-        pearson = pearsonr(xs, ys)[0]
-        spearman = spearmanr(xs, ys)[0]
-
-        # Association rules
-        # First, get the corresponding itemsets for the clades
-        itemset_1 = itemsets.itemset_for_headers(clade_1, mtv.headers)
-        itemset_2 = itemsets.itemset_for_headers(clade_2, mtv.headers)
-        # Get association rules
-        X_Y, Y_X = association_rule(mtv, itemset_1, itemset_2)
-
-        # Get phi from model
-        # that is, we need the counts for 00, 01, 10, 11. We will get these by the probabilities
-        intersection = mtv.query_headers([clade_2, clade_1])
-        _00 = len(mtv.D) * (1 - intersection)
-        _01 = len(mtv.D) * (mtv.query_headers(clade_1) - intersection)
-        _10 = len(mtv.D) * (mtv.query_headers(clade_2) - intersection)
-        _11 = len(mtv.D) * (intersection)
-        phi = phicoeff(_00, _01, _10, _11)
-
-        line = '%d&' % faust_result.row
-
-        line += '%s - %s &' % (clade_1, clade_2)
-
-        line += '%d &' % faust_result.direction
-
-        line += '%f&' % pearson
-
-        line += '%f&' % spearman
-
-        line += '%f&' % phi
-
-        line += '%f,%f&' % (X_Y.confidence, X_Y.lift)
-
-        line += '%s,%s&' % (Y_X.confidence, Y_X.lift)
-
-        print line + '\\\\'
 
 
 def clade_table(summary):
@@ -266,3 +168,35 @@ def clade_pair_abundances(summary):
         clades.append((clade1, clade2))
 
     plot_clades_relationships(clades, '../experiments/1/plots_top_10/')
+
+
+def format_stats(f):
+    """
+    Reads a file containing a copy of the MTV output
+    :param f:
+    """
+    heuristics = []
+    BIC_scores = []
+    independent_models = []
+    size_of_c = []
+    iteration_time = []
+    with open(f) as fd:
+        for line in fd:
+            if '\n' in line:
+                line = line.replace('\n', '')
+            chunks = line.split(' ')
+            chunks = [c for c in chunks if c != '']
+            heuristics.append(float(chunks[0]))
+            BIC_scores.append(float(chunks[1]))
+            #2 is query
+            size_of_c.append(int(chunks[3]))
+            independent_models.append(int(chunks[4]))
+            iteration_time.append(float(chunks[5]))
+
+    print 'heuristics =', heuristics
+    print 'BIC_scores =', BIC_scores
+    print 'independent_models =', independent_models
+    print 'size_of_c =', size_of_c
+    print 'iteration_time =', iteration_time
+
+format_stats('./output.txt')

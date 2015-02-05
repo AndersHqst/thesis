@@ -207,15 +207,20 @@ class MTV(object):
         :return:
         """
 
+        print 'init graph'
+
         # Build graph
         for X in self.C:
             self.graph.add_node(X, Model(self))
 
+        i=1
         # initialize independent models
         # and removed singletons from singleton model
         for model in self.graph.independent_models():
             model.iterative_scaling()
             self.singleton_model.I -= model.I
+            print 'initted model %d of 41' % i
+            i += 1
 
         # finally initialize the singleton model
         self.singleton_model.iterative_scaling()
@@ -283,7 +288,7 @@ class MTV(object):
         self.model_cache = {}
 
         timer_start('Find best itemset')
-        Z = self.find_best_itemset_iter(0, self.I.copy(), [(0,0)])
+        Z = self.find_best_itemset_rec(0, self.I.copy(), [(0,0)])
         timer_stop('Find best itemset')
 
         # Edge case, where we only find singletons not exactly described by the model
