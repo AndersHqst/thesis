@@ -91,7 +91,7 @@ def run_discretization_all_nodes():
         line = ' '.join(headers)
         fd.write(line)
 
-run_discretization_all_nodes()
+# run_discretization_all_nodes()
 
 
 def load_model():
@@ -140,15 +140,20 @@ def build_summary_table():
 
 
 
-def clade_table(summary):
-    from utils.files import parse_header_file
+def clade_table():
+    from utils.files import parse_header_file, parse_dat_file
     from itemsets import to_index_list
     headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
 
+    summary = parse_dat_file('../experiments/1/summary.dat')
+
+    # Get the indeces of the pair
+    bin_indeces = [to_index_list(x) for x in summary[:10]]
+
     clades = []
-    for binindex1, binindex2 in summary:
-        clade1 = to_index_list(2**binindex1, headers)[0]
-        clade2 = to_index_list(2**binindex2, headers)[0]
+    for binindex1, binindex2 in bin_indeces:
+        clade1 = headers[binindex1]
+        clade2 = headers[binindex2]
         clades.append((clade1, clade2))
 
     print 'clade 1 & clade 2'
@@ -156,20 +161,28 @@ def clade_table(summary):
     for clade1, clade2 in clades:
         print '%s & %s\\\\' % (clade1, clade2)
 
-def clade_pair_abundances(summary):
-    from utils.files import parse_header_file
+# clade_table()
+
+def clade_pair_abundances():
+    from utils.files import parse_header_file, parse_dat_file
     from itemsets import to_index_list
     from plots.clade_correlation import plot_clades_relationships
     headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
 
+    # parse_dat_file returns a list of ints
+    summary = parse_dat_file('../experiments/1/summary.dat')
+    # Get the indeces of the pair
+    bin_indeces = [to_index_list(x) for x in summary[:50]]
+
     clades = []
-    for binindex1, binindex2 in summary:
-        clade1 = to_index_list(2**binindex1, headers)[0]
-        clade2 = to_index_list(2**binindex2, headers)[0]
+    for binindex1, binindex2 in bin_indeces:
+        clade1 = headers[binindex1]
+        clade2 = headers[binindex2]
         clades.append((clade1, clade2))
 
     plot_clades_relationships(clades, '../experiments/1/plots_top_10/')
 
+clade_pair_abundances()
 
 def format_stats(f):
     """

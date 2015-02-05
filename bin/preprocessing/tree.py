@@ -48,6 +48,22 @@ class Node(object):
 
             return xml
 
+    def is_ancestor(self, node):
+        """
+        Returns Ture if the passed in node is an ancestor of
+        this node
+        :param node:
+        :return:
+        """
+
+        parent = self.parent
+
+        while not (parent is None):
+            if parent == node:
+                return True
+
+        return False
+
 
     def is_leaf(self):
         """
@@ -59,6 +75,16 @@ class Node(object):
 
     def is_root(self):
         return self.parent is None
+
+
+    def is_in_lineage(self, other_node):
+        """
+        Returns true if the node and the passed in node
+        share lineage
+        :param other_node:
+        :return:
+        """
+        return self.name in other_node.clades or other_node.name in self.clades
 
 
     def __str__(self):
@@ -192,6 +218,48 @@ class Tree(object):
             for child in node.children:
                 nodes = self.nodes_at_max_depth(max_depth, child, depth + 1, nodes)
         return nodes
+
+
+    def nodes_for_clades_or_leaf(self, clade_names, node=None, nodes=None):
+        """
+        Returns all nodes in the tree that are either in the clade names
+        or are leafs
+        :param clade_names: A list of clade names
+        :param node: Current node
+        :param nodes: Current list of nodes
+        :return:
+        """
+        if nodes is None:
+            nodes = []
+        if node is None:
+            node = self.root
+
+        if node.name in clade_names or node.is_leaf():
+            return nodes + [node]
+        else:
+            for child in node.children:
+                nodes = self.nodes_for_clades_or_leaf(clade_names, child, nodes)
+        return nodes
+
+
+    def dataset_for_clades_or_leaf(self, clade_names):
+        """
+        Returns a dataset that cuts the tree at the provided clades,
+        and leaf nodes for subtrees where a clade name is not found
+        :param clade_names: Clades that must be included
+        :return:
+        """
+        nodes = self.nodes_for_clades_or_leaf(clade_names)
+        return self.dataset_for_nodes(nodes)
+
+
+    def dataset_at_leaves(self):
+        """
+        Build a dataset using only the leaf nodes
+        :return:
+        """
+        nodes = [node for node in self.nodes if node.is_leaf()]
+        return self.dataset_for_nodes(nodes)
 
 
     def dataset_for_all_nodes(self):
@@ -338,7 +406,7 @@ class Tree(object):
         :param node_b:
         :return:
         """
-        return node_a.name in node_b.clades or node_b.name in node_a.clades
+        return node_a.is_in_lineage(node_b)
 
     def has_clade(self, clade_name):
         return clade_name in self.nodes
