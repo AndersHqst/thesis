@@ -23,9 +23,9 @@ class Node(object):
         size = 1
         if self.is_root():
 
-            tag_name = 'Root'
+            tag_name = 'Process'
             # Attributes on root node?
-            xml = '<%s name="nullRoot" size="%s">' % (tag_name, size)
+            xml = '<%s name="null" size="%s">' % (tag_name, 0)
             for child in self.children:
                 xml += child.to_xml()
             xml += '</%s>' % tag_name
