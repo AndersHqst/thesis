@@ -1,13 +1,13 @@
 """
 Simple classes to build a graph that splits its nodes into disjoint components
 """
+import itemsets
 
 class Component(object):
 
     def __init__(self):
         super(Component, self).__init__()
-        self.itemsets = []
-        self.nodes = 0
+        self.model = None
 
     def __str__(self):
         return 'nodes: %s components: ' % (bin(self.nodes), self.components)
@@ -22,12 +22,18 @@ class Graph(object):
         self.components = []
 
 
-    def add_node(self, itemset):
+    def add_node(self, itemset, new_model):
         """
         Add a new node to the graph. Components will be re-computed, and
-        the itemset added to one component
+        the itemset added to one component. The model passed in
+        will be setup with the itemsets in the new component.
+
+        It is the responsibility of the caller to
+        create and init the new_model.
+
         :param itemset:
-        :return:
+        :param itemset: A model
+        :return: The new model updated according to the graph component
         """
 
         # Find all intersecting or disjoint components
@@ -35,21 +41,27 @@ class Graph(object):
         disjoint_components = []
         while 0 < len(self.components):
             component = self.components.pop()
-            if component.nodes & itemset != 0:
+            if component.model.union_of_C & itemset != 0:
                 intersecting_components.append(component)
             else:
                 disjoint_components.append(component)
 
-        # Create new component as a merge of the added itemset
-        # and intersecting components
+        # Create new component as a merge of C of all intersectin
+        # components with the new model
         new_component = Component()
-        new_component.itemsets = [itemset]
-        new_component.nodes = itemset
+        new_component.model = new_model
+        new_component.model.C = [itemset]
+        new_component.model.I = itemsets.singletons_of_itemset(itemset)
         for intersecting_component in intersecting_components:
-                new_component.nodes = new_component.nodes | intersecting_component.nodes
-                new_component.itemsets += intersecting_component.itemsets
+                new_component.model.C += intersecting_component.model.C
+                new_component.model.I =  new_component.model.I.union(intersecting_component.model.I)
+
+        # Set the union of C on the new model
+        new_component.model.union_of_C = itemsets.union_of_itemsets(new_component.model.C)
 
         self.components = disjoint_components + [new_component]
+
+        return new_model, self.components
 
 
     def disjoint_itemsets(self):
@@ -57,4 +69,12 @@ class Graph(object):
         Iterator for disjoint summaries C
         """
         for component in self.components:
-            yield component.itemsets
+            yield component.model.C
+
+    def independent_models(self):
+        """
+        Iterator for disjoint summaries C
+        """
+        for component in self.components:
+            yield component.model
+

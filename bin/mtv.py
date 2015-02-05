@@ -51,7 +51,15 @@ class MTV(object):
         self.BIC_scores = {}
         self.heuristics = {}
 
-        self.models = []
+        # Create a model for holding all singletons
+        # Singletons not used by model in the graph
+        # will be in this model
+        self.singleton_model = Model(self)
+        self.singleton_model.I = self.I.copy()
+        self.singleton_model.iterative_scaling()
+
+        # Graph of independent models
+        self.graph = Graph()
 
         # Cache for merged models
         self.model_cache = {}
@@ -60,7 +68,7 @@ class MTV(object):
         self.query_cache = {}
 
         # List to track history of disjoint components
-        self.disjoint_components = []
+        self.independent_components = []
 
         # List to track history of C size
         self.largest_summary = []
@@ -76,8 +84,7 @@ class MTV(object):
 
         timer_stopwatch('run')
 
-        self.build_independent_models()
-        self.BIC_scores['initial_score'] = self.models[0].score()
+        self.BIC_scores['initial_score'] = self.score()
 
         # Run until we have converged
         while not self.finished():
@@ -94,24 +101,18 @@ class MTV(object):
             self.loop_times.append(time()-start)
 
             if self.v:
-                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, max(|C|): %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X, self.headers), self.BIC_scores[X], self.disjoint_components[-1], self.largest_summary[-1])
+                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, max(|C|): %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X, self.headers), self.BIC_scores[X], self.independent_components[-1], self.largest_summary[-1])
 
 
     def query(self, y):
         """
-        Query using necessary models w.r.t y
+        Query using models intersected by y
         """
-
-        # No intersection. Use models[0]
-        # which holds disjoint singletons
-        if y & self.union_of_C == 0:
-            return self.models[0].query(y)
 
         # query intersected models independently
         mask = y
         p = 1.0
-
-        for model in self.models:
+        for model in self.graph.independent_models():
 
             # Is this an intersected model?
             if y & model.union_of_C != 0:
@@ -126,9 +127,10 @@ class MTV(object):
                 p *= model.query(intersection)
 
         # disjoint singletons
-        p *= self.models[0].query(mask)
+        p *= self.singleton_model.query(mask)
 
         return p
+
 
     def query_headers(self, itemset_headers):
         """
@@ -149,9 +151,9 @@ class MTV(object):
 
     def score(self):
 
-        total_score = 0
+        total_score = self.singleton_model.score()
 
-        for model in self.models:
+        for model in self.graph.independent_models():
             total_score += model.score()
 
         total_score += 0.5 * len(self.C) * log(len(self.D), 2)
@@ -191,20 +193,46 @@ class MTV(object):
         self.union_of_C = itemsets.union_of_itemsets(self.C)
         self.heuristics[X] = heuristic
 
-        self.build_independent_models()
+        self.update_graph(X)
         # Compute score
         self.BIC_scores[X] = self.score()
 
+    def __init_graph(self):
+        """
+        Init the graph with itemsets in C
+        :return:
+        """
 
-    def build_independent_models(self):
+        # Build graph
+        for X in self.C:
+            self.graph.add_node(X, Model(self))
+
+        # initialize independent models
+        for model in self.graph.independent_models():
+            model.iterative_scaling()
+
+        self.singleton_model.iterative_scaling()
+
+    def update_graph(self, X):
         """
         Builds model for each disjoint set of C
         :return:
         """
         timer_start('Build independent models')
 
-        # Clear old models
-        self.models = []
+        new_model, components = self.graph.add_node(X, Model(self))
+        new_model.iterative_scaling()
+
+        # Update the model holding the singletons
+        self.singleton_model.I -= new_model.I
+        self.singleton_model.iterative_scaling()
+
+        # stats
+        self.independent_components.append(len(components))
+        largest_C = 0
+        for component in components:
+            largest_C = max(largest_C, len(component.model.C))
+        self.largest_summary.append(largest_C)
 
         # Hack to only use one model
         # if True:
@@ -218,39 +246,39 @@ class MTV(object):
 
 
         # If C is empty, we just need one empty model
-        if len(self.C) == 0:
-            model = Model(self)
-            model.I = model.I.union(self.I)
-            model.iterative_scaling()
-            self.models.append(model)
+        # if len(self.C) == 0:
+        #     model = Model(self)
+        #     model.I = model.I.union(self.I)
+        #     model.iterative_scaling()
+        #     self.models.append(model)
 
         # Create all disjoint models
-        else:
-            graph = Graph()
-            for itemset in self.C:
-                graph.add_node(itemset)
+        # else:
+        #     graph = Graph()
+        #     for itemset in self.C:
+        #         graph.add_node(itemset)
 
-            I_copy = self.I.copy()
-            count = 0
-            largest_C = 0
-            for disjoint_C in graph.disjoint_itemsets():
-                count += 1
-                model = Model(self)
-                model.C = disjoint_C
-                largest_C = max(largest_C, len(model.C))
-                model.I = itemsets.singletons(model.C)
-                I_copy = I_copy - model.I
-                model.union_of_C = itemsets.union_of_itemsets(disjoint_C)
-                model.iterative_scaling()
-                self.models.append(model)
+            # I_copy = self.I.copy()
+            # count = 0
+            # largest_C = 0
+            # for disjoint_C in graph.disjoint_itemsets():
+            #     count += 1
+            #     model = Model(self)
+            #     model.C = disjoint_C
+            #     largest_C = max(largest_C, len(model.C))
+            #     model.I = itemsets.singletons(model.C)
+            #     I_copy = I_copy - model.I
+            #     model.union_of_C = itemsets.union_of_itemsets(disjoint_C)
+            #     model.iterative_scaling()
+            #     self.models.append(model)
 
-            self.disjoint_components.append(count)
-            self.largest_summary.append(largest_C)
-            self.models[0].I = self.models[0].I.union(I_copy)
-            self.models[0].iterative_scaling()
+            # self.independent_components.append(count)
+            # self.largest_summary.append(largest_C)
+            # self.models[0].I = self.models[0].I.union(I_copy)
+            # self.models[0].iterative_scaling()
 
         timer_start('Build independent models')
-        counter_max('Independent models', len(self.models))
+        counter_max('Independent models', len(components))
 
 
     def cached_itemset_query(self, X):

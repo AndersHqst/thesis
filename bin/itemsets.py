@@ -108,7 +108,7 @@ def singletons_of_itemset(itemset):
     """
     timer_start('Singletons of itemsets')
 
-    singletons = []
+    singletons = set()
     while itemset:
 
         # Save the current itemset
@@ -120,7 +120,7 @@ def singletons_of_itemset(itemset):
         # Get the bit that was removed
         removed = itemset ^ prev
 
-        singletons.append(removed)
+        singletons.add(removed)
 
     timer_stop('Singletons of itemsets')
     return singletons

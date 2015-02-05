@@ -38,8 +38,6 @@ class Model(object):
         # Cached queries in FindBestItemSet
         self.query_cache = {}
 
-        self.iterative_scaling()
-
         # Heurestics from h() for X in C at the time X was added
         self.heurestics = {}
 
