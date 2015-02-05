@@ -21,7 +21,7 @@ def load_model():
     summary = parse_dat_file('../experiments/1/summary.dat')
 
     print 'Creating MTV object'
-    mtv = MTV(D, summary, s=0.05)
+    mtv = MTV(D, summary[:-10], s=0.05)
     print 'Done'
     mtv.headers = headers
     return mtv
@@ -86,9 +86,11 @@ def faust_comparison(body_site='Stool'):
         # Get phi from model
         # that is, we need the counts for 00, 01, 10, 11. We will get these by the probabilities
         intersection = mtv.query_headers([clade_2, clade_1])
+        X_estiamte = mtv.query_headers([clade_1])
+        Y_estiamte = mtv.query_headers([clade_2])
         _00 = len(mtv.D) * (1 - intersection)
-        _01 = len(mtv.D) * (mtv.query_headers(clade_1) - intersection)
-        _10 = len(mtv.D) * (mtv.query_headers(clade_2) - intersection)
+        _01 = len(mtv.D) * (X_estiamte - intersection)
+        _10 = len(mtv.D) * (Y_estiamte - intersection)
         _11 = len(mtv.D) * (intersection)
         phi = phicoeff(_00, _01, _10, _11)
 

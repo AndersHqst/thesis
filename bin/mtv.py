@@ -147,7 +147,7 @@ class MTV(object):
 
         # itemset for the provided header names, will throw ValueError
         # if a header name is not in the self.headers property
-        itemset = itemsets.itemset_for_headers(self.headers, itemset_headers)
+        itemset = itemsets.itemset_for_headers(itemset_headers, self.headers)
 
         return self.query(itemset)
 

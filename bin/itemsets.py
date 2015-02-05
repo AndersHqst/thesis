@@ -94,7 +94,7 @@ def itemset_for_headers(itemset_headers, headers):
     itemset = 0
 
     for itemset_header in itemset_headers:
-        itemset = itemset | headers.index(itemset_header)
+        itemset = itemset | 2**headers.index(itemset_header)
 
     return itemset
 
@@ -154,7 +154,7 @@ def binary_vectors_to_ints(binary_matrix):
     for row in binary_matrix:
         val = 0
         pos = 0
-        for bin_val in row[::-1]:
+        for bin_val in row:
             # the cast to int is necessay if the bin_val is
             # a numpy int64 - the binary operand will fail for higher values
             bit = 2 ** pos * int(bin_val)

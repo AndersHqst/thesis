@@ -8,7 +8,7 @@ from preprocessing.discretization import *
 from preprocessing.preprocessors import remove_empty_samples, compute_relative_values, discrete_dataset_cleaning
 import os
 
-
+from plots.faust_result_discretized import plot_faust_relationships
 # plot_faust_relationships()
 # run()
 
@@ -56,6 +56,7 @@ def run_discretization_all_nodes():
     from utils.dataset_helpers import abundance_matrix
     from itemsets import binary_vectors_to_ints
     from utils.files import write_dat_file
+    import itemsets
 
     # Get the stool dataset and discretize it
     ds = parser.get_dataset()
@@ -86,11 +87,11 @@ def run_discretization_all_nodes():
         else:
             headers.append(vals[0])
 
-    with open('../experiments/1/stool_all_discrete.headers', 'wb') as fd:
+    with open('../experiments/1/Stool_maxent_discretized_all_nodes.headers', 'wb') as fd:
         line = ' '.join(headers)
         fd.write(line)
 
-# run_discretization_all_nodes()
+run_discretization_all_nodes()
 
 
 def load_model():
@@ -199,4 +200,4 @@ def format_stats(f):
     print 'size_of_c =', size_of_c
     print 'iteration_time =', iteration_time
 
-format_stats('./output.txt')
+# format_stats('./output.txt')

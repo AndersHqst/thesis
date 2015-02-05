@@ -247,7 +247,7 @@ class Tree(object):
                 # The new header name is the clade at the node
                 # 'Bacteria|Firmicutes|' from 'Bacteria|Firmicutes|Bacilli' if we
                 # cut at some node, not leaf
-                headers.append(node.clades)
+                headers.append(node.name)
 
                 # Get the merged abundance columns for the subtree from the node
                 column = self.abundance_column_in_subtree(node)
