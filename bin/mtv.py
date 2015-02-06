@@ -11,7 +11,7 @@ from time import time
 
 class MTV(object):
 
-    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, headers=None):
+    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, q=DEFAULT_Q, headers=None):
         super(MTV, self).__init__()
 
         # Mine up to k itemsets
@@ -23,8 +23,16 @@ class MTV(object):
         # Support
         self.s = s
 
+        # Constraint on max model size
+        self.q = q
+        # If q is set, we will black list singletons from models
+        # having reached the max size
+        self.black_list_singletons = set()
+
+        # Be verbose
         self.v = v
 
+        # Header strings for attributes
         self.headers = headers
 
         # Number of candidate itemsets FindBestItemSet should search for
@@ -207,20 +215,15 @@ class MTV(object):
         :return:
         """
 
-        print 'init graph'
-
         # Build graph
         for X in self.C:
             self.graph.add_node(X, Model(self))
 
-        i=1
         # initialize independent models
         # and removed singletons from singleton model
         for model in self.graph.independent_models():
             model.iterative_scaling()
             self.singleton_model.I -= model.I
-            print 'initted model %d of 41' % i
-            i += 1
 
         # finally initialize the singleton model
         self.singleton_model.iterative_scaling()
@@ -238,19 +241,15 @@ class MTV(object):
         new_model, components = self.graph.add_node(X, Model(self))
         new_model.iterative_scaling()
 
+        self.update_model_constraints(new_model)
+
         # Update the singleton model
         self.singleton_model.I -= new_model.I
         self.singleton_model.iterative_scaling()
 
-        # stats
-        self.independent_components.append(len(components))
-        largest_C = 0
-        for component in components:
-            largest_C = max(largest_C, len(component.model.C))
-        self.largest_summary.append(largest_C)
+        timer_stop('Build independent models')
 
-        timer_start('Build independent models')
-        counter_max('Independent models', len(components))
+        self.graph_stats(components)
 
 
     def cached_itemset_query(self, X):
@@ -288,7 +287,7 @@ class MTV(object):
         self.model_cache = {}
 
         timer_start('Find best itemset')
-        Z = self.find_best_itemset_rec(0, self.I.copy(), [(0,0)])
+        Z = self.find_best_itemset(0, self.I.copy() - self.black_list_singletons, [(0,0)])
         timer_stop('Find best itemset')
 
         # Edge case, where we only find singletons not exactly described by the model
@@ -300,7 +299,7 @@ class MTV(object):
         return Z[0][0]
 
 
-    def find_best_itemset_rec(self, X, Y, Z, X_length=0):
+    def find_best_itemset(self, X, Y, Z, X_length=0):
         """
         :param X: itemset
         :param Y: remaining itemsets
@@ -330,6 +329,7 @@ class MTV(object):
 
         XY = X | itemsets.union_of_itemsets(Y)
         fr_XY = self.fr(XY)
+
         p_XY = self.cached_itemset_query(XY)
 
         b = max(h(fr_X, p_XY), h(fr_XY, p_X))
@@ -366,6 +366,13 @@ class MTV(object):
         return p
 
 
+    def update_model_constraints(self, newest_model):
+        if not (self.q is None):
+            # Blacklist model singletons
+            if len(newest_model.C) >= self.q:
+                self.black_list_singletons = self.black_list_singletons.union(newest_model.I)
+
+
     def validate_best_itemset(self, itemset):
         """
         Returns true if an itemset is valid to be added to C, or false.
@@ -385,3 +392,20 @@ class MTV(object):
             return False
 
         return True
+
+
+    def graph_stats(self, components):
+        """
+        Record stats when the graph is updated
+        :param components:
+        :param newest_component:
+        :return:
+        """
+        self.independent_components.append(len(components))
+
+        largest_C = 0
+        for component in components:
+            largest_C = max(largest_C, len(component.model.C))
+        self.largest_summary.append(largest_C)
+
+        counter_max('Independent models', len(components))

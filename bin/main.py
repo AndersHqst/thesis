@@ -34,6 +34,7 @@ def print_help(s, z, a):
     print '-f Input file containing a dataset. See example.dat'
     print '-o Output file with resulting summary C'
     print '-c Input file with seed for the summary.'
+    print '-q Put a constraint on the maximum model size. Defaults (recommended) is to be unset'
     print '-v verbose'
     print '-z Suggest best top z itemsets, will slow down computation, default %d' % z
     print '-a Print a association and disassociation rules, default %d' % a
@@ -55,12 +56,13 @@ def parse_argv(argv):
     a = DEFAULT_A
     H = DEFAULT_H
     v = DEFAULT_V
+    q = DEFAULT_Q
     debug = DEFAULT_DEBUG
 
     try:
         # Cmd line arguments.
         # Single letter arguments, args followed by ':' expect a value
-        opts, args = getopt.getopt(argv, "hm:s:k:vz:f:o:c:a:H:", ['debug'])
+        opts, args = getopt.getopt(argv, "hm:s:k:vz:f:o:c:a:H:q:", ['debug'])
     except getopt.GetoptError:
        print 'Unknown arguments: ', args
        print_help(s, z, a)
@@ -100,14 +102,17 @@ def parse_argv(argv):
         elif opt in ("-v"):
             v = True
 
+        elif opt in ("-q"):
+            q = int(arg)
+
         elif opt in ("--debug"):
             debug = True
 
-    return k, m, s, z, c, f, o, a, v, H, debug
+    return k, m, s, z, c, f, o, a, v, q, H, debug
 
 def main(argv):
 
-    k, m, s, z, c, f, o, a, v, H, debug = parse_argv(argv)
+    k, m, s, z, c, f, o, a, v, q, H, debug = parse_argv(argv)
     D = dummy_data
 
     # Input dataset
@@ -127,7 +132,7 @@ def main(argv):
         headers = parse_header_file(H)
 
     # Initialize MTV
-    mtv = MTV(D, initial_c, k=k, m=m, s=s, z=z, v=v, headers=headers)
+    mtv = MTV(D, initial_c, k=k, m=m, s=s, z=z, v=v, q=q, headers=headers)
 
     # Total run time
     start = time()

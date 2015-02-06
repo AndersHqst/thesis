@@ -46,13 +46,13 @@ from plots.faust_result_discretized import plot_faust_relationships
 #         line = ' '.join(headers)
 #         fd.write(line)
 
-def write_dataset_to_experiment(experiment, ds):
+def write_dataset_to_experiment(file_name, ds):
     from itemsets import binary_vectors_to_ints
     from utils.files import write_dat_file
     # Write .dat file
     abundance = abundance_matrix(ds)
     D = binary_vectors_to_ints(abundance)
-    write_dat_file('../experiments/5/Stool_maxent_discretized_faust_nodes_and_leafs.dat', D)
+    write_dat_file(file_name + '.dat', D)
 
     # Create a header file
     headers = []
@@ -63,7 +63,7 @@ def write_dataset_to_experiment(experiment, ds):
         else:
             headers.append(vals[0])
 
-    with open('../experiments/5/Stool_maxent_discretized_faust_nodes_and_leafs.headers', 'wb') as fd:
+    with open(file_name + '.headers', 'wb') as fd:
         line = ' '.join(headers)
         fd.write(line)
 
@@ -92,7 +92,7 @@ def run_discretization_all_nodes():
     print 'tree nodes after: ', t2.count_nodes()
     print 'tree leafs after: ', t2.count_leafs()
 
-    write_dataset_to_experiment(1, ds)
+    write_dataset_to_experiment('../experiments/1/Stool_maxent_discretized_all_nodes', ds)
 
 
 # run_discretization_all_nodes()
@@ -129,16 +129,24 @@ def run_discretization_faust_nodes_and_leafs():
     ds = discrete_dataset_cleaning(ds)
     print 'Attributes after cleaning: ', len(ds[0][2:])
 
-    write_dataset_to_experiment(2, ds)
+    write_dataset_to_experiment('../experiments/5/Stool_maxent_discretized_faust_nodes_and_leafs', ds)
 
+# run_discretization_faust_nodes_and_leafs()
 
 def run_discretization_for_tree_depth(depth):
     """
     Experiment with all nodes at a given depth
+
+    depth 6:
     Cleaning:
     Attributes:  166
     discrete dataset cleaning, removed bacteria:  65
     Attributes after cleaning:  101
+
+    depth 5:
+    Attributes:  66
+    discrete dataset cleaning, removed bacteria:  21
+    Attributes after cleaning:  45
     """
     from preprocessing import parser
     from preprocessing.tree import Tree
@@ -156,10 +164,10 @@ def run_discretization_for_tree_depth(depth):
     ds = discrete_dataset_cleaning(ds)
     print 'Attributes after cleaning: ', len(ds[0][2:])
 
-    write_dataset_to_experiment(4, ds)
+    write_dataset_to_experiment('../experiments/3/Stool_maxent_discretized_nodes_depth_5', ds)
 
 
-run_discretization_for_tree_depth(6)
+# run_discretization_for_tree_depth(5)
 
 def load_model():
     from mtv import MTV
@@ -210,25 +218,28 @@ def build_summary_table():
 def clade_table():
     from utils.files import parse_header_file, parse_dat_file
     from itemsets import to_index_list
-    headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
+    headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6.headers')
 
-    summary = parse_dat_file('../experiments/1/summary.dat')
+    summary = parse_dat_file('../experiments/4/summary.dat')
 
     # Get the indeces of the pair
     bin_indeces = [to_index_list(x) for x in summary[:10]]
 
     clades = []
-    for binindex1, binindex2 in bin_indeces:
-        clade1 = headers[binindex1]
-        clade2 = headers[binindex2]
-        clades.append((clade1, clade2))
+    for indeces in bin_indeces:
+        name = []
+        for index in indeces:
+            name.append(headers[index])
 
-    print 'clade 1 & clade 2'
+        clades.append(name)
+        print '[' + ', '.join(name) + ']'
 
-    for clade1, clade2 in clades:
-        print '%s & %s\\\\' % (clade1, clade2)
+    print 'Clades in itemset: '
 
-# clade_table()
+    # for clade1, clade2 in clades:
+    #     print '%s & %s\\\\' % (clade1, clade2)
+
+clade_table()
 
 def clade_pair_abundances():
     from utils.files import parse_header_file, parse_dat_file

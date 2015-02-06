@@ -99,30 +99,37 @@ class Model(object):
         return closure
 
 
-    def query(self, y, total_weight_changed=False):
+    def query(self, y, scaling=False):
         """
         Query the probability on an itemset y.
         :param y: Itemset
         :return: Estimate of y
         """
 
+        if y in self.query_cache and not scaling:
+            return self.query_cache[y]
+
         counter_inc('Total queries')
 
-        if y & self.T_c[0].union_of_itemsets == 0:
-            return self.independence_estimate(y)
-
-        counter_inc('Block queries')
-
-        if total_weight_changed:
-            self.compute_total_weight()
-
-        T_c = self.compute_block_weights(y)
-
-        timer_start('Compute p')
         estimate = 0.0
-        for T in T_c:
-            estimate += self.p(T, y)
-        timer_stop('Compute p')
+
+        if y & self.T_c[0].union_of_itemsets == 0:
+            estimate = self.independence_estimate(y)
+        else:
+            counter_inc('Block queries')
+
+            if scaling:
+                self.compute_total_weight()
+
+            T_c = self.compute_block_weights(y)
+
+            timer_start('Compute p')
+            for T in T_c:
+                estimate += self.p(T, y)
+            timer_stop('Compute p')
+
+        if not scaling:
+            self.query_cache[y] = estimate
 
         return estimate
 
@@ -228,6 +235,9 @@ class Model(object):
 
     def iterative_scaling(self):
 
+        # reset cache
+        self.query_cache = {}
+
         # Initialize U and u0
         self.u0 = 2 ** -len(self.I)
         _C = self.I.union(self.C)
@@ -247,7 +257,7 @@ class Model(object):
 
             for x in _C:
 
-                estimate = self.query(x, total_weight_changed=True)
+                estimate = self.query(x, scaling=True)
 
                 if self.mtv.fr(x) == 0 or estimate == 0:
                     msg = 'itemset %d has frequency=%f and p=%f. It should not be added to the summary' % (x, self.mtv.fr(x), estimate)
@@ -255,11 +265,9 @@ class Model(object):
 
                 fr_x = self.mtv.fr(x)
                 if  abs(1 - fr_x) < float_precision:
-                    # print 'fr_x was 1'
                     fr_x = 0.9999999999
                 if  abs(1 - estimate) < float_precision:
-                    # print 'estimate was 1'
-                    p = 0.9999999999
+                    estimate = 0.9999999999
 
                 self.U[x] = self.U[x] * (fr_x / estimate) * ((1 - estimate) / (1 - fr_x))
                 self.u0 = self.u0 * (1 - fr_x) / (1 - estimate)
@@ -278,14 +286,12 @@ class Model(object):
     def score(self):
         # print 'score called'
         try:
-            # _C = self.I.union(self.C)
-            _C = self.C
+            C = self.C
             U = self.U
             u0 = self.u0
             D = self.mtv.D
 
-            return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C])))
-            # return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in _C]))) + 0.5 * len(_C) * log(len(D), 2)
+            return -1 * (len(D) * (log(u0, 2) + sum([self.mtv.fr(x) * log(U[x], 2) for x in C])))
 
         except Exception, e:
             print 'Exception in score function, ', e
@@ -294,11 +300,11 @@ class Model(object):
                 if U[u] <= 0:
                     'Negative U: ', u
 
-            for x in _C:
+            for x in C:
                 if self.mtv.fr(x) <= 0:
                     'Itemset with 0 frequency: ', x
 
-            print 'len of C: ', len(_C)
+            print 'len of C: ', len(C)
             print 'len of D: ', len(D)
             print 'u0: ', u0
 

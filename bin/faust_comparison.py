@@ -21,7 +21,7 @@ def load_model():
     summary = parse_dat_file('../experiments/1/summary.dat')
 
     print 'Creating MTV object'
-    mtv = MTV(D, summary[:-10], s=0.05)
+    mtv = MTV(D, summary[:-6], s=0.25)
     print 'Done'
     mtv.headers = headers
     return mtv
