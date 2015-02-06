@@ -10,6 +10,7 @@ from utils.timer import *
 from utils.counter import *
 from rule_miner import association_rules
 from mtv import MTV
+from utils.dataset_helpers import is_mutual_exclusion
 
 
 # dummy_data = [21415, 405699, 921899, 761510, 330665, 50970, 306223, 5199, 381774, 103028, 745639, 502414, 581, 562356, 957547, 932979, 570599, 23175, 638694, 136764, 470066, 833478, 716342, 50282, 63152, 947408, 82343, 888639, 190586, 621982, 589862, 682409, 134334, 688306, 632724, 334408, 929026, 548801, 551132, 504552, 845351, 138961, 544142, 92379, 49554, 915311, 903555, 962526, 30498, 289818, 10800, 345909, 487053, 125766, 523631, 174254, 559138, 256349, 754332, 938511, 1002062, 606879, 340165, 874619, 881341, 867731, 164271, 86124, 137125, 690770, 202291, 234552, 733041, 801285, 205811, 1047206, 423512, 218847, 107931, 580221, 46457, 900791, 815593, 139424, 203079, 201607, 90494, 404517, 879538, 834110, 606952, 396832, 86907, 344951, 591667, 727317, 347627, 633111, 664092, 1008713, 398054, 425449, 1046759, 605223, 455833, 873611, 351676, 349668, 770365, 419096, 564896, 851994, 407543, 851913, 695336, 515435, 922762, 797134, 369942, 872349, 495114, 227718, 402448, 399326, 334229, 382707, 151194, 889540, 535077, 778197, 380056, 637648, 893416, 902114, 1029435, 648946, 962767, 482108, 193286, 986671, 327394, 231550, 278109, 866283, 912137, 284118, 664393, 9794, 539012, 275435, 165921, 810591, 388354, 461143, 49360, 414486, 396285, 251994, 1005026, 407486, 213157, 953070, 610329, 224336, 83418, 855209, 53395, 424425, 646189, 23342, 305377, 493753, 1012500, 672178, 242262, 544137, 795057, 196304, 954895, 817445, 435515, 462169, 547429, 428031, 157882, 630440, 646981, 105647, 587554, 606385, 92989, 444736, 726758, 621216, 657007, 710537, 96419, 648289, 834942, 97076, 928094, 861473, 896428, 569212, 842970, 412296, 111054, 867388, 631813, 955413, 465995, 638286, 190938, 839092, 323203, 463151, 804090, 899056, 232127, 42629, 314318, 980576, 443360, 403920, 54771, 230824, 633898, 298065, 730677, 168881, 531705, 842610, 465424, 533300, 857033, 712976, 137554, 666771, 860443, 982378, 186829, 728970, 984119, 1017068, 283739, 32464, 982841, 396024, 242038, 959384, 957026, 397664, 989927, 375417, 797588, 766105, 350704, 139760, 553706, 348380, 428792, 849648, 652317, 392422, 519685, 597542, 568168, 686904, 197964, 708405, 531034, 915145, 279481, 970868, 720768, 355165, 743891, 893418, 413868, 986389, 850115, 402686, 798065, 848994, 799325, 732902, 666437, 752729, 642324, 887869, 991404, 481895, 303809, 736986, 468877, 875064, 397081, 368902, 130331, 151841, 159918, 785485, 33594, 84210, 58995, 478375, 244604, 429863, 543589, 520734, 636488, 44047, 566576, 1029151, 300021, 37854, 592258, 40679, 454733, 71668, 948158, 838585, 881323, 1020346, 385791, 997728, 65949, 268996, 310561, 698954, 713410, 86841, 77718, 913347, 507970, 559648, 367969, 295495, 218140, 804179, 390674, 13925, 126060, 258737, 632312, 699373, 49925, 979658, 165621, 498751, 99538, 1021119, 785247, 648251, 101732, 818373, 1038389, 806440, 559233, 697884, 131173, 236622, 392914, 159646, 402393, 440803, 539285, 470393, 922636, 52422, 248780, 693249, 983750, 186401, 799724, 779860, 584779, 949554, 661548, 478192, 1047550, 855279, 102392, 861756, 699871, 998186, 284473, 28326, 629910, 490800, 838920, 793437, 176807, 539255, 398270, 883273, 727976, 579104, 694316, 708088, 223887, 780170, 306543, 470709, 232473, 414365, 250821, 608178, 15849, 820953, 369710, 289313, 932766, 75384, 119055, 961205, 857757, 782032, 435220, 345589, 553062, 838514, 887950, 573303, 72165, 701840, 637442, 244805, 982984, 519748, 931635, 413756, 13819, 267121, 118980, 925336, 953611, 332834, 890803, 862317, 582858, 330155, 50482, 167843, 683358, 432953, 337494, 748501, 495543, 888773, 637373, 802300, 551322, 321424, 602517, 756204, 65308, 70217, 510053, 670294, 71017, 729280, 739264, 531136, 328419, 916968, 692296, 92424, 432580, 1030142, 183241, 346266, 143062, 946631, 206822, 125393, 210718, 459268, 212354, 432516, 438779, 409351, 660409, 710449, 56874, 666091, 969179, 142857, 651017, 793861, 368484, 600924, 141907, 275102, 734229, 614707, 786974, 361794, 856380, 993982, 651878, 324980, 444908, 84895, 477360, 1015017, 559771, 370956, 797234, 573547, 115337, 16373, 462979, 979092, 322844, 759524, 215601, 662922, 845317, 839335, 590995, 520312, 825068, 18020, 673940, 412221, 1036449, 585065, 320702, 765172, 935029, 280180, 41451, 469606, 337040, 446778, 665019, 19057, 83010, 303019, 916678, 13754, 328689, 625386, 437820, 817271, 513601, 490143, 464166, 564788, 9503, 988320, 1025645, 183841, 582616, 518648, 685207, 783407, 79960, 432517, 992454, 380307, 46624, 303589, 83018, 307988, 903487, 533287, 721859, 606013, 415335, 512700, 232575, 829962, 952717, 978973, 276743, 420201, 865717, 579435, 895868, 233299, 122455, 212123, 185245, 656520, 1006761, 273013, 948987, 562490, 894545, 272257, 501839, 732445, 308503, 726262, 257770, 383403, 147898, 158654]
@@ -38,6 +39,7 @@ def print_help(s, z, a):
     print '-v verbose'
     print '-z Suggest best top z itemsets, will slow down computation, default %d' % z
     print '-a Print a association and disassociation rules, default %d' % a
+    print '--mutual-exclusion Also mine mutual exclusion patterns. These will always be many to one. Will double the sample space'
     print '--debug print debug and performance info'
     print '-H headers file. mtv.py will convert attribute name to header names'
     print ''
@@ -57,12 +59,13 @@ def parse_argv(argv):
     H = DEFAULT_H
     v = DEFAULT_V
     q = DEFAULT_Q
+    mutual_exclusion = DEFAULT_MUTUAL_EXCLUSION
     debug = DEFAULT_DEBUG
 
     try:
         # Cmd line arguments.
         # Single letter arguments, args followed by ':' expect a value
-        opts, args = getopt.getopt(argv, "hm:s:k:vz:f:o:c:a:H:q:", ['debug'])
+        opts, args = getopt.getopt(argv, "hm:s:k:vz:f:o:c:a:H:q:", ['debug', 'mutual-exclusion'])
     except getopt.GetoptError:
        print 'Unknown arguments: ', args
        print_help(s, z, a)
@@ -108,11 +111,14 @@ def parse_argv(argv):
         elif opt in ("--debug"):
             debug = True
 
-    return k, m, s, z, c, f, o, a, v, q, H, debug
+        elif opt in ("--mutual-exclusion"):
+            mutual_exclusion = True
+
+    return k, m, s, z, c, f, o, a, v, q, H, debug, mutual_exclusion
 
 def main(argv):
 
-    k, m, s, z, c, f, o, a, v, q, H, debug = parse_argv(argv)
+    k, m, s, z, c, f, o, a, v, q, H, debug, mutual_exclusion = parse_argv(argv)
     D = dummy_data
 
     # Input dataset
@@ -132,7 +138,7 @@ def main(argv):
         headers = parse_header_file(H)
 
     # Initialize MTV
-    mtv = MTV(D, initial_c, k=k, m=m, s=s, z=z, v=v, q=q, headers=headers)
+    mtv = MTV(D, initial_c, k=k, m=m, s=s, z=z, v=v, q=q, mutual_exclusion=mutual_exclusion, headers=headers)
 
     # Total run time
     start = time()
@@ -148,18 +154,24 @@ def main(argv):
     if debug:
         print '\nModel predictions:'
         for c in mtv.C:
-            print 'query %s with fr %f query %f' % (itemsets.to_index_list(c, headers), mtv.fr(c), mtv.query(c))
+            print 'query %s with fr %f query %f' % (itemsets.to_index_list(c), mtv.fr(c), mtv.query(c))
 
     # Print general run parameters and final summary C
     print ''
     print 'k=%s, m=%d, s=%f' % (str(k), m, s)
     print '\nMTV run time: ', time() - start
     print '\nSummary: '
-    print 'Heuristic \t BIC score \t p \t\t |c| \t models  Time \t Itemsets'
-    print 'x.xxxxxx \t %f \t (No query) \t 0 \t 0 \t 0 \t I+seed' % mtv.BIC_scores['initial_score']
+    print 'Heuristic \t BIC score \t p \t\t |c| \t models  Time \t Relationship \t Itemsets'
+    print 'x.xxxxxx \t %f \t (No query) \t 0 \t 0 \t 0 \t +/- \t\t I+seed' % mtv.BIC_scores['initial_score']
     for index, x in enumerate(mtv.C):
         if x in mtv.BIC_scores:
-            print '%f \t %f \t %f \t %d \t %d \t %.2f \t %s' % (mtv.heuristics[x], mtv.BIC_scores[x], mtv.query(x), mtv.largest_summary[index], mtv.independent_components[index], mtv.loop_times[index], itemsets.to_index_list(x, headers))
+            relationship = '+'
+            if mutual_exclusion:
+                me_pattern, (a, b) = is_mutual_exclusion(x, mtv.I)
+                if me_pattern:
+                    relationship = '-'
+
+            print '%f \t %f \t %f \t %d \t %d \t %.2f \t %s \t\t %s' % (mtv.heuristics[x], mtv.BIC_scores[x], mtv.query(x), mtv.largest_summary[index], mtv.independent_components[index], mtv.loop_times[index], relationship, itemsets.to_index_list(x))
     print ''
 
     if debug:

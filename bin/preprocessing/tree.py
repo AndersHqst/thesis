@@ -6,7 +6,7 @@ import numpy as np
 from utils.dataset_helpers import abundance_matrix
 
 class Node(object):
-    def __init__(self):
+    def __init__(self, tree):
         super(Node, self).__init__()
         self.parent = None
         self.children = []
@@ -16,16 +16,20 @@ class Node(object):
         # Numpy array of the abundance colum
         # w.r.t. the clade at a given leaf
         self.abundances = None
+        self.tree = tree
 
 
     def to_xml(self):
         xml = ''
         size = 1
+        subtree_abundance = sum(self.tree.abundance_column_in_subtree(self))
+
         if self.is_root():
 
             tag_name = 'Root'
+
             # Attributes on root node?
-            xml = '<%s name="nullRoot" size="%s">' % (tag_name, size)
+            xml = '<%s name="nullRoot" size="%s" total_abundance="%f">' % (tag_name, size, float(subtree_abundance))
             for child in self.children:
                 xml += child.to_xml()
             xml += '</%s>' % tag_name
@@ -35,13 +39,13 @@ class Node(object):
         elif self.is_leaf():
             short_name = self.name.split('|')[-1]
             tag_name = 'depth_%d' % self.depth
-            xml = '<%s name="%s" path="%s" size="%s" />' % (tag_name, short_name, self.clades, size)
+            xml = '<%s name="%s" path="%s" size="%s" total_abundance="%f"/>' % (tag_name, short_name, self.clades, size, float(subtree_abundance))
             return xml
 
         else:
             short_name = self.name.split('|')[-1]
             tag_name = 'depth_%d' % self.depth
-            xml = '<%s name="%s" path="%s" size="%s">' % (tag_name, short_name, self.clades, size)
+            xml = '<%s name="%s" path="%s" size="%s" total_abundance="%f">' % (tag_name, short_name, self.clades, size, float(subtree_abundance))
             for child in self.children:
                 xml += child.to_xml()
             xml += '</%s>' % tag_name
@@ -100,7 +104,7 @@ class Tree(object):
         :return: An initialized Tree
         """
         super(Tree, self).__init__()
-        self.root = Node()
+        self.root = Node(self)
         self.root.name = 'Root'
         "Dataset related to the datasets"
         self.ds = ds
@@ -129,7 +133,7 @@ class Tree(object):
             if not name in [n.name for n in node.children]:
                 assert not (name in self.nodes), 'Attempting to add node twice'
 
-                child = Node()
+                child = Node(self)
                 child.name = name
                 child.parent = node
                 child.depth = depth + 1
@@ -457,7 +461,6 @@ def test_tree():
     print sub_ds
 
 # test_tree()
-
 
 
 

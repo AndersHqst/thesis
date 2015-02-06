@@ -49,6 +49,7 @@ from plots.faust_result_discretized import plot_faust_relationships
 def write_dataset_to_experiment(file_name, ds):
     from itemsets import binary_vectors_to_ints
     from utils.files import write_dat_file
+    import itemsets
     # Write .dat file
     abundance = abundance_matrix(ds)
     D = binary_vectors_to_ints(abundance)
@@ -62,6 +63,7 @@ def write_dataset_to_experiment(file_name, ds):
             headers.append('|'.join(vals[-2:]))
         else:
             headers.append(vals[0])
+
 
     with open(file_name + '.headers', 'wb') as fd:
         line = ' '.join(headers)
@@ -161,13 +163,13 @@ def run_discretization_for_tree_depth(depth):
 
     print 'Attributes: ', len(ds[0][2:])
     ds = median_discretization(ds)
-    ds = discrete_dataset_cleaning(ds)
+    ds = discrete_dataset_cleaning(ds, 0.45)
     print 'Attributes after cleaning: ', len(ds[0][2:])
 
-    write_dataset_to_experiment('../experiments/3/Stool_maxent_discretized_nodes_depth_5', ds)
+    write_dataset_to_experiment('../experiments/4/Stool_maxent_discretized_nodes_depth_6_045', ds)
 
 
-# run_discretization_for_tree_depth(5)
+run_discretization_for_tree_depth(6)
 
 def load_model():
     from mtv import MTV
@@ -221,9 +223,10 @@ def clade_table():
     headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6.headers')
 
     summary = parse_dat_file('../experiments/4/summary.dat')
-
     # Get the indeces of the pair
     bin_indeces = [to_index_list(x) for x in summary[:10]]
+
+    bin_indeces = [[33, 10], [33, 11]]
 
     clades = []
     for indeces in bin_indeces:
@@ -239,7 +242,7 @@ def clade_table():
     # for clade1, clade2 in clades:
     #     print '%s & %s\\\\' % (clade1, clade2)
 
-clade_table()
+# clade_table()
 
 def clade_pair_abundances():
     from utils.files import parse_header_file, parse_dat_file
@@ -261,6 +264,37 @@ def clade_pair_abundances():
     plot_clades_relationships(clades, '../experiments/1/plots_top_10/')
 
 # clade_pair_abundances()
+
+def plot_clades():
+    from plots.clade_correlation import plot_clades_relationships
+    #[Ruminococcaceae|Oscillibacter, Ruminococcaceae|unclassified, Ruminococcaceae|Ruminococcus, Ruminococcaceae|Subdoligranulum, Ruminococcaceae|Sporobacter, Incertae_Sedis_XIII|Anaerovorax]
+    # clades = [('Incertae_Sedis_XIII|Anaerovorax', 'Ruminococcaceae|Oscillibacter'),
+    #     ('Incertae_Sedis_XIII|Anaerovorax', 'Ruminococcaceae|unclassified'),
+    #     ('Incertae_Sedis_XIII|Anaerovorax', 'Ruminococcaceae|Ruminococcus'),
+    #     ('Incertae_Sedis_XIII|Anaerovorax', 'Ruminococcaceae|Subdoligranulum'),
+    #     ('Incertae_Sedis_XIII|Anaerovorax', 'Ruminococcaceae|Sporobacter')]
+
+    # clades = [('Ruminococcaceae|Sporobacter', 'Ruminococcaceae|Oscillibacter'),
+    #     ('Ruminococcaceae|Sporobacter', 'Ruminococcaceae|unclassified'),
+    #     ('Ruminococcaceae|Sporobacter', 'Ruminococcaceae|Ruminococcus'),
+    #     ('Ruminococcaceae|Sporobacter', 'Ruminococcaceae|Subdoligranulum')]
+
+    # clades = [('Veillonellaceae|unclassified', 'Lachnospiraceae|unclassified'),
+    #           ('Veillonellaceae|unclassified', 'Lachnospiraceae|Dorea')]
+
+    clades = [['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']]
+    # clades = [('Bacteroidaceae|Bacteroides', 'Prevotellaceae|unclassified')]
+
+    plot_clades_relationships(clades, './')
+
+
+
+plot_clades()
+
+# from preprocessing import faust_parser
+# res = faust_parser.results()
+# for r in res:
+#     print r.clade_1 + ' + ' + r.clade_1
 
 def format_stats(f):
     """
@@ -292,3 +326,14 @@ def format_stats(f):
     print 'iteration_time =', iteration_time
 
 # format_stats('./output.txt')
+
+def write_tree():
+    from preprocessing.tree import Tree
+    from preprocessing.parser import get_dataset
+    ds=get_dataset()
+    t = Tree(ds)
+    xml=t.root.to_xml()
+    with open('tree.xml', 'wb') as fd:
+       fd.write(xml)
+
+# write_tree()

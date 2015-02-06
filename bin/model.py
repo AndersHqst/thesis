@@ -286,7 +286,7 @@ class Model(object):
     def score(self):
         # print 'score called'
         try:
-            C = self.C
+            C = self.I.union(self.C)
             U = self.U
             u0 = self.u0
             D = self.mtv.D

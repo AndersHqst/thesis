@@ -3,6 +3,7 @@ import itemsets
 from model import Model
 from heurestic import h
 from utils.timer import *
+from utils.dataset_helpers import dataset_with_negations
 from graph import Graph
 from utils.timer import *
 from utils.counter import *
@@ -11,7 +12,7 @@ from time import time
 
 class MTV(object):
 
-    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, q=DEFAULT_Q, headers=None):
+    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, q=DEFAULT_Q, mutual_exclusion=DEFAULT_MUTUAL_EXCLUSION, headers=None):
         super(MTV, self).__init__()
 
         # Mine up to k itemsets
@@ -35,6 +36,9 @@ class MTV(object):
         # Header strings for attributes
         self.headers = headers
 
+        # If set to True, MTV will also produce mutual exclusion patterns
+        self.mutual_exclusion = mutual_exclusion
+
         # Number of candidate itemsets FindBestItemSet should search for
         # Will result in a list of top-z highest heuristics
         self.z = z
@@ -48,6 +52,10 @@ class MTV(object):
 
         # Singletons
         self.I = itemsets.singletons(self.D)
+
+        if self.mutual_exclusion:
+            self.D  = dataset_with_negations(self.D, self.I)
+            self.I = itemsets.singletons(self.D)
 
         # Cached frequency counts in D
         self.fr_cache = {}
@@ -109,7 +117,7 @@ class MTV(object):
             self.loop_times.append(time()-start)
 
             if self.v:
-                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, max(|C|): %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X, self.headers), self.BIC_scores[X], self.independent_components[-1], self.largest_summary[-1])
+                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, max(|C|): %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X), self.BIC_scores[X], self.independent_components[-1], self.largest_summary[-1])
 
 
     def query(self, y):
@@ -299,6 +307,38 @@ class MTV(object):
         return Z[0][0]
 
 
+    def validate_itemset_union_for_mutual_exclusion(self, X, y):
+        """
+        Return true if y unioned with X is a valied itemset
+        under mutual exclusion.
+
+        X|y will not be valid if a negated attribute is already in X
+        or if the positive counterpart of y, is already in X
+        :param X:
+        :param y:
+        :return: True if y can be unioned with X
+        """
+
+        assert self.mutual_exclusion
+
+        # MTV should be setup so half of the attributes
+        # positive
+        positive_attributes = int(len(self.I)/2.)
+
+        # check no other negated attribute is set
+        if X >> positive_attributes != 0:
+            return False
+
+        # Check if y is a negated attribute
+        if 2**positive_attributes <= y:
+
+            # Check if positive counterpart of y is set
+            pos = y >> positive_attributes
+            if pos & X == pos:
+                return False
+
+        return True
+
     def find_best_itemset_rec(self, X, Y, Z, X_length=0):
         """
         :param X: itemset
@@ -339,7 +379,11 @@ class MTV(object):
             if self.m == 0 or X_length < self.m:
                 while 0 < len(Y):
                     y = Y.pop()
-                    Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
+
+                    # If we are also mining for mutual exclusion
+                    # we have to check that ycan be unioned with X
+                    if not self.mutual_exclusion or self.validate_itemset_union_for_mutual_exclusion(X, y):
+                        Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
 
         return Z
 
