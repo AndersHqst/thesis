@@ -400,7 +400,7 @@ class Tree(object):
         if count_depth is None or depth <= count_depth:
             return 1 + count
         return count
-    
+
 
     def count_leafs(self, node=None, count=0):
         """
