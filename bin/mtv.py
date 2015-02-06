@@ -287,7 +287,7 @@ class MTV(object):
         self.model_cache = {}
 
         timer_start('Find best itemset')
-        Z = self.find_best_itemset(0, self.I.copy() - self.black_list_singletons, [(0,0)])
+        Z = self.find_best_itemset_rec(0, self.I.copy() - self.black_list_singletons, [(0,0)])
         timer_stop('Find best itemset')
 
         # Edge case, where we only find singletons not exactly described by the model
@@ -299,7 +299,7 @@ class MTV(object):
         return Z[0][0]
 
 
-    def find_best_itemset(self, X, Y, Z, X_length=0):
+    def find_best_itemset_rec(self, X, Y, Z, X_length=0):
         """
         :param X: itemset
         :param Y: remaining itemsets
