@@ -96,8 +96,8 @@ def plot_clades_relationships(clade_pairs, folder):
             pearson = pearsonr(xs, ys)
             spearman = spearmanr(xs, ys)
 
-            pearson = 'Pearson: %.3f' % pearson[0]
-            spearman = 'Spearman: %.3f' % spearman[0]
+            pearson = 'Pearson: %.3f, %.3f' % (pearson[0], pearson[1])
+            spearman = 'Spearman: %.3f, %.3f' % (spearman[0], spearman[1])
 
             figtext(0.7, 0.52, pearson, fontsize=10)
             figtext(0.7, 0.49, spearman, fontsize=10)

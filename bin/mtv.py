@@ -87,7 +87,7 @@ class MTV(object):
         self.independent_components = []
 
         # List to track history of C size
-        self.largest_summary = []
+        self.summary_sizes = []
 
         # List to track history of timings of a loop in mtv
         self.loop_times = []
@@ -117,7 +117,7 @@ class MTV(object):
             self.loop_times.append(time()-start)
 
             if self.v:
-                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, max(|C|): %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X), self.BIC_scores[X], self.independent_components[-1], self.largest_summary[-1])
+                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, Cs: %s' % (timer_stopwatch_time('run'), itemsets.to_index_list(X), self.BIC_scores[X], self.independent_components[-1], self.summary_sizes[-1])
 
 
     def query(self, y):
@@ -447,9 +447,9 @@ class MTV(object):
         """
         self.independent_components.append(len(components))
 
-        largest_C = 0
+        C_sizes = []
         for component in components:
-            largest_C = max(largest_C, len(component.model.C))
-        self.largest_summary.append(largest_C)
+            C_sizes.append(len(component.model.C))
+        self.summary_sizes.append(C_sizes)
 
         counter_max('Independent models', len(components))

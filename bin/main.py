@@ -119,10 +119,66 @@ def parse_argv(argv):
     return k, m, s, z, c, f, o, a, v, q, H, debug, mutual_exclusion
 
 
-def write_summary_file(folder, mtv):
-    from utils.dataset_helpers import is_mutual_exclusion
+def summary_write_coocurrence_pattern(fd, itemset, mtv):
+    """
+    Write co-occurrence patter to summary file
+    :param fd: File
+    :param itemset: Itemset
+    :param mtv: MTV
+    :return:
+    """
+    line = '\n# CO-OCURRENCE # \n'
+    line += '%s\n' % str(itemsets.to_index_list(itemset, mtv.headers))
+    line += 'p=%f \n' % (mtv.query(itemset))
+
+    # Independence probabilities:
+    p = 1.0
+    independennt_probabilities = ''
+    for i in itemsets.singletons_of_itemset(itemset):
+        estiamte = mtv.query(i)
+        p *= estiamte
+        independennt_probabilities += '%f %s\n' % (estiamte, itemsets.to_index_list(i, mtv.headers))
+    line += 'Independent probability: %f\n' % p
+    line += independennt_probabilities
+
+    fd.write(line + '\n')
+
+
+def summary_write_mutualexclusion_pattern(fd, a, b, mtv):
+    """
+    Write mutual-exclusion patter to summary file
+    :param fd: File
+    :param a: Left hand side of pattern
+    :param b: Right hand side - the item getting excluded
+    :param mtv: MTV
+    :return:
+    """
     from rule_miner import association_rule
 
+    fd.write('\n# MUTUAL-EXCLUSION #:\n')
+    line = '%s - %s\n' % (str(itemsets.to_index_list(a, mtv.headers)), str(itemsets.to_index_list(b, mtv.headers)))
+
+    phi = phi_correlation_in_model(mtv, a, b)
+    X_Y, Y_X = association_rule(mtv, a, b)
+
+    line += 'p=%f lhs=%f rhs=%f phi=%f X->Y:(conf:%f, lift:%f) Y->X:(conf:%f, lift:%f) \n' % (mtv.query(a|b), mtv.query(a), mtv.query(b), phi, X_Y.confidence, X_Y.lift, Y_X.confidence, Y_X.lift)
+
+    p = 1.0
+    for i in itemsets.singletons_of_itemsets([a,b]):
+        p *= mtv.query(i)
+
+    # Independence probabilities:
+    independennt_probabilities = ''
+    for i in itemsets.singletons_of_itemsets([a,b]):
+        independennt_probabilities += '%f %s\n' % (mtv.query(i), itemsets.to_index_list(i, mtv.headers))
+    line += 'Independent probability: %f\n' % p
+    line += independennt_probabilities
+
+    fd.write(line+'\n')
+
+
+def write_summary_file(folder, mtv):
+    from utils.dataset_helpers import is_mutual_exclusion
 
     # Write a raw .dat file. Would be used
     # to seed MTV
@@ -131,51 +187,12 @@ def write_summary_file(folder, mtv):
     # Write patterns to a file in a more 'human readable'
     # format, with some result info
     with open(os.path.join(folder, 'summary.txt'), 'wb') as fd:
-        mutual_exclusion_itemsets = []
-        fd.write('#\n')
-        fd.write('# Co-occurrence patterns:\n')
-        fd.write('#\n')
         for itemset in mtv.C:
             is_me, (a,b) = is_mutual_exclusion(itemset, mtv.I)
             if is_me:
-                mutual_exclusion_itemsets.append((a,b))
+                summary_write_mutualexclusion_pattern(fd, a, b, mtv)
             else:
-                line = '%s\n' % str(itemsets.to_index_list(itemset, mtv.headers))
-                line += 'p=%f \n' % (mtv.query(itemset))
-
-                # Independence probabilities:
-                p = 1.0
-                independennt_probabilities = ''
-                for i in itemsets.singletons_of_itemset(itemset):
-                    estiamte = mtv.query(i)
-                    p *= estiamte
-                    independennt_probabilities += '%f %s\n' % (estiamte, itemsets.to_index_list(i, mtv.headers))
-                line += 'Independent probability: %f\n' % p
-                line += independennt_probabilities
-
-                fd.write(line + '\n')
-
-        fd.write('\n#\n')
-        fd.write('# Mutual-exclusion patterns:\n')
-        fd.write('#\n')
-        for (a,b) in mutual_exclusion_itemsets:
-            line = '%s - %s\n' % (str(itemsets.to_index_list(a, mtv.headers)), str(itemsets.to_index_list(b, mtv.headers)))
-
-            phi = phi_correlation_in_model(mtv, a, b)
-            X_Y, Y_X = association_rule(mtv, a, b)
-
-            line += 'p=%f lhs=%f rhs=%f phi=%f X->Y:(conf:%f, lift:%f) Y->X:(conf:%f, lift:%f) \n' % (mtv.query(a|b), mtv.query(a), mtv.query(b), phi, X_Y.confidence, X_Y.lift, Y_X.confidence, Y_X.lift)
-
-            # Independence probabilities:
-            independennt_probabilities = ''
-            for i in itemsets.singletons_of_itemsets([a,b]):
-                independennt_probabilities += '%f %s\n' % (mtv.query(i), itemsets.to_index_list(i, mtv.headers))
-            line += 'Independent probability: %f\n' % p
-            line += independennt_probabilities
-
-            fd.write(line+'\n')
-
-
+                summary_write_coocurrence_pattern(fd, itemset, mtv)
 
 
 def main(argv):
@@ -232,12 +249,12 @@ def main(argv):
             relationship = '+'
 
             if mutual_exclusion:
-                me_pattern, (a, b) = is_mutual_exclusion(x, mtv.I)
+                me_pattern, (X, Y) = is_mutual_exclusion(x, mtv.I)
                 if me_pattern:
                     relationship = '-'
-                    itemset = '%s - %s' % (itemsets.to_index_list(a), itemsets.to_index_list(b))
+                    itemset = '%s - %s' % (itemsets.to_index_list(X), itemsets.to_index_list(Y))
 
-            print '%f \t %f \t %f \t %d \t %d \t %.2f \t %s \t\t %s' % (mtv.heuristics[x], mtv.BIC_scores[x], mtv.query(x), mtv.largest_summary[index], mtv.independent_components[index], mtv.loop_times[index], relationship, itemset)
+            print '%f \t %f \t %f \t %d \t %d \t %.2f \t %s \t\t %s' % (mtv.heuristics[x], mtv.BIC_scores[x], mtv.query(x), max(mtv.summary_sizes[index]), mtv.independent_components[index], mtv.loop_times[index], relationship, itemset)
     print ''
 
     if debug:

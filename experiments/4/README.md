@@ -23,52 +23,62 @@ Report:
     Write about results based on above questions.
 
 
-101 items in 354 transactions
+Found itemset (64.39 secs): [12, 13, 14, 15, 19, 31, 52, 103], score: 37316.304956, models: 1, Cs: [1]
+Found itemset (8.53 secs): [6, 7, 8, 9, 10, 18, 21, 27], score: 37157.132238, models: 2, Cs: [1, 1]
+Found itemset (7.67 secs): [12, 14, 39, 40, 43, 49, 50, 103], score: 37014.284348, models: 2, Cs: [1, 2]
+Found itemset (7.84 secs): [45, 46, 51, 52, 103], score: 36883.793605, models: 2, Cs: [1, 3]
+Found itemset (7.76 secs): [10, 14, 16, 17, 20, 31], score: 36782.398824, models: 1, Cs: [5]
+Found itemset (23.76 secs): [3, 26, 28, 29], score: 36688.771047, models: 2, Cs: [5, 1]
+Found itemset (7.74 secs): [1, 2, 7, 9, 10, 15, 103], score: 36612.458372, models: 2, Cs: [1, 6]
+Found itemset (60.01 secs): [5, 7, 13, 30, 31], score: 36542.975785, models: 2, Cs: [1, 7]
+Found itemset (145.01 secs): [39, 43, 46, 47], score: 36477.266425, models: 2, Cs: [1, 8]
+Found itemset (393.83 secs): [22, 33, 34], score: 36404.544745, models: 3, Cs: [8, 1, 1]
+110 items in 354 transactions
 
 Model predictions:
-query [16, 19, 20, 25, 26, 47] with fr 0.161017 query 0.161018
-query [10, 11, 12, 14, 28, 42] with fr 0.158192 query 0.158188
-query [16, 74, 75, 78, 84] with fr 0.158192 query 0.158189
-query [16, 17, 19, 24, 91] with fr 0.161017 query 0.161005
-query [19, 21, 23, 26] with fr 0.172316 query 0.172314
-query [74, 80, 81, 91] with fr 0.152542 query 0.152550
-query [8, 10, 17, 47] with fr 0.158192 query 0.158187
-query [75, 78, 79, 85] with fr 0.197740 query 0.197743
-query [9, 14, 24, 28, 42] with fr 0.163842 query 0.163841
-query [17, 50, 89, 91] with fr 0.152542 query 0.152540
+query [12, 13, 14, 15, 19, 31, 52, 103] with fr 0.118644 query 0.118643
+query [6, 7, 8, 9, 10, 18, 21, 27] with fr 0.110169 query 0.110168
+query [12, 14, 39, 40, 43, 49, 50, 103] with fr 0.112994 query 0.112986
+query [45, 46, 51, 52, 103] with fr 0.135593 query 0.135592
+query [10, 14, 16, 17, 20, 31] with fr 0.112994 query 0.112996
+query [3, 26, 28, 29] with fr 0.112994 query 0.112994
+query [1, 2, 7, 9, 10, 15, 103] with fr 0.104520 query 0.104515
+query [5, 7, 13, 30, 31] with fr 0.104520 query 0.104515
+query [39, 43, 46, 47] with fr 0.107345 query 0.107348
+query [22, 33, 34] with fr 0.135593 query 0.135593
 
-k=10, m=0, s=0.150000
+k=10, m=0, s=0.100000
 
-MTV run time:  155.154405117
+MTV run time:  726.546221018
 
 Summary: 
-Heuristic    BIC score   p       |c|     models  Time    Itemsets
-x.xxxxxx     19331.567309    (No query)      0   0   0   I+seed
-0.348427     18591.343569    0.161018    1   1   6.29    [16, 19, 20, 25, 26, 47]
-0.338312     17869.639300    0.158188    1   2   0.99    [10, 11, 12, 14, 28, 42]
-0.200623     17324.894981    0.158189    2   2   0.87    [16, 74, 75, 78, 84]
-0.174351     16842.934347    0.161005    3   2   0.86    [16, 17, 19, 24, 91]
-0.150127     16415.026335    0.172314    4   2   0.79    [19, 21, 23, 26]
-0.148622     16007.160725    0.152550    5   2   0.92    [74, 80, 81, 91]
-0.131628     15620.468295    0.158187    7   1   1.65    [8, 10, 17, 47]
-0.116151     15185.055710    0.197743    8   1   8.76    [75, 78, 79, 85]
-0.111876     14841.056959    0.163841    9   1   28.76   [9, 14, 24, 28, 42]
-0.109495     14506.501038    0.152540    10      1   105.17      [17, 50, 89, 91]
+Heuristic    BIC score   p       |c|     models  Time    Relationship    Itemsets
+x.xxxxxx     37495.344980    (No query)      0   0   0   +/-         I+seed
+0.428678     37316.304956    0.118643    1   1   64.39   -       [12, 13, 14, 15, 19, 31, 52] - [48]
+0.385953     37157.132238    0.110168    1   2   8.53    +       [6, 7, 8, 9, 10, 18, 21, 27]
+0.335821     37014.284348    0.112986    2   2   7.67    -       [12, 14, 39, 40, 43, 49, 50] - [48]
+0.277734     36883.793605    0.135592    3   2   7.84    -       [45, 46, 51, 52] - [48]
+0.233937     36782.398824    0.112996    5   1   7.76    +       [10, 14, 16, 17, 20, 31]
+0.203603     36688.771047    0.112994    5   2   23.76   +       [3, 26, 28, 29]
+0.175825     36612.458372    0.104515    6   2   7.74    -       [1, 2, 7, 9, 10, 15] - [48]
+0.156575     36542.975785    0.104515    7   2   60.01   +       [5, 7, 13, 30, 31]
+0.134479     36477.266425    0.107348    8   2   145.01      +       [39, 43, 46, 47]
+0.132408     36404.544745    0.135593    8   3   393.83      +       [22, 33, 34]
 
-[TIMER] Compute p: 7.024513
-[TIMER] independence_estimate: 0.431631
-[TIMER] mtv_query: 104.808763
-[TIMER] Block weight: 105.825682
-[TIMER] Cached query: 105.015026
-[TIMER] Find best itemset: 116.813908
-[TIMER] union_of_itemsets: 0.519027
-[TIMER] Iterative scaling: 38.115963
-[TIMER] Cummulative weight: 28.725369
-[TIMER] Singletons of itemsets: 0.000092
-[TIMER] Compute blocks: 0.143832
-[TIMER] Build independent models: 38.245670
-[COUNTER] Independence estimates: 50101
-[COUNTER] Block queries: 34192
-[COUNTER] Total queries: 84293
-[COUNTER] Iterative scaling max iterations: 30
-[COUNTER] Independent models: 2
+[TIMER] Compute p: 42.155339
+[TIMER] independence_estimate: 3.956882
+[TIMER] mtv_query: 596.286206
+[TIMER] Block weight: 296.383675
+[TIMER] Cached query: 600.991288
+[TIMER] Find best itemset: 721.698202
+[TIMER] union_of_itemsets: 6.837795
+[TIMER] Iterative scaling: 4.810292
+[TIMER] Cummulative weight: 252.112358
+[TIMER] Singletons of itemsets: 0.000097
+[TIMER] Compute blocks: 0.038839
+[TIMER] Build independent models: 4.836272
+[COUNTER] Independence estimates: 571792
+[COUNTER] Block queries: 457676
+[COUNTER] Total queries: 1029468
+[COUNTER] Iterative scaling max iterations: 25
+[COUNTER] Independent models: 3
