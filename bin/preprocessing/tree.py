@@ -26,7 +26,8 @@ class Node(object):
 
         if self.is_root():
 
-            tag_name = 'Root'
+            tag_name = 'Process'
+
 
             # Attributes on root node?
             xml = '<%s name="nullRoot" size="%s" total_abundance="%f">' % (tag_name, size, float(subtree_abundance))
