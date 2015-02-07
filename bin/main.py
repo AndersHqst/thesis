@@ -11,7 +11,7 @@ from utils.timer import *
 from utils.counter import *
 from rule_miner import association_rules
 from mtv import MTV
-from utils.dataset_helpers import is_mutual_exclusion
+from utils.dataset_helpers import is_co_exclusion
 from utils.correlation import phi_correlation_in_model
 
 
@@ -41,7 +41,7 @@ def print_help(s, z, a):
     print '-v verbose'
     print '-z Suggest best top z itemsets, will slow down computation, default %d' % z
     print '-a Print a association and disassociation rules, default %d' % a
-    print '--mutual-exclusion Also mine mutual exclusion patterns. These will always be many to one. Will double the sample space'
+    print '--co-exclusion Also mine co-exclusion patterns. These will always be many to one. Will double the sample space'
     print '--debug print debug and performance info'
     print '-H headers file. mtv.py will convert attribute name to header names'
     print ''
@@ -61,13 +61,13 @@ def parse_argv(argv):
     H = DEFAULT_H
     v = DEFAULT_V
     q = DEFAULT_Q
-    mutual_exclusion = DEFAULT_MUTUAL_EXCLUSION
+    co_exclusion = DEFAULT_CO_EXCLUSION
     debug = DEFAULT_DEBUG
 
     try:
         # Cmd line arguments.
         # Single letter arguments, args followed by ':' expect a value
-        opts, args = getopt.getopt(argv, "hm:s:k:vz:f:o:c:a:H:q:", ['debug', 'mutual-exclusion'])
+        opts, args = getopt.getopt(argv, "hm:s:k:vz:f:o:c:a:H:q:", ['debug', 'co-exclusion'])
     except getopt.GetoptError:
        print 'Unknown arguments: ', args
        print_help(s, z, a)
@@ -113,10 +113,10 @@ def parse_argv(argv):
         elif opt in ("--debug"):
             debug = True
 
-        elif opt in ("--mutual-exclusion"):
-            mutual_exclusion = True
+        elif opt in ("--co-exclusion"):
+            co_exclusion = True
 
-    return k, m, s, z, c, f, o, a, v, q, H, debug, mutual_exclusion
+    return k, m, s, z, c, f, o, a, v, q, H, debug, co_exclusion
 
 
 def summary_write_coocurrence_pattern(fd, itemset, mtv):
@@ -144,9 +144,9 @@ def summary_write_coocurrence_pattern(fd, itemset, mtv):
     fd.write(line + '\n')
 
 
-def summary_write_mutualexclusion_pattern(fd, a, b, mtv):
+def summary_write_coexclusion_pattern(fd, a, b, mtv):
     """
-    Write mutual-exclusion patter to summary file
+    Write co-exclusion patter to summary file
     :param fd: File
     :param a: Left hand side of pattern
     :param b: Right hand side - the item getting excluded
@@ -155,7 +155,7 @@ def summary_write_mutualexclusion_pattern(fd, a, b, mtv):
     """
     from rule_miner import association_rule
 
-    fd.write('\n# MUTUAL-EXCLUSION #:\n')
+    fd.write('\n# CO-EXCLUSION #:\n')
     line = '%s - %s\n' % (str(itemsets.to_index_list(a, mtv.headers)), str(itemsets.to_index_list(b, mtv.headers)))
 
     phi = phi_correlation_in_model(mtv, a, b)
@@ -178,7 +178,7 @@ def summary_write_mutualexclusion_pattern(fd, a, b, mtv):
 
 
 def write_summary_file(folder, mtv):
-    from utils.dataset_helpers import is_mutual_exclusion
+    from utils.dataset_helpers import is_co_exclusion
 
     # Write a raw .dat file. Would be used
     # to seed MTV
@@ -188,16 +188,16 @@ def write_summary_file(folder, mtv):
     # format, with some result info
     with open(os.path.join(folder, 'summary.txt'), 'wb') as fd:
         for itemset in mtv.C:
-            is_me, (a,b) = is_mutual_exclusion(itemset, mtv.I)
+            is_me, (a,b) = is_co_exclusion(itemset, mtv.I)
             if is_me:
-                summary_write_mutualexclusion_pattern(fd, a, b, mtv)
+                summary_write_coexclusion_pattern(fd, a, b, mtv)
             else:
                 summary_write_coocurrence_pattern(fd, itemset, mtv)
 
 
 def main(argv):
 
-    k, m, s, z, c, f, o, a, v, q, H, debug, mutual_exclusion = parse_argv(argv)
+    k, m, s, z, c, f, o, a, v, q, H, debug, co_exclusion = parse_argv(argv)
     D = dummy_data
 
     # Input dataset
@@ -217,7 +217,7 @@ def main(argv):
         headers = parse_header_file(H)
 
     # Initialize MTV
-    mtv = MTV(D, initial_c, k=k, m=m, s=s, z=z, v=v, q=q, mutual_exclusion=mutual_exclusion, headers=headers)
+    mtv = MTV(D, initial_c, k=k, m=m, s=s, z=z, v=v, q=q, co_exclusion=co_exclusion, headers=headers)
 
     # Total run time
     start = time()
@@ -248,8 +248,8 @@ def main(argv):
             itemset = str(itemsets.to_index_list(x))
             relationship = '+'
 
-            if mutual_exclusion:
-                me_pattern, (X, Y) = is_mutual_exclusion(x, mtv.I)
+            if co_exclusion:
+                me_pattern, (X, Y) = is_co_exclusion(x, mtv.I)
                 if me_pattern:
                     relationship = '-'
                     itemset = '%s - %s' % (itemsets.to_index_list(X), itemsets.to_index_list(Y))

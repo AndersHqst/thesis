@@ -12,7 +12,7 @@ from time import time
 
 class MTV(object):
 
-    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, q=DEFAULT_Q, mutual_exclusion=DEFAULT_MUTUAL_EXCLUSION, headers=None):
+    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, q=DEFAULT_Q, co_exclusion=DEFAULT_CO_EXCLUSION, headers=None):
         super(MTV, self).__init__()
 
         # Mine up to k itemsets
@@ -36,8 +36,8 @@ class MTV(object):
         # Header strings for attributes
         self.headers = headers
 
-        # If set to True, MTV will also produce mutual exclusion patterns
-        self.mutual_exclusion = mutual_exclusion
+        # If set to True, MTV will also produce co-exclusion patterns
+        self.co_exclusion = co_exclusion
 
         # Number of candidate itemsets FindBestItemSet should search for
         # Will result in a list of top-z highest heuristics
@@ -53,7 +53,7 @@ class MTV(object):
         # Singletons
         self.I = itemsets.singletons(self.D)
 
-        if self.mutual_exclusion:
+        if self.co_exclusion:
             self.D  = dataset_with_negations(self.D, self.I)
             self.I = itemsets.singletons(self.D)
 
@@ -307,10 +307,10 @@ class MTV(object):
         return Z[0][0]
 
 
-    def validate_itemset_union_for_mutual_exclusion(self, X, y):
+    def validate_itemset_union_for_co_exclusion(self, X, y):
         """
         Return true if y unioned with X is a valied itemset
-        under mutual exclusion.
+        under co-exclusion.
 
         X|y will not be valid if a negated attribute is already in X
         or if the positive counterpart of y, is already in X
@@ -319,7 +319,7 @@ class MTV(object):
         :return: True if y can be unioned with X
         """
 
-        assert self.mutual_exclusion
+        assert self.co_exclusion
 
         # MTV should be setup so half of the attributes
         # positive
@@ -380,9 +380,9 @@ class MTV(object):
                 while 0 < len(Y):
                     y = Y.pop()
 
-                    # If we are also mining for mutual exclusion
+                    # If we are also mining for co-exclusion
                     # we have to check that ycan be unioned with X
-                    if not self.mutual_exclusion or self.validate_itemset_union_for_mutual_exclusion(X, y):
+                    if not self.co_exclusion or self.validate_itemset_union_for_co_exclusion(X, y):
                         Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
 
         return Z

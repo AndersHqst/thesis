@@ -48,7 +48,7 @@ def dataset_with_negations(dataset, singletons):
         return dataset_with_negations
 
 
-def is_mutual_exclusion(itemset, singletons):
+def is_co_exclusion(itemset, singletons):
     """
     :param itemset: Itemset
     :param singletons: All singleton, positive and negated
