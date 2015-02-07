@@ -3,15 +3,41 @@
 #
 ['Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|unclassified', 'Ruminococcaceae|Ruminococcus', 'Ruminococcaceae|Subdoligranulum', 'Ruminococcaceae|Sporobacter', 'Incertae_Sedis_XIII|Anaerovorax']
 p=0.161023 
+Independent probability: 0.015625
+0.499989 ['Ruminococcaceae|Oscillibacter']
+0.500004 ['Ruminococcaceae|unclassified']
+0.500004 ['Ruminococcaceae|Ruminococcus']
+0.499999 ['Ruminococcaceae|Sporobacter']
+0.500003 ['Incertae_Sedis_XIII|Anaerovorax']
+0.499995 ['Ruminococcaceae|Subdoligranulum']
 
 ['Lachnospiraceae|unclassified', 'Lachnospiraceae|Dorea', 'Lachnospiraceae|Roseburia', 'Lachnospiraceae|Coprococcus', 'Ruminococcaceae|Butyricicoccus', 'Incertae_Sedis_XIV|Blautia']
 p=0.158193 
+Independent probability: 0.015624
+0.499997 ['Lachnospiraceae|unclassified']
+0.499998 ['Lachnospiraceae|Dorea']
+0.499998 ['Ruminococcaceae|Butyricicoccus']
+0.499994 ['Lachnospiraceae|Roseburia']
+0.499997 ['Lachnospiraceae|Coprococcus']
+0.499996 ['Incertae_Sedis_XIV|Blautia']
 
 ['Ruminococcaceae|Oscillibacter', 'Porphyromonadaceae|Butyricimonas', 'Porphyromonadaceae|unclassified', 'Porphyromonadaceae|Barnesiella', 'Rikenellaceae|unclassified']
 p=0.158192 
+Independent probability: 0.031071
+0.499989 ['Ruminococcaceae|Oscillibacter']
+0.497169 ['Porphyromonadaceae|Butyricimonas']
+0.499993 ['Rikenellaceae|unclassified']
+0.499996 ['Porphyromonadaceae|unclassified']
+0.499994 ['Porphyromonadaceae|Barnesiella']
 
 ['Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|Anaerotruncus', 'Ruminococcaceae|unclassified', 'Ruminococcaceae|Faecalibacterium', 'Coriobacteriaceae|Collinsella']
 p=0.161016 
+Independent probability: 0.031249
+0.499989 ['Ruminococcaceae|Oscillibacter']
+0.499995 ['Ruminococcaceae|Anaerotruncus']
+0.500002 ['Coriobacteriaceae|Collinsella']
+0.500004 ['Ruminococcaceae|unclassified']
+0.499996 ['Ruminococcaceae|Faecalibacterium']
 
 
 #
@@ -19,4 +45,10 @@ p=0.161016
 #
 ['Lachnospiraceae|Coprococcus', 'Ruminococcaceae|Anaerotruncus', 'Ruminococcaceae|Ruminococcus', 'Incertae_Sedis_XIII|Anaerovorax'] - ['Bacteroidaceae|Bacteroides']
 p=0.093158 lhs=0.186315 rhs=0.500000 phi=0.000000 X->Y:(conf:0.500000, lift:1.000000) Y->X:(conf:0.186315, lift:1.000000) 
+Independent probability: 0.031249
+0.499997 ['Lachnospiraceae|Coprococcus']
+0.499995 ['Ruminococcaceae|Anaerotruncus']
+0.500000 ['Bacteroidaceae|Bacteroides']
+0.500004 ['Ruminococcaceae|Ruminococcus']
+0.500003 ['Incertae_Sedis_XIII|Anaerovorax']
 
