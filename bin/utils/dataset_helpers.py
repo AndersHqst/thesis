@@ -56,8 +56,9 @@ def is_mutual_exclusion(itemset, singletons):
     and tuple of (positive (values, negated_value), or False and (0.0)
     """
 
-    negated_attribute = itemset >> int(len(singletons) / 2.0)
-    positive_attributes = itemset ^ negated_attribute
+    positive_bits = int(len(singletons) / 2.0)
+    negated_attribute = itemset >> positive_bits
+    positive_attributes = (2**positive_bits - 1) & itemset
 
     if negated_attribute != 0:
         return (True, (positive_attributes, negated_attribute))

@@ -1,4 +1,4 @@
-from math import sqrt
+import math
 
 def phicoeff_lists(x, y):
     """
@@ -40,7 +40,7 @@ def phicoeff_lists(x, y):
        bd = 1
 
 
-    return (a*d - b * c) / sqrt(ab * cd * ac * bd)
+    return (a*d - b * c) / math.sqrt(ab * cd * ac * bd)
 
 def phicoeff(a, b, c, d):
     """
@@ -75,7 +75,17 @@ def phicoeff(a, b, c, d):
     if bd == 0:
        bd = 1
 
+    return (a*d - b * c) / math.sqrt(ab * cd * ac * bd)
 
-    return (a*d - b * c) / sqrt(ab * cd * ac * bd)
 
+def phi_correlation_in_model(mtv, X, Y):
 
+    # that is, we need the counts for 00, 01, 10, 11. We will get these by the probabilities
+    intersection = mtv.query(X|Y)
+    X_estiamte = mtv.query(X)
+    Y_estiamte = mtv.query(Y)
+    _00 = int(len(mtv.D) * (1 - X_estiamte - Y_estiamte + intersection))
+    _01 = int(len(mtv.D) * (X_estiamte - intersection))
+    _10 = int(len(mtv.D) * (Y_estiamte - intersection))
+    _11 = int(len(mtv.D) * (intersection))
+    return phicoeff(_00, _01, _10, _11)
