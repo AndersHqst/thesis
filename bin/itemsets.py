@@ -81,9 +81,11 @@ def to_index_lists(itemsets):
 
 def union_of_itemsets(itemsets):
     """Union of items in itemsets"""
+    timer_start('union_of_itemsets')
     result = 0
     for c in itemsets:
         result = c | result
+    timer_stop('union_of_itemsets')
     return result
 
 
@@ -92,7 +94,7 @@ def itemset_for_headers(itemset_headers, headers):
     itemset = 0
 
     for itemset_header in itemset_headers:
-        itemset = itemset | headers.index(itemset_header)
+        itemset = itemset | 2**headers.index(itemset_header)
 
     return itemset
 
@@ -108,7 +110,7 @@ def singletons_of_itemset(itemset):
     """
     timer_start('Singletons of itemsets')
 
-    singletons = []
+    singletons = set()
     while itemset:
 
         # Save the current itemset
@@ -120,10 +122,31 @@ def singletons_of_itemset(itemset):
         # Get the bit that was removed
         removed = itemset ^ prev
 
-        singletons.append(removed)
+        singletons.add(removed)
 
     timer_stop('Singletons of itemsets')
     return singletons
+
+
+def iterate_singletons_of_itemset(itemset):
+    """
+    Iterate the singletons in an itemset.
+    This is a small modification of the bitCount algorithm
+    ex https://wiki.python.org/moin/BitManipulation
+    :param itemset:
+    :return:
+    """
+
+    while itemset:
+
+        # Save the current itemset
+        prev = itemset
+
+        # Mask all bits but the lowest that is set
+        itemset &= itemset - 1
+
+        # Return bit that was removed
+        yield itemset ^ prev
 
 
 def binary_vectors_to_ints(binary_matrix):
@@ -131,7 +154,7 @@ def binary_vectors_to_ints(binary_matrix):
     for row in binary_matrix:
         val = 0
         pos = 0
-        for bin_val in row[::-1]:
+        for bin_val in row:
             # the cast to int is necessay if the bin_val is
             # a numpy int64 - the binary operand will fail for higher values
             bit = 2 ** pos * int(bin_val)

@@ -14,11 +14,16 @@ def plot_clades_relationships(clade_pairs, folder):
     # and plot the numeric correlations
     tree = Tree(ds)
 
+    same_lineages = 0
+
     for clade_1, clade_2 in clade_pairs:
 
         # Get the nodes in the phylogenetic tree
         from_node = tree.node_for_clade_name(clade_1)
         to_node = tree.node_for_clade_name(clade_2)
+
+        if from_node.is_in_lineage(to_node):
+            same_lineages += 1
 
         title_text = 'Relative clade abundances'
         title(title_text)
@@ -111,3 +116,6 @@ def plot_clades_relationships(clade_pairs, folder):
         # print vals
         savefig(file_name)
         close()
+
+    print 'same lineages: ', same_lineages
+    print 'node pairs: ', len(clade_pairs)

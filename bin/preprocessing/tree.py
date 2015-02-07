@@ -6,7 +6,7 @@ import numpy as np
 from utils.dataset_helpers import abundance_matrix
 
 class Node(object):
-    def __init__(self):
+    def __init__(self, tree):
         super(Node, self).__init__()
         self.parent = None
         self.children = []
@@ -16,16 +16,21 @@ class Node(object):
         # Numpy array of the abundance colum
         # w.r.t. the clade at a given leaf
         self.abundances = None
+        self.tree = tree
 
 
     def to_xml(self):
         xml = ''
         size = 1
+        subtree_abundance = sum(self.tree.abundance_column_in_subtree(self))
+
         if self.is_root():
 
             tag_name = 'Process'
+
+
             # Attributes on root node?
-            xml = '<%s name="null" size="%s">' % (tag_name, 0)
+            xml = '<%s name="nullRoot" size="%s" total_abundance="%f">' % (tag_name, size, float(subtree_abundance))
             for child in self.children:
                 xml += child.to_xml()
             xml += '</%s>' % tag_name
@@ -35,18 +40,34 @@ class Node(object):
         elif self.is_leaf():
             short_name = self.name.split('|')[-1]
             tag_name = 'depth_%d' % self.depth
-            xml = '<%s name="%s" path="%s" size="%s" />' % (tag_name, short_name, self.clades, size)
+            xml = '<%s name="%s" path="%s" size="%s" total_abundance="%f"/>' % (tag_name, short_name, self.clades, size, float(subtree_abundance))
             return xml
 
         else:
             short_name = self.name.split('|')[-1]
             tag_name = 'depth_%d' % self.depth
-            xml = '<%s name="%s" path="%s" size="%s">' % (tag_name, short_name, self.clades, size)
+            xml = '<%s name="%s" path="%s" size="%s" total_abundance="%f">' % (tag_name, short_name, self.clades, size, float(subtree_abundance))
             for child in self.children:
                 xml += child.to_xml()
             xml += '</%s>' % tag_name
 
             return xml
+
+    def is_ancestor(self, node):
+        """
+        Returns Ture if the passed in node is an ancestor of
+        this node
+        :param node:
+        :return:
+        """
+
+        parent = self.parent
+
+        while not (parent is None):
+            if parent == node:
+                return True
+
+        return False
 
 
     def is_leaf(self):
@@ -59,6 +80,16 @@ class Node(object):
 
     def is_root(self):
         return self.parent is None
+
+
+    def is_in_lineage(self, other_node):
+        """
+        Returns true if the node and the passed in node
+        share lineage
+        :param other_node:
+        :return:
+        """
+        return self.name in other_node.clades or other_node.name in self.clades
 
 
     def __str__(self):
@@ -74,7 +105,7 @@ class Tree(object):
         :return: An initialized Tree
         """
         super(Tree, self).__init__()
-        self.root = Node()
+        self.root = Node(self)
         self.root.name = 'Root'
         "Dataset related to the datasets"
         self.ds = ds
@@ -103,7 +134,7 @@ class Tree(object):
             if not name in [n.name for n in node.children]:
                 assert not (name in self.nodes), 'Attempting to add node twice'
 
-                child = Node()
+                child = Node(self)
                 child.name = name
                 child.parent = node
                 child.depth = depth + 1
@@ -173,6 +204,23 @@ class Tree(object):
 
         return column
 
+    def nodes_at_depth(self, node, depth, nodes=None):
+        """
+        Return nodes at at a given depth. Leafs at lower depth are ignored
+        :param node: Current node
+        :param depth: Depth of desired nodes
+        :return: Nodes at a given depth
+        """
+        if nodes is None:
+            nodes = []
+
+        if depth == 0:
+            return nodes + [node]
+        else:
+            for child in node.children:
+                nodes = self.nodes_at_depth(child, depth - 1, nodes)
+        return nodes
+
 
     def nodes_at_max_depth(self, max_depth, node, depth=0, nodes=None):
         """
@@ -192,6 +240,58 @@ class Tree(object):
             for child in node.children:
                 nodes = self.nodes_at_max_depth(max_depth, child, depth + 1, nodes)
         return nodes
+
+
+    def nodes_for_clades_or_leaf(self, clade_names, node=None, nodes=None):
+        """
+        Returns all nodes in the tree that are either in the clade names
+        or are leafs
+        :param clade_names: A list of clade names
+        :param node: Current node
+        :param nodes: Current list of nodes
+        :return:
+        """
+        if nodes is None:
+            nodes = []
+        if node is None:
+            node = self.root
+
+        if node.name in clade_names or node.is_leaf():
+            return nodes + [node]
+        else:
+            for child in node.children:
+                nodes = self.nodes_for_clades_or_leaf(clade_names, child, nodes)
+        return nodes
+
+
+    def dataset_at_depth(self, depth):
+        """
+        Return a dataset at at a given depth. Leafs at lower depths are ignored
+        :param depth: Depth of desired nodes
+        :return: Dataset with nodes at desired depth
+        """
+        nodes = self.nodes_at_depth(self.root, depth)
+        return self.dataset_for_nodes(nodes)
+
+
+    def dataset_for_clades_or_leaf(self, clade_names):
+        """
+        Returns a dataset that cuts the tree at the provided clades,
+        and leaf nodes for subtrees where a clade name is not found
+        :param clade_names: Clades that must be included
+        :return:
+        """
+        nodes = self.nodes_for_clades_or_leaf(clade_names)
+        return self.dataset_for_nodes(nodes)
+
+
+    def dataset_at_leaves(self):
+        """
+        Build a dataset using only the leaf nodes
+        :return:
+        """
+        nodes = [node for node in self.nodes if node.is_leaf()]
+        return self.dataset_for_nodes(nodes)
 
 
     def dataset_for_all_nodes(self):
@@ -247,7 +347,7 @@ class Tree(object):
                 # The new header name is the clade at the node
                 # 'Bacteria|Firmicutes|' from 'Bacteria|Firmicutes|Bacilli' if we
                 # cut at some node, not leaf
-                headers.append(node.clades)
+                headers.append(node.name)
 
                 # Get the merged abundance columns for the subtree from the node
                 column = self.abundance_column_in_subtree(node)
@@ -306,6 +406,7 @@ class Tree(object):
             return 1 + count
         return count
 
+
     def count_leafs(self, node=None, count=0):
         """
         Returns the number of leafs
@@ -338,7 +439,7 @@ class Tree(object):
         :param node_b:
         :return:
         """
-        return node_a.name in node_b.clades or node_b.name in node_a.clades
+        return node_a.is_in_lineage(node_b)
 
     def has_clade(self, clade_name):
         return clade_name in self.nodes
@@ -361,7 +462,6 @@ def test_tree():
     print sub_ds
 
 # test_tree()
-
 
 
 

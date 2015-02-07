@@ -21,6 +21,8 @@ def plot_faust_relationships(relative_values=True):
     faust_results = faust_parser.results('Stool')
     for faust_result in faust_results:
 
+        
+
         # if faust_result.number_of_supporting_methods < 5:
         #     continue
 

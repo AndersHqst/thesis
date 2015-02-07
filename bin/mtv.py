@@ -3,6 +3,7 @@ import itemsets
 from model import Model
 from heurestic import h
 from utils.timer import *
+from utils.dataset_helpers import dataset_with_negations
 from graph import Graph
 from utils.timer import *
 from utils.counter import *
@@ -11,7 +12,7 @@ from time import time
 
 class MTV(object):
 
-    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, headers=None):
+    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, q=DEFAULT_Q, mutual_exclusion=DEFAULT_MUTUAL_EXCLUSION, headers=None):
         super(MTV, self).__init__()
 
         # Mine up to k itemsets
@@ -23,9 +24,20 @@ class MTV(object):
         # Support
         self.s = s
 
+        # Constraint on max model size
+        self.q = q
+        # If q is set, we will black list singletons from models
+        # having reached the max size
+        self.black_list_singletons = set()
+
+        # Be verbose
         self.v = v
 
+        # Header strings for attributes
         self.headers = headers
+
+        # If set to True, MTV will also produce mutual exclusion patterns
+        self.mutual_exclusion = mutual_exclusion
 
         # Number of candidate itemsets FindBestItemSet should search for
         # Will result in a list of top-z highest heuristics
@@ -41,6 +53,10 @@ class MTV(object):
         # Singletons
         self.I = itemsets.singletons(self.D)
 
+        if self.mutual_exclusion:
+            self.D  = dataset_with_negations(self.D, self.I)
+            self.I = itemsets.singletons(self.D)
+
         # Cached frequency counts in D
         self.fr_cache = {}
 
@@ -51,7 +67,15 @@ class MTV(object):
         self.BIC_scores = {}
         self.heuristics = {}
 
-        self.models = []
+        # Create a model for holding all singletons
+        # Singletons not used by model in the graph
+        # will be in this model
+        self.singleton_model = Model(self)
+        self.singleton_model.I = self.I.copy()
+
+        # Graph of independent models
+        self.graph = Graph()
+        self.__init_graph()
 
         # Cache for merged models
         self.model_cache = {}
@@ -60,7 +84,7 @@ class MTV(object):
         self.query_cache = {}
 
         # List to track history of disjoint components
-        self.disjoint_components = []
+        self.independent_components = []
 
         # List to track history of C size
         self.largest_summary = []
@@ -76,8 +100,7 @@ class MTV(object):
 
         timer_stopwatch('run')
 
-        self.build_independent_models()
-        self.BIC_scores['initial_score'] = self.models[0].score()
+        self.BIC_scores['initial_score'] = self.score()
 
         # Run until we have converged
         while not self.finished():
@@ -94,24 +117,19 @@ class MTV(object):
             self.loop_times.append(time()-start)
 
             if self.v:
-                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, max(|C|): %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X, self.headers), self.BIC_scores[X], self.disjoint_components[-1], self.largest_summary[-1])
+                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, max(|C|): %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X), self.BIC_scores[X], self.independent_components[-1], self.largest_summary[-1])
 
 
     def query(self, y):
         """
-        Query using necessary models w.r.t y
+        Query using models intersected by y
         """
 
-        # No intersection. Use models[0]
-        # which holds disjoint singletons
-        if y & self.union_of_C == 0:
-            return self.models[0].query(y)
-
+        timer_start('mtv_query')
         # query intersected models independently
         mask = y
         p = 1.0
-
-        for model in self.models:
+        for model in self.graph.independent_models():
 
             # Is this an intersected model?
             if y & model.union_of_C != 0:
@@ -126,9 +144,12 @@ class MTV(object):
                 p *= model.query(intersection)
 
         # disjoint singletons
-        p *= self.models[0].query(mask)
+        p *= self.singleton_model.query(mask)
+
+        timer_stop('mtv_query')
 
         return p
+
 
     def query_headers(self, itemset_headers):
         """
@@ -142,16 +163,16 @@ class MTV(object):
 
         # itemset for the provided header names, will throw ValueError
         # if a header name is not in the self.headers property
-        itemset = itemsets.itemset_for_headers(self.headers, itemset_headers)
+        itemset = itemsets.itemset_for_headers(itemset_headers, self.headers)
 
         return self.query(itemset)
 
 
     def score(self):
 
-        total_score = 0
+        total_score = self.singleton_model.score()
 
-        for model in self.models:
+        for model in self.graph.independent_models():
             total_score += model.score()
 
         total_score += 0.5 * len(self.C) * log(len(self.D), 2)
@@ -165,7 +186,7 @@ class MTV(object):
         :return:
         """
         if not (self.k is None):
-            return self.k < len(self.C)
+            return self.k <= len(self.C)
 
         if 1 < len(self.C):
             # If previous score is lower, the model score has increased
@@ -191,66 +212,52 @@ class MTV(object):
         self.union_of_C = itemsets.union_of_itemsets(self.C)
         self.heuristics[X] = heuristic
 
-        self.build_independent_models()
+        self.update_graph(X)
         # Compute score
         self.BIC_scores[X] = self.score()
 
 
-    def build_independent_models(self):
+    def __init_graph(self):
         """
-        Builds model for each disjoint set of C
+        Init the graph with itemsets in C
         :return:
         """
-        timer_start('Build independent models')
 
-        # Clear old models
-        self.models = []
+        # Build graph
+        for X in self.C:
+            self.graph.add_node(X, Model(self))
 
-        # Hack to only use one model
-        # if True:
-        #     model = Model(self)
-        #     model.C = self.C
-        #     model.I = self.I
-        #     model.union_of_C = itemsets.union_of_itemsets(self.C)
-        #     model.iterative_scaling()
-        #     self.models.append(model)
-        #     return
-
-
-        # If C is empty, we just need one empty model
-        if len(self.C) == 0:
-            model = Model(self)
-            model.I = model.I.union(self.I)
+        # initialize independent models
+        # and removed singletons from singleton model
+        for model in self.graph.independent_models():
             model.iterative_scaling()
-            self.models.append(model)
+            self.singleton_model.I -= model.I
 
-        # Create all disjoint models
-        else:
-            graph = Graph()
-            for itemset in self.C:
-                graph.add_node(itemset)
+        # finally initialize the singleton model
+        self.singleton_model.iterative_scaling()
 
-            I_copy = self.I.copy()
-            count = 0
-            largest_C = 0
-            for disjoint_C in graph.disjoint_itemsets():
-                count += 1
-                model = Model(self)
-                model.C = disjoint_C
-                largest_C = max(largest_C, len(model.C))
-                model.I = itemsets.singletons(model.C)
-                I_copy = I_copy - model.I
-                model.union_of_C = itemsets.union_of_itemsets(disjoint_C)
-                model.iterative_scaling()
-                self.models.append(model)
 
-            self.disjoint_components.append(count)
-            self.largest_summary.append(largest_C)
-            self.models[0].I = self.models[0].I.union(I_copy)
-            self.models[0].iterative_scaling()
-
+    def update_graph(self, X):
+        """
+        Updates the graph with a new itemset X. This will always results in a new
+        model being initialized. The new model's C corresponds to a new graph
+        component, that may contain a merge of one or more existing
+        graph components.
+        """
         timer_start('Build independent models')
-        counter_max('Independent models', len(self.models))
+
+        new_model, components = self.graph.add_node(X, Model(self))
+        new_model.iterative_scaling()
+
+        self.update_model_constraints(new_model)
+
+        # Update the singleton model
+        self.singleton_model.I -= new_model.I
+        self.singleton_model.iterative_scaling()
+
+        timer_stop('Build independent models')
+
+        self.graph_stats(components)
 
 
     def cached_itemset_query(self, X):
@@ -261,7 +268,7 @@ class MTV(object):
         :param X: Queried itemset
         :return: Query result
         """
-
+        timer_start('Cached query')
         estimate = 0.0
 
         if X in self.query_cache:
@@ -270,6 +277,7 @@ class MTV(object):
             estimate = self.query(X)
             self.query_cache[X] = estimate
 
+        timer_stop('Cached query')
         return estimate
 
 
@@ -287,7 +295,7 @@ class MTV(object):
         self.model_cache = {}
 
         timer_start('Find best itemset')
-        Z = self.find_best_itemset_rec(0, self.I.copy(), [(0,0)])
+        Z = self.find_best_itemset_rec(0, self.I.copy() - self.black_list_singletons, [(0,0)])
         timer_stop('Find best itemset')
 
         # Edge case, where we only find singletons not exactly described by the model
@@ -299,7 +307,39 @@ class MTV(object):
         return Z[0][0]
 
 
-    def find_best_itemset_rec(self, X, Y, Z, X_length=0, singleton_restrictions=None):
+    def validate_itemset_union_for_mutual_exclusion(self, X, y):
+        """
+        Return true if y unioned with X is a valied itemset
+        under mutual exclusion.
+
+        X|y will not be valid if a negated attribute is already in X
+        or if the positive counterpart of y, is already in X
+        :param X:
+        :param y:
+        :return: True if y can be unioned with X
+        """
+
+        assert self.mutual_exclusion
+
+        # MTV should be setup so half of the attributes
+        # positive
+        positive_attributes = int(len(self.I)/2.)
+
+        # check no other negated attribute is set
+        if X >> positive_attributes != 0:
+            return False
+
+        # Check if y is a negated attribute
+        if 2**positive_attributes <= y:
+
+            # Check if positive counterpart of y is set
+            pos = y >> positive_attributes
+            if pos & X == pos:
+                return False
+
+        return True
+
+    def find_best_itemset_rec(self, X, Y, Z, X_length=0):
         """
         :param X: itemset
         :param Y: remaining itemsets
@@ -326,8 +366,10 @@ class MTV(object):
             if self.z < len(Z):
                 Z.pop()
 
+
         XY = X | itemsets.union_of_itemsets(Y)
         fr_XY = self.fr(XY)
+
         p_XY = self.cached_itemset_query(XY)
 
         b = max(h(fr_X, p_XY), h(fr_XY, p_X))
@@ -337,7 +379,11 @@ class MTV(object):
             if self.m == 0 or X_length < self.m:
                 while 0 < len(Y):
                     y = Y.pop()
-                    Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
+
+                    # If we are also mining for mutual exclusion
+                    # we have to check that ycan be unioned with X
+                    if not self.mutual_exclusion or self.validate_itemset_union_for_mutual_exclusion(X, y):
+                        Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
 
         return Z
 
@@ -364,6 +410,13 @@ class MTV(object):
         return p
 
 
+    def update_model_constraints(self, newest_model):
+        if not (self.q is None):
+            # Blacklist model singletons
+            if len(newest_model.C) >= self.q:
+                self.black_list_singletons = self.black_list_singletons.union(newest_model.I)
+
+
     def validate_best_itemset(self, itemset):
         """
         Returns true if an itemset is valid to be added to C, or false.
@@ -383,3 +436,20 @@ class MTV(object):
             return False
 
         return True
+
+
+    def graph_stats(self, components):
+        """
+        Record stats when the graph is updated
+        :param components:
+        :param newest_component:
+        :return:
+        """
+        self.independent_components.append(len(components))
+
+        largest_C = 0
+        for component in components:
+            largest_C = max(largest_C, len(component.model.C))
+        self.largest_summary.append(largest_C)
+
+        counter_max('Independent models', len(components))

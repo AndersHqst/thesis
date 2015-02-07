@@ -22,7 +22,7 @@ class FaustResult(object):
         super(FaustResult, self).__init__()
 
         # row for resutl in the faust result file
-        self.row = 0
+        self.id = 0
 
         # Body site and clade name separeted by |
         self.node_identifier_1 = ""
