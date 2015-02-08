@@ -74,8 +74,8 @@ def plot_clades_relationships(clade_pairs, folder):
         figtext(0.7, 0.70, phi, fontsize=10)
 
         # Depth of nodes in the phylogenetic tree
-        from_depth = 'From depth: %d' % from_node.depth
-        to_depth = 'To depth: %d' % to_node.depth
+        from_depth = 'x depth: %d' % from_node.depth
+        to_depth = 'y depth: %d' % to_node.depth
         figtext(0.7, 0.67, from_depth, fontsize=10)
         figtext(0.7, 0.64, to_depth, fontsize=10)
 

@@ -103,6 +103,8 @@ class Model(object):
         """
         Query the probability on an itemset y.
         :param y: Itemset
+        :param scaling: When scaling, query will not use any cache,
+        and will recompute the total weight of songletons for every query
         :return: Estimate of y
         """
 
@@ -113,6 +115,8 @@ class Model(object):
 
         estimate = 0.0
 
+        # If y does not intersect any block,
+        # we do an independence estimate
         if y & self.T_c[0].union_of_itemsets == 0:
             estimate = self.independence_estimate(y)
         else:

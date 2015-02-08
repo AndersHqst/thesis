@@ -169,7 +169,7 @@ def run_discretization_for_tree_depth(depth):
     write_dataset_to_experiment('../experiments/4/Stool_maxent_discretized_nodes_depth_6_020', ds)
 
 
-run_discretization_for_tree_depth(6)
+# run_discretization_for_tree_depth(6)
 
 def load_model():
     from mtv import MTV
@@ -215,28 +215,142 @@ def build_summary_table():
     pass
 
 
+def compare_to_faust():
+    """
+    Go through the faust results and check if our pairs occur
+    :return:
+    """
+    from preprocessing.faust_parser import results
+    from utils.files import parse_header_file, parse_dat_file
+    from itemsets import to_index_list
+    from itertools import combinations
+    from preprocessing import parser
+    from preprocessing.tree import Tree
+    from preprocessing import faust_parser
+    import itemsets
+
+    # Get the stool dataset, and construct the
+    # phylogenetic tree, so we can look up
+    # ancestors of the patterns we have discovered
+    ds = parser.get_dataset()
+    tree = Tree(ds)
+
+    headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6_020.headers')
+    summary = parse_dat_file('../experiments/4/summary.dat')
+    # Get the indeces of the pair
+    bin_indeces = [to_index_list(x) for x in summary]
+
+    # Get summary itemsets by their clade names
+    patterns = []
+    for indeces in bin_indeces:
+        pattern = []
+        for index in indeces:
+            # co-occurrence
+            if index > len(headers):
+                index = index - len(headers)
+            pattern.append(headers[index])
+        patterns.append(pattern)
+
+    faust_results = results()
+    genues_in_faust = []
+    for faust_result in faust_results:
+        a = faust_result.clade_1
+        b = faust_result.clade_2
+        if a in tree.nodes and b in tree.nodes:
+            node_a = tree.nodes[a]
+            node_b = tree.nodes[b]
+            if node_a.depth == 6 and node_b.depth == 6:
+                genues_in_faust.append((a,b))
+    print 'genus in faust: ', len(genues_in_faust)
+
+    # Check every pair in every pattern for existence in the faust results
+    print 'In faust:'
+    for pattern in patterns:
+        for a, b in combinations(pattern, 2):
+
+            # Get nodes for our pattern
+            node_a = tree.nodes[a]
+            node_b = tree.nodes[b]
+            # print 'depth a: ', node_a.depth
+            # print 'depth b: ', node_b.depth
+
+            for faust_result in faust_results:
+                if faust_result.clade_1 == a or faust_result.clade_2 == a:
+                    if faust_result.clade_1 == b or faust_result.clade_2 == b:
+                        print 'Genus results:'
+                        print 'Faust: %s %s, %d' % (faust_result.clade_1, faust_result.clade_2, faust_result.direction)
+                        print '%s, %s' % (a.replace('|', '-'), b.replace('|', '-'))
+
+                        if (faust_result.clade_1, faust_result.clade_2) in genues_in_faust:
+                            genues_in_faust.remove((faust_result.clade_1, faust_result.clade_2))
+                    elif faust_result.clade_1 in tree.nodes and faust_result.clade_2 in tree.nodes:
+                        faust_a = tree.nodes[faust_result.clade_1]
+                        faust_b = tree.nodes[faust_result.clade_2]
+
+                        # Do not look for stuff that is too general
+                        # only parent nodes
+                        parent_depth = 3
+                        if faust_a.depth <= parent_depth or faust_b.depth <= parent_depth:
+                            continue
+
+                        # Node a
+                        is_descendents = 0
+                        res = ''
+                        if node_a.is_in_lineage(faust_a)  and node_b.is_in_lineage(faust_b):
+                            res += 'a in a, b in b'
+                            is_descendents = True
+                        if node_a.is_in_lineage(faust_b)  and node_b.is_in_lineage(faust_a):
+                            res += 'a in b, b in a'
+                            is_descendents = True
+
+                        if is_descendents:
+                            print '####'
+                            print 'Result in same lineage: ' + res
+                            print '%s, %s' % (a, b)
+                            print 'Faust %d' % faust_result.direction
+                            print '%s, %s' % (faust_a.name, faust_b.name)
+                            print '####'
+
+
+
+
+
+    print 'Not found at genus level: ', genues_in_faust
+compare_to_faust()
+
 
 
 def clade_table():
     from utils.files import parse_header_file, parse_dat_file
     from itemsets import to_index_list
-    headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6.headers')
+    headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6_020.headers')
 
     summary = parse_dat_file('../experiments/4/summary.dat')
     # Get the indeces of the pair
-    bin_indeces = [to_index_list(x) for x in summary[:10]]
+    bin_indeces = [to_index_list(x) for x in summary]
 
-    bin_indeces = [[33, 10], [33, 11]]
 
     clades = []
     for indeces in bin_indeces:
-        name = []
+        pattern = []
         for index in indeces:
-            name.append(headers[index])
+            # co-occurrence
+            if index > len(headers):
+                index = index - len(headers)
 
-        clades.append(name)
-        print '[' + ', '.join(name) + ']'
+            pattern.append(headers[index])
 
+        clades.append(pattern)
+        # print '[' + ', '.join(pattern) + ']'
+        print '\item {\small '
+        for clade in pattern:
+            line = '%s, ' % clade.replace('|', '-')
+            if clade == pattern[-1]:
+                line = line.replace(',', '')
+            line = line.replace('_', '\\_')
+            print line
+        print '}'
+        print ''
     print 'Clades in itemset: '
 
     # for clade1, clade2 in clades:
@@ -267,26 +381,19 @@ def clade_pair_abundances():
 
 def plot_clades():
     from plots.clade_correlation import plot_clades_relationships
-    #[Ruminococcaceae|Oscillibacter, Ruminococcaceae|unclassified, Ruminococcaceae|Ruminococcus, Ruminococcaceae|Subdoligranulum, Ruminococcaceae|Sporobacter, Incertae_Sedis_XIII|Anaerovorax]
-    # clades = [('Incertae_Sedis_XIII|Anaerovorax', 'Ruminococcaceae|Oscillibacter'),
-    #     ('Incertae_Sedis_XIII|Anaerovorax', 'Ruminococcaceae|unclassified'),
-    #     ('Incertae_Sedis_XIII|Anaerovorax', 'Ruminococcaceae|Ruminococcus'),
-    #     ('Incertae_Sedis_XIII|Anaerovorax', 'Ruminococcaceae|Subdoligranulum'),
-    #     ('Incertae_Sedis_XIII|Anaerovorax', 'Ruminococcaceae|Sporobacter')]
 
-    # clades = [('Ruminococcaceae|Sporobacter', 'Ruminococcaceae|Oscillibacter'),
-    #     ('Ruminococcaceae|Sporobacter', 'Ruminococcaceae|unclassified'),
-    #     ('Ruminococcaceae|Sporobacter', 'Ruminococcaceae|Ruminococcus'),
-    #     ('Ruminococcaceae|Sporobacter', 'Ruminococcaceae|Subdoligranulum')]
+    # Plot all combs
+    # lh = ['Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|Anaerotruncus', 'Ruminococcaceae|unclassified', 'Ruminococcaceae|Ruminococcus', 'Ruminococcaceae|Subdoligranulum', 'Incertae_Sedis_XIII|Anaerovorax', 'Coriobacteriaceae|Collinsella']
+    # clades = []
+    # for c in lh:
+    #     clades.append((c, 'Bacteroidaceae|Bacteroides'))
 
-    # clades = [('Veillonellaceae|unclassified', 'Lachnospiraceae|unclassified'),
-    #           ('Veillonellaceae|unclassified', 'Lachnospiraceae|Dorea')]
-    # lh = ['Lachnospiraceae|Coprococcus', 'Ruminococcaceae|Anaerotruncus', 'Ruminococcaceae|Ruminococcus', 'Incertae_Sedis_XIII|Anaerovorax']
-    lh = ['Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|Anaerotruncus', 'Ruminococcaceae|unclassified', 'Ruminococcaceae|Ruminococcus', 'Ruminococcaceae|Subdoligranulum', 'Incertae_Sedis_XIII|Anaerovorax', 'Coriobacteriaceae|Collinsella']
-    clades = []
-    for c in lh:
-        clades.append((c, 'Bacteroidaceae|Bacteroides'))
-
+    clades = [('Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides'),
+              ('Ruminococcaceae|unclassified', 'Bacteroidia|Bacteroidales'),
+              ('Ruminococcaceae|unclassified', 'Bacteroidales|Prevotellaceae'),
+              ('Ruminococcaceae|unclassified', 'Bacteroidales|Porphyromonadaceae'),
+              ('Ruminococcaceae|unclassified', 'Bacteroidales|Rikenellaceae'),
+              ('Ruminococcaceae|unclassified', 'Bacteroidales|unclassified')]
     # clades = [['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']]
     # clades = [('Bacteroidaceae|Bacteroides', 'Prevotellaceae|unclassified')]
 
@@ -294,7 +401,7 @@ def plot_clades():
 
 
 
-# plot_clades()
+plot_clades()
 
 # from preprocessing import faust_parser
 # res = faust_parser.results()
@@ -311,6 +418,8 @@ def format_stats(f):
     independent_models = []
     size_of_c = []
     iteration_time = []
+    relation_ships = []
+    queries = []
     with open(f) as fd:
         for line in fd:
             if '\n' in line:
@@ -319,18 +428,33 @@ def format_stats(f):
             chunks = [c for c in chunks if c != '']
             heuristics.append(float(chunks[0]))
             BIC_scores.append(float(chunks[1]))
-            #2 is query
+            queries.append(float(chunks[2]))
             size_of_c.append(int(chunks[3]))
             independent_models.append(int(chunks[4]))
             iteration_time.append(float(chunks[5]))
+            relation_ships.append(chunks[6])
 
     print 'heuristics =', heuristics
     print 'BIC_scores =', BIC_scores
     print 'independent_models =', independent_models
     print 'size_of_c =', size_of_c
     print 'iteration_time =', iteration_time
+    print 'relation_ships: ', relation_ships
+    print
+    # for latex table
+    print 'LATEX:'
+    for index, i in enumerate(heuristics):
+        line = '$ %d $ & ' % (index + 1)
+        line += '$ %s $ & ' % relation_ships[index]
+        line += '$ %.3f $ & ' % queries[index]
+        line += '$ %d $ & ' % independent_models[index]
+        line += '$ %d $ & ' % size_of_c[index]
+        line += '$ %.1f $ &' % iteration_time[index]
+        line += '$ %.3f $ & ' % heuristics[index]
+        line += '$ %d $ ' % BIC_scores[index]
+        print line + '\\\\'
 
-# format_stats('./output.txt')
+# format_stats('../experiments/4/run_result.txt')
 
 def write_tree():
     from preprocessing.tree import Tree

@@ -56,6 +56,8 @@ def is_co_exclusion(itemset, singletons):
     and tuple of (positive (values, negated_value), or False and (0.0)
     """
 
+    # With cooccurrences, the data has been double, thus
+    # dividing by 2 should always be the splitting value
     positive_bits = int(len(singletons) / 2.0)
     negated_attribute = itemset >> positive_bits
     positive_attributes = (2**positive_bits - 1) & itemset

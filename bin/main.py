@@ -243,18 +243,29 @@ def main(argv):
     print '\nSummary: '
     print 'Heuristic \t BIC score \t p \t\t |c| \t models  Time \t Relationship \t Itemsets'
     print 'x.xxxxxx \t %f \t (No query) \t 0 \t 0 \t 0 \t +/- \t\t I+seed' % mtv.BIC_scores['initial_score']
+
+    # Also write the run result to file if -o is provided
+    fd_run = None
+    if not (o is None):
+        fd_run = open(os.path.join(o, 'run_result.txt'), 'wb')
+
     for index, x in enumerate(mtv.C):
         if x in mtv.BIC_scores:
+
+            # If the itemset is a co-exclusion patter, we format the to negated attribute
+            # to make it clear in the outpur which one it is
             itemset = str(itemsets.to_index_list(x))
             relationship = '+'
-
             if co_exclusion:
                 me_pattern, (X, Y) = is_co_exclusion(x, mtv.I)
                 if me_pattern:
                     relationship = '-'
                     itemset = '%s - %s' % (itemsets.to_index_list(X), itemsets.to_index_list(Y))
 
-            print '%f \t %f \t %f \t %d \t %d \t %.2f \t %s \t\t %s' % (mtv.heuristics[x], mtv.BIC_scores[x], mtv.query(x), max(mtv.summary_sizes[index]), mtv.independent_components[index], mtv.loop_times[index], relationship, itemset)
+            line = '%f \t %f \t %f \t %d \t %d \t %.2f \t %s \t\t %s' % (mtv.heuristics[x], mtv.BIC_scores[x], mtv.query(x), max(mtv.summary_sizes[index]), mtv.independent_components[index], mtv.loop_times[index], relationship, itemset)
+            if not (fd_run is None):
+                fd_run.write(line)
+            print line
     print ''
 
     if debug:
