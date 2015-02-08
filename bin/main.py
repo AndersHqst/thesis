@@ -177,7 +177,7 @@ def summary_write_coexclusion_pattern(fd, a, b, mtv):
     fd.write(line+'\n')
 
 
-def write_summary_file(folder, mtv):
+def write_summary_file(folder, mtv, co_exclusion):
     from utils.dataset_helpers import is_co_exclusion
 
     # Write a raw .dat file. Would be used
@@ -188,8 +188,10 @@ def write_summary_file(folder, mtv):
     # format, with some result info
     with open(os.path.join(folder, 'summary.txt'), 'wb') as fd:
         for itemset in mtv.C:
-            is_me, (a,b) = is_co_exclusion(itemset, mtv.I)
-            if is_me:
+
+            # IF co-exclusion us added, check whether this is such pattern
+            is_co_exclusion_pattern, (a,b) = is_co_exclusion(itemset, mtv.I)
+            if co_exclusion and is_co_exclusion_pattern:
                 summary_write_coexclusion_pattern(fd, a, b, mtv)
             else:
                 summary_write_coocurrence_pattern(fd, itemset, mtv)
@@ -225,7 +227,7 @@ def main(argv):
 
     # Write final summary to file
     if not (o is None):
-        write_summary_file(o, mtv)
+        write_summary_file(o, mtv, co_exclusion)
 
 
     # Print number of items and transactions

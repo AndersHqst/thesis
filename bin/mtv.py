@@ -9,6 +9,7 @@ from utils.timer import *
 from utils.counter import *
 from math import log
 from time import time
+import charitems
 
 class MTV(object):
 
@@ -89,6 +90,9 @@ class MTV(object):
         # List to track history of C size
         self.summary_sizes = []
 
+        # List to track how large a search space was searched
+        self.search_space = []
+
         # List to track history of timings of a loop in mtv
         self.loop_times = []
 
@@ -117,7 +121,7 @@ class MTV(object):
             self.loop_times.append(time()-start)
 
             if self.v:
-                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, Cs: %s' % (timer_stopwatch_time('run'), itemsets.to_index_list(X), self.BIC_scores[X], self.independent_components[-1], self.summary_sizes[-1])
+                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, Cs: %s, searched-nodes: %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X), self.BIC_scores[X], self.independent_components[-1], self.summary_sizes[-1], self.search_space[-1])
 
 
     def query(self, y):
@@ -295,6 +299,7 @@ class MTV(object):
         self.model_cache = {}
 
         timer_start('Find best itemset')
+        self.search_space.append(0)
         Z = self.find_best_itemset_rec(0, self.I.copy() - self.black_list_singletons, [(0,0)])
         timer_stop('Find best itemset')
 
@@ -351,6 +356,8 @@ class MTV(object):
         :return: Best itemsets Z
         """
 
+        self.search_space[-1] += 1
+
         fr_X = self.fr(X)
         if fr_X < self.s:
             return Z
@@ -375,6 +382,11 @@ class MTV(object):
         b = max(h(fr_X, p_XY), h(fr_XY, p_X))
 
         if Z[0][0] == 0 or b > Z[-1][1]:
+            # print 'Not pruned: X: %s' % charitems.to_chars(X)
+            # print 'Not pruned: XY: %s' % charitems.to_chars(XY)
+            # print 'b: ', b
+            # print 'Z[-1][1]: ', Z[-1][1]
+            # print 'Z[0][0]: ', Z[0][1]
 
             if self.m == 0 or X_length < self.m:
                 while 0 < len(Y):
@@ -384,6 +396,8 @@ class MTV(object):
                     # we have to check that ycan be unioned with X
                     if not self.co_exclusion or self.validate_itemset_union_for_co_exclusion(X, y):
                         Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
+        # else:
+        #     print 'Pruned by bound'
 
         return Z
 
