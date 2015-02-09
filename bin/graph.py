@@ -22,7 +22,7 @@ class Graph(object):
         self.components = []
 
 
-    def add_node(self, itemset, new_model):
+    def add_nodes(self, itemset, new_model):
         """
         Add a new node to the graph. Components will be re-computed, and
         the itemset added to one component. The model passed in

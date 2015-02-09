@@ -254,7 +254,7 @@ class MTV(object):
         """
         timer_start('Build independent models')
 
-        new_model, components = self.graph.add_node(X, Model(self))
+        new_model, components = self.graph.add_nodes(X, Model(self))
         new_model.iterative_scaling()
 
         self.update_model_constraints(new_model)
