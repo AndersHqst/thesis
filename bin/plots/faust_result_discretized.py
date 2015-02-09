@@ -62,8 +62,8 @@ def plot_faust_relationships(relative_values=True):
         xlabel(from_clade, fontsize=10)
         ylabel(to_clade, fontsize=10)
 
-        disc_x, discrete_xs = median_discretization_row(xs)
-        disc_y, discrete_ys = median_discretization_row(ys)
+        disc_x, discrete_xs = maxent_discretization_row(xs)
+        disc_y, discrete_ys = maxent_discretization_row(ys)
 
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]
@@ -128,7 +128,7 @@ def plot_faust_relationships(relative_values=True):
         plot(xs, ys, 'g.', color='#0066FF')
 
         # Save the figure to file
-        file_name = '../../plots/plots/stool_normalized_clade/' +str(faust_result.id) + '_' + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/stool_normalized_clade_maxent/' +str(faust_result.id) + '_' + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
         file_name = os.path.join(dir, file_name)
         savefig(file_name)
         close()

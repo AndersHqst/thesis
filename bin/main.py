@@ -141,6 +141,11 @@ def summary_write_coocurrence_pattern(fd, itemset, mtv):
     line += 'Independent probability: %f\n' % p
     line += independennt_probabilities
 
+    # Write the Ux value
+    if itemset in mtv.U():
+        headers = itemsets.to_index_list(itemset, mtv.headers)
+        line += 'U: %f\n' % mtv.U()[itemset]
+
     fd.write(line + '\n')
 
 
@@ -162,6 +167,11 @@ def summary_write_coexclusion_pattern(fd, a, b, mtv):
     X_Y, Y_X = association_rule(mtv, a, b)
 
     line += 'p=%f lhs=%f rhs=%f phi=%f X->Y:(conf:%f, lift:%f) Y->X:(conf:%f, lift:%f) \n' % (mtv.query(a|b), mtv.query(a), mtv.query(b), phi, X_Y.confidence, X_Y.lift, Y_X.confidence, Y_X.lift)
+
+    # Write the Ux value
+    if a|b in mtv.U():
+        headers = itemsets.to_index_list(a|b, mtv.headers)
+        line += 'U: %f\n' % mtv.U()[a|b]
 
     p = 1.0
     for i in itemsets.singletons_of_itemsets([a,b]):
@@ -188,7 +198,6 @@ def write_summary_file(folder, mtv, co_exclusion):
     # format, with some result info
     with open(os.path.join(folder, 'summary.txt'), 'wb') as fd:
         for itemset in mtv.C:
-
             # IF co-exclusion us added, check whether this is such pattern
             is_co_exclusion_pattern, (a,b) = is_co_exclusion(itemset, mtv.I)
             if co_exclusion and is_co_exclusion_pattern:
@@ -223,7 +232,7 @@ def main(argv):
 
     # Total run time
     start = time()
-    mtv.run()
+    mtv.mtv()
 
     # Write final summary to file
     if not (o is None):

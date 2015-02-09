@@ -72,7 +72,7 @@ class Graph(object):
             yield component.model.C
 
 
-    def independent_models(self):
+    def model_iterator(self):
         """
         Iterator for disjoint summaries C
         """

@@ -51,8 +51,8 @@ def plot_clades_relationships(clade_pairs, folder):
         xlabel(from_clade, fontsize=10)
         ylabel(to_clade, fontsize=10)
 
-        disc_x, discrete_xs = median_discretization_row(xs)
-        disc_y, discrete_ys = median_discretization_row(ys)
+        disc_x, discrete_xs = maxent_discretization_row(xs)
+        disc_y, discrete_ys = maxent_discretization_row(ys)
 
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]

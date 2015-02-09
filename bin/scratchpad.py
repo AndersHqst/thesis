@@ -316,7 +316,7 @@ def compare_to_faust():
 
 
     print 'Not found at genus level: ', genues_in_faust
-compare_to_faust()
+# compare_to_faust()
 
 
 
@@ -379,7 +379,7 @@ def clade_pair_abundances():
 
     plot_clades_relationships(clades, '../experiments/tmp/')
 
-clade_pair_abundances()
+# clade_pair_abundances()
 
 def plot_clades():
     from plots.clade_correlation import plot_clades_relationships
@@ -395,7 +395,8 @@ def plot_clades():
               ('Ruminococcaceae|unclassified', 'Bacteroidales|Prevotellaceae'),
               ('Ruminococcaceae|unclassified', 'Bacteroidales|Porphyromonadaceae'),
               ('Ruminococcaceae|unclassified', 'Bacteroidales|Rikenellaceae'),
-              ('Ruminococcaceae|unclassified', 'Bacteroidales|unclassified')]
+              ('Ruminococcaceae|unclassified', 'Bacteroidales|unclassified'),
+              ('Ruminococcaceae|unclassified', 'Ruminococcaceae|Anaerofilum')]
     # clades = [['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']]
     # clades = [('Bacteroidaceae|Bacteroides', 'Prevotellaceae|unclassified')]
 
@@ -403,7 +404,7 @@ def plot_clades():
 
 
 
-plot_clades()
+# plot_clades()
 
 # from preprocessing import faust_parser
 # res = faust_parser.results()

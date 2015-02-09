@@ -77,9 +77,6 @@ class MTV(object):
         self.singleton_model.I = self.I.copy()
         self.singleton_model.iterative_scaling()
 
-        # Cache for merged models
-        self.model_cache = {}
-
         # Cached queries
         self.query_cache = {}
 
@@ -102,7 +99,7 @@ class MTV(object):
         self.BIC_scores['initial_score'] = self.score()
 
 
-    def run(self):
+    def mtv(self):
         """
         Run the mtv algorithm
         """
@@ -140,7 +137,7 @@ class MTV(object):
         # query intersected models independently
         mask = y
         p = 1.0
-        for model in self.graph.independent_models():
+        for model in self.graph.model_iterator():
 
             # Is this an intersected model?
             if y & model.union_of_C != 0:
@@ -183,7 +180,7 @@ class MTV(object):
 
         total_score = self.singleton_model.score()
 
-        for model in self.graph.independent_models():
+        for model in self.graph.model_iterator():
             total_score += model.score()
 
         total_score += 0.5 * len(self.C) * log(len(self.D), 2)
@@ -303,7 +300,6 @@ class MTV(object):
 
         # reset query caches
         self.query_cache = {}
-        self.model_cache = {}
 
         timer_start('Find best itemset')
         self.search_space.append(0)
@@ -430,6 +426,17 @@ class MTV(object):
 
         return p
 
+    def U(self):
+        """
+        Returns U over all models
+        :return: U
+        """
+        U = {}
+
+        for model in self.graph.model_iterator():
+            U.update(model.U)
+
+        return U
 
     def update_model_constraints(self, newest_model):
         if not (self.q is None):

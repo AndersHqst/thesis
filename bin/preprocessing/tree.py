@@ -112,7 +112,7 @@ class Tree(object):
         # Submatrix of ds with bacteria abundances
         self.bacteria_abundances = None
         self.nodes = {}
-        self.__build_bacteria_family_tree(self.ds)
+        self.__build(self.ds)
 
 
     def __add_clades(self, node, clades, abundances, depth=0):
@@ -151,7 +151,7 @@ class Tree(object):
             node.abundances = abundances
 
 
-    def __build_bacteria_family_tree(self, ds):
+    def __build(self, ds):
         """
         Build the bacteria family datasets from a dataset.
         The data set is expected to be in the format of the datasets
