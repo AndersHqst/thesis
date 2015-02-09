@@ -362,12 +362,14 @@ def clade_pair_abundances():
     from utils.files import parse_header_file, parse_dat_file
     from itemsets import to_index_list
     from plots.clade_correlation import plot_clades_relationships
-    headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
+    headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6_020.headers')
+    headers = headers + headers
 
     # parse_dat_file returns a list of ints
-    summary = parse_dat_file('../experiments/1/summary.dat')
+    summary = parse_dat_file('../experiments/tmp/summary.dat')
     # Get the indeces of the pair
-    bin_indeces = [to_index_list(x) for x in summary[:50]]
+    bin_indeces = [to_index_list(x) for x in summary]
+    bin_indeces = [bin_indeces[38]]
 
     clades = []
     for binindex1, binindex2 in bin_indeces:
@@ -375,9 +377,9 @@ def clade_pair_abundances():
         clade2 = headers[binindex2]
         clades.append((clade1, clade2))
 
-    plot_clades_relationships(clades, '../experiments/1/plots_top_10/')
+    plot_clades_relationships(clades, '../experiments/tmp/')
 
-# clade_pair_abundances()
+clade_pair_abundances()
 
 def plot_clades():
     from plots.clade_correlation import plot_clades_relationships

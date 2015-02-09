@@ -58,11 +58,13 @@ class MTV(object):
             self.D  = dataset_with_negations(self.D, self.I)
             self.I = itemsets.singletons(self.D)
 
+
         # Cached frequency counts in D
         self.fr_cache = {}
 
         # Global summary
-        self.C = initial_C
+        self.C = list()
+
         self.union_of_C = itemsets.union_of_itemsets(self.C)
 
         self.BIC_scores = {}
@@ -73,10 +75,7 @@ class MTV(object):
         # will be in this model
         self.singleton_model = Model(self)
         self.singleton_model.I = self.I.copy()
-
-        # Graph of independent models
-        self.graph = Graph()
-        self.__init_graph()
+        self.singleton_model.iterative_scaling()
 
         # Cache for merged models
         self.model_cache = {}
@@ -96,6 +95,12 @@ class MTV(object):
         # List to track history of timings of a loop in mtv
         self.loop_times = []
 
+        # Initialize Graph of independent models
+        self.graph = Graph()
+        self.__init_graph(initial_C)
+
+        self.BIC_scores['initial_score'] = self.score()
+
 
     def run(self):
         """
@@ -104,7 +109,9 @@ class MTV(object):
 
         timer_stopwatch('run')
 
-        self.BIC_scores['initial_score'] = self.score()
+        # Added 0 loop_times for seeded itemsets
+        for X in self.C:
+            self.loop_times.append(0)
 
         # Run until we have converged
         while not self.finished():
@@ -221,24 +228,24 @@ class MTV(object):
         self.BIC_scores[X] = self.score()
 
 
-    def __init_graph(self):
+    def __init_graph(self, initial_c):
         """
         Init the graph with itemsets in C
         :return:
         """
 
         # Build graph
-        for X in self.C:
-            self.graph.add_node(X, Model(self))
+        for X in initial_c:
+            self.add_itemset(X)
 
         # initialize independent models
         # and removed singletons from singleton model
-        for model in self.graph.independent_models():
-            model.iterative_scaling()
-            self.singleton_model.I -= model.I
+        # for model in self.graph.independent_models():
+        #     model.iterative_scaling()
+        #     self.singleton_model.I -= model.I
 
         # finally initialize the singleton model
-        self.singleton_model.iterative_scaling()
+        # self.singleton_model.iterative_scaling()
 
 
     def update_graph(self, X):
@@ -344,7 +351,7 @@ class MTV(object):
 
         return True
 
-    def find_best_itemset_rec(self, X, Y, Z, X_length=0):
+    def find_best_itemset_rec(self, X, Y, Z, X_length=0, parent_h=0):
         """
         :param X: itemset
         :param Y: remaining itemsets
@@ -356,8 +363,6 @@ class MTV(object):
         :return: Best itemsets Z
         """
 
-        self.search_space[-1] += 1
-
         fr_X = self.fr(X)
         if fr_X < self.s:
             return Z
@@ -365,6 +370,13 @@ class MTV(object):
         p_X = self.cached_itemset_query(X)
 
         h_X = h(fr_X, p_X)
+
+        # TODO: is this ok? It seems to work in
+        # with the few tests I've made, but it should fail in some
+        # cases. However it prunes much of the search space
+        # if h_X < parent_h:
+        #     return Z
+
         if h_X > Z[-1][1] or len(Z) < self.z:
             Z.append((X, h_X))
 
@@ -372,7 +384,6 @@ class MTV(object):
             Z.sort(lambda x, y: x[1] < y[1] and 1 or -1)
             if self.z < len(Z):
                 Z.pop()
-
 
         XY = X | itemsets.union_of_itemsets(Y)
         fr_XY = self.fr(XY)
@@ -382,22 +393,18 @@ class MTV(object):
         b = max(h(fr_X, p_XY), h(fr_XY, p_X))
 
         if Z[0][0] == 0 or b > Z[-1][1]:
-            # print 'Not pruned: X: %s' % charitems.to_chars(X)
-            # print 'Not pruned: XY: %s' % charitems.to_chars(XY)
-            # print 'b: ', b
-            # print 'Z[-1][1]: ', Z[-1][1]
-            # print 'Z[0][0]: ', Z[0][1]
 
             if self.m == 0 or X_length < self.m:
+                best_bound = 0
                 while 0 < len(Y):
                     y = Y.pop()
+
+                    self.search_space[-1] += 1
 
                     # If we are also mining for co-exclusion
                     # we have to check that ycan be unioned with X
                     if not self.co_exclusion or self.validate_itemset_union_for_co_exclusion(X, y):
-                        Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
-        # else:
-        #     print 'Pruned by bound'
+                        Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1, parent_h=h_X)
 
         return Z
 

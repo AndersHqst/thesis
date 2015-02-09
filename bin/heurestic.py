@@ -14,6 +14,7 @@ def h(x, y):
 
     if y < float_precision:
         y = 0.000000000001
+        # y =0.1
 
     # x == y
     if abs(x - y) < float_precision:
@@ -22,6 +23,7 @@ def h(x, y):
     # y >= 1
     if abs(1.0 - y) < float_precision or y > 1.0:
         y = 0.9999999999
+        # y=0.9
 
     # x == 0
     if x < float_precision:
