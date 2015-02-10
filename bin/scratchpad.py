@@ -87,12 +87,9 @@ def run_discretization_all_nodes():
     print 'tree leafs before: ', t.count_leafs()
     ds = t.dataset_for_all_nodes()
     ds = median_discretization(ds)
-    ds = discrete_dataset_cleaning(ds)
+    ds = discrete_dataset_cleaning(ds, 0.05)
 
-    t2 = Tree(ds)
-    print 'number of attributes: ', len(ds[0]) - 2
-    print 'tree nodes after: ', t2.count_nodes()
-    print 'tree leafs after: ', t2.count_leafs()
+    print 'Final number of attributes: ', len(ds[0]) - 2
 
     write_dataset_to_experiment('../experiments/1/Stool_maxent_discretized_all_nodes', ds)
 
@@ -188,25 +185,29 @@ def plot_BIC_score(BIC_SCORE, path):
     xlabel('|C|')
     ylabel('BIC score')
     plot(BIC_SCORE)
-    savefig(path)
+    savefig(os.path.join(path, 'BIC.png'))
+    close()
 
 def plot_heuristic(heuristic, path):
     xlabel('|C|')
     ylabel('h')
     plot(heuristic)
-    savefig(path)
+    savefig(os.path.join(path, 'heuristic.png'))
+    close()
 
 def plot_independent_models(independent_models, path):
     xlabel('|C|')
     ylabel('Independent models')
     plot(independent_models)
-    savefig(path)
+    savefig(os.path.join(path, 'independent_models.png'))
+    close()
 
-def plot_running_time(running_time, offset, path):
+def plot_running_time(running_time, path):
     xlabel('|C|')
     ylabel('MTV iteration in secs.')
-    plot([x+offset for x in range(len(running_time[offset:]))], running_time[offset:])
-    savefig(path)
+    plot([x for x in range(len(running_time))], running_time)
+    savefig(os.path.join(path, 'running_time.png'))
+    close()
 
 
 
@@ -362,24 +363,26 @@ def clade_pair_abundances():
     from utils.files import parse_header_file, parse_dat_file
     from itemsets import to_index_list
     from plots.clade_correlation import plot_clades_relationships
-    headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6_020.headers')
+    from itertools import combinations
+    headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
     headers = headers + headers
 
     # parse_dat_file returns a list of ints
     summary = parse_dat_file('../experiments/tmp/summary.dat')
     # Get the indeces of the pair
     bin_indeces = [to_index_list(x) for x in summary]
-    bin_indeces = [bin_indeces[38]]
+
 
     clades = []
-    for binindex1, binindex2 in bin_indeces:
-        clade1 = headers[binindex1]
-        clade2 = headers[binindex2]
-        clades.append((clade1, clade2))
+    for pattern in bin_indeces:
+        for binindex1, binindex2 in combinations(pattern, 2):
+            clade1 = headers[binindex1]
+            clade2 = headers[binindex2]
+            clades.append((clade1, clade2))
 
-    plot_clades_relationships(clades, '../experiments/tmp/')
+    plot_clades_relationships(clades, '../experiments/1/plots/')
 
-# clade_pair_abundances()
+clade_pair_abundances()
 
 def plot_clades():
     from plots.clade_correlation import plot_clades_relationships
@@ -403,6 +406,29 @@ def plot_clades():
     plot_clades_relationships(clades, './')
 
 
+def read_run_results(run_results_file):
+    heuristics = []
+    BIC_scores = []
+    independent_models = []
+    size_of_c = []
+    iteration_time = []
+    relation_ships = []
+    queries = []
+    with open(run_results_file) as fd:
+        for line in fd:
+            if '\n' in line:
+                line = line.replace('\n', '')
+            chunks = line.split(' ')
+            chunks = [c for c in chunks if c != '' and not ('\t' in c)]
+            heuristics.append(float(chunks[0]))
+            BIC_scores.append(float(chunks[1]))
+            queries.append(float(chunks[2]))
+            size_of_c.append(int(chunks[3]))
+            independent_models.append(int(chunks[4]))
+            iteration_time.append(float(chunks[5]))
+            relation_ships.append(chunks[6])
+
+    return heuristics, BIC_scores, independent_models, size_of_c, iteration_time, relation_ships, queries
 
 # plot_clades()
 
@@ -411,31 +437,24 @@ def plot_clades():
 # for r in res:
 #     print r.clade_1 + ' + ' + r.clade_1
 
-def format_stats(f):
+def plot_run_results(run_result_folder):
+    path = os.path.join(run_result_folder, 'run_result.txt')
+    heuristics, BIC_scores, independent_models, size_of_c, iteration_time, relation_ships, queries = read_run_results(path)
+
+    plot_BIC_score(BIC_scores, run_result_folder)
+    plot_heuristic(heuristics, run_result_folder)
+    plot_independent_models(independent_models, run_result_folder)
+    plot_running_time(iteration_time, run_result_folder)
+
+# plot_run_results('../experiments/1/')
+
+def format_stats(summary_file):
     """
     Reads a file containing a copy of the MTV output
     :param f:
     """
-    heuristics = []
-    BIC_scores = []
-    independent_models = []
-    size_of_c = []
-    iteration_time = []
-    relation_ships = []
-    queries = []
-    with open(f) as fd:
-        for line in fd:
-            if '\n' in line:
-                line = line.replace('\n', '')
-            chunks = line.split(' ')
-            chunks = [c for c in chunks if c != '']
-            heuristics.append(float(chunks[0]))
-            BIC_scores.append(float(chunks[1]))
-            queries.append(float(chunks[2]))
-            size_of_c.append(int(chunks[3]))
-            independent_models.append(int(chunks[4]))
-            iteration_time.append(float(chunks[5]))
-            relation_ships.append(chunks[6])
+
+    heuristics, BIC_scores, independent_models, size_of_c, iteration_time, relation_ships, queries = read_run_results(summary_file)
 
     print 'heuristics =', heuristics
     print 'BIC_scores =', BIC_scores
