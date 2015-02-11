@@ -1,0 +1,29 @@
+digraph G { 
+	BetaproteobacteriaBurkholderiales [label="Burkholderiales", color="green", style=filled];
+	ProteobacteriaBetaproteobacteria [label="Betaproteobacteria"];
+	BetaproteobacteriaBurkholderiales [label="Burkholderiales"];
+	ProteobacteriaBetaproteobacteria -> BetaproteobacteriaBurkholderiales;
+	BacteriaProteobacteria [label="Proteobacteria"];
+	ProteobacteriaBetaproteobacteria [label="Betaproteobacteria"];
+	BacteriaProteobacteria -> ProteobacteriaBetaproteobacteria;
+	BacteriaProteobacteria [label="Proteobacteria", color="green", style=filled];
+	PasteurellalesPasteurellaceae [label="Pasteurellaceae", color="green", style=filled];
+	GammaproteobacteriaPasteurellales [label="Pasteurellales"];
+	PasteurellalesPasteurellaceae [label="Pasteurellaceae"];
+	GammaproteobacteriaPasteurellales -> PasteurellalesPasteurellaceae;
+	ProteobacteriaGammaproteobacteria [label="Gammaproteobacteria"];
+	GammaproteobacteriaPasteurellales [label="Pasteurellales"];
+	ProteobacteriaGammaproteobacteria -> GammaproteobacteriaPasteurellales;
+	BacteriaProteobacteria [label="Proteobacteria"];
+	ProteobacteriaGammaproteobacteria [label="Gammaproteobacteria"];
+	BacteriaProteobacteria -> ProteobacteriaGammaproteobacteria;
+	BurkholderialesAlcaligenaceae [label="Alcaligenaceae", color="green", style=filled];
+	BetaproteobacteriaBurkholderiales [label="Burkholderiales"];
+	BurkholderialesAlcaligenaceae [label="Alcaligenaceae"];
+	BetaproteobacteriaBurkholderiales -> BurkholderialesAlcaligenaceae;
+	Pasteurellaceaeunclassified [label="unclassified", color="green", style=filled];
+	PasteurellalesPasteurellaceae [label="Pasteurellaceae"];
+	Pasteurellaceaeunclassified [label="unclassified"];
+	PasteurellalesPasteurellaceae -> Pasteurellaceaeunclassified;
+
+ }

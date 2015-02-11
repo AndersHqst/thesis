@@ -1,0 +1,252 @@
+
+0 # CO-EXCLUSION #:
+['Firmicutes|Clostridia', 'Clostridia|Clostridiales', 'Clostridiales|Ruminococcaceae', 'Ruminococcaceae|unclassified', 'Bacteria|Firmicutes', 'Verrucomicrobiales|Verrucomicrobiaceae', 'Verrucomicrobiae|Verrucomicrobiales', 'Verrucomicrobia|Verrucomicrobiae', 'Bacteria|Verrucomicrobia', 'Verrucomicrobiaceae|Akkermansia'] - ['Bacteria|Bacteroidetes']
+p=0.111585 lhs=0.223117 rhs=0.500119 phi=0.000000 X->Y:(conf:0.500119, lift:1.000000) Y->X:(conf:0.223117, lift:1.000000) 
+Independent probability: 0.000270
+0.499942 ['Clostridiales|Ruminococcaceae']
+0.500009 ['Ruminococcaceae|unclassified']
+0.457630 ['Bacteria|Verrucomicrobia']
+0.500012 ['Firmicutes|Clostridia']
+0.500014 ['Bacteria|Firmicutes']
+0.500015 ['Clostridia|Clostridiales']
+0.440616 ['Verrucomicrobiaceae|Akkermansia']
+0.440678 ['Verrucomicrobia|Verrucomicrobiae']
+0.500119 ['Bacteria|Bacteroidetes']
+0.440629 ['Verrucomicrobiae|Verrucomicrobiales']
+0.440616 ['Verrucomicrobiales|Verrucomicrobiaceae']
+
+
+1 # CO-OCURRENCE # 
+['Lactobacillales|Streptococcaceae', 'Coriobacteriales|Coriobacteriaceae', 'Bacilli|Lactobacillales', 'Actinobacteria|Actinobacteria', 'Firmicutes|Bacilli', 'Coriobacteriaceae|Collinsella', 'Streptococcaceae|Streptococcus', 'Bacteria|Actinobacteria', 'Actinobacteria|Coriobacteriales']
+p=0.231592 
+Independent probability: 0.001953
+0.500006 ['Lactobacillales|Streptococcaceae']
+0.499972 ['Coriobacteriales|Coriobacteriaceae']
+0.499987 ['Actinobacteria|Coriobacteriales']
+0.499986 ['Firmicutes|Bacilli']
+0.499961 ['Bacteria|Actinobacteria']
+0.499984 ['Coriobacteriaceae|Collinsella']
+0.499971 ['Actinobacteria|Actinobacteria']
+0.500001 ['Streptococcaceae|Streptococcus']
+0.500000 ['Bacilli|Lactobacillales']
+U: 1750.162776
+
+
+2 # CO-EXCLUSION #:
+['Bacteria|Bacteroidetes', 'Bacteroidia|Bacteroidales', 'Bacteroidetes|Bacteroidia', 'Bacteroidales|Bacteroidaceae', 'Bacteroidaceae|Bacteroides'] - ['Tenericutes|Mollicutes']
+p=0.023637 lhs=0.398449 rhs=0.059322 phi=0.001140 X->Y:(conf:0.059322, lift:1.000000) Y->X:(conf:0.398449, lift:1.000000) 
+Independent probability: 0.001854
+0.500119 ['Bacteria|Bacteroidetes']
+0.500174 ['Bacteroidia|Bacteroidales']
+0.499915 ['Bacteroidaceae|Bacteroides']
+0.059322 ['Tenericutes|Mollicutes']
+0.499935 ['Bacteroidales|Bacteroidaceae']
+0.500014 ['Bacteroidetes|Bacteroidia']
+
+
+3 # CO-EXCLUSION #:
+['Firmicutes|Clostridia', 'Clostridia|Clostridiales', 'Clostridiales|Incertae_Sedis_XIII', 'Incertae_Sedis_XIII|Anaerovorax', 'Clostridia|unclassified', 'Firmicutes|unclassified', 'Bacteria|Firmicutes', 'Bacteria|unclassified'] - ['Bacteroidetes|Bacteroidia']
+p=0.108899 lhs=0.217793 rhs=0.500014 phi=0.000000 X->Y:(conf:0.500014, lift:1.000000) Y->X:(conf:0.217793, lift:1.000000) 
+Independent probability: 0.001953
+0.499951 ['Clostridiales|Incertae_Sedis_XIII']
+0.499973 ['Incertae_Sedis_XIII|Anaerovorax']
+0.500012 ['Firmicutes|Clostridia']
+0.499983 ['Clostridia|unclassified']
+0.500015 ['Clostridia|Clostridiales']
+0.500000 ['Bacteria|unclassified']
+0.500014 ['Bacteroidetes|Bacteroidia']
+0.500014 ['Bacteria|Firmicutes']
+0.500002 ['Firmicutes|unclassified']
+
+
+4 # CO-OCURRENCE # 
+['Actinobacteria|Bifidobacteriales', 'Actinobacteria|Actinobacteria', 'Bifidobacteriaceae|Bifidobacterium', 'Bifidobacteriales|Bifidobacteriaceae', 'Bacteria|Actinobacteria']
+p=0.299435 
+Independent probability: 0.012094
+0.364373 ['Actinobacteria|Bifidobacteriales']
+0.499971 ['Actinobacteria|Actinobacteria']
+0.499961 ['Bacteria|Actinobacteria']
+0.364386 ['Bifidobacteriaceae|Bifidobacterium']
+0.364406 ['Bifidobacteriales|Bifidobacteriaceae']
+U: 4367.434210
+
+
+5 # CO-OCURRENCE # 
+['Betaproteobacteria|Burkholderiales', 'Bacteria|Proteobacteria', 'Pasteurellales|Pasteurellaceae', 'Burkholderiales|Alcaligenaceae', 'Proteobacteria|Betaproteobacteria', 'Pasteurellaceae|unclassified', 'Gammaproteobacteria|Pasteurellales']
+p=0.200564 
+Independent probability: 0.003371
+0.499990 ['Betaproteobacteria|Burkholderiales']
+0.499997 ['Bacteria|Proteobacteria']
+0.403953 ['Gammaproteobacteria|Pasteurellales']
+0.499998 ['Proteobacteria|Betaproteobacteria']
+0.330497 ['Pasteurellaceae|unclassified']
+0.500001 ['Burkholderiales|Alcaligenaceae']
+0.403959 ['Pasteurellales|Pasteurellaceae']
+U: 285.976031
+
+
+6 # CO-EXCLUSION #:
+['Firmicutes|Clostridia', 'Clostridia|Clostridiales', 'Erysipelotrichaceae|Coprobacillus', 'Firmicutes|Erysipelotrichi', 'Bacteria|Firmicutes', 'Clostridiales|Lachnospiraceae', 'Erysipelotrichi|Erysipelotrichales', 'Lachnospiraceae|unclassified', 'Erysipelotrichales|Erysipelotrichaceae'] - ['Bacteria|Bacteroidetes']
+p=0.101925 lhs=0.203802 rhs=0.500119 phi=0.000000 X->Y:(conf:0.500119, lift:1.000000) Y->X:(conf:0.203802, lift:1.000000) 
+Independent probability: 0.000977
+0.499995 ['Erysipelotrichaceae|Coprobacillus']
+0.499963 ['Firmicutes|Erysipelotrichi']
+0.500012 ['Firmicutes|Clostridia']
+0.500014 ['Bacteria|Firmicutes']
+0.499985 ['Erysipelotrichi|Erysipelotrichales']
+0.500015 ['Clostridia|Clostridiales']
+0.499969 ['Erysipelotrichales|Erysipelotrichaceae']
+0.500119 ['Bacteria|Bacteroidetes']
+0.499976 ['Lachnospiraceae|unclassified']
+0.500006 ['Clostridiales|Lachnospiraceae']
+
+
+7 # CO-OCURRENCE # 
+['Desulfovibrionaceae|unclassified', 'Proteobacteria|Deltaproteobacteria', 'Deltaproteobacteria|Desulfovibrionales', 'Desulfovibrionales|Desulfovibrionaceae']
+p=0.279661 
+Independent probability: 0.017701
+0.281751 ['Desulfovibrionaceae|unclassified']
+0.411341 ['Proteobacteria|Deltaproteobacteria']
+0.409604 ['Deltaproteobacteria|Desulfovibrionales']
+0.372881 ['Desulfovibrionales|Desulfovibrionaceae']
+U: 31204.958931
+
+
+8 # CO-OCURRENCE # 
+['Bacteria|Fusobacteria', 'Fusobacteria|Fusobacteria', 'Fusobacteria|Fusobacteriales']
+p=0.251412 
+Independent probability: 0.016607
+0.253298 ['Bacteria|Fusobacteria']
+0.255146 ['Fusobacteria|Fusobacteria']
+0.256957 ['Fusobacteria|Fusobacteriales']
+U: 3609655.975783
+
+
+9 # CO-OCURRENCE # 
+['Enterobacteriaceae|Escherichia/Shigella', 'Gammaproteobacteria|Enterobacteriales', 'Proteobacteria|Gammaproteobacteria', 'Enterobacteriales|Enterobacteriaceae']
+p=0.262694 
+Independent probability: 0.024253
+0.389818 ['Gammaproteobacteria|Enterobacteriales']
+0.319200 ['Enterobacteriaceae|Escherichia/Shigella']
+0.500004 ['Proteobacteria|Gammaproteobacteria']
+0.389826 ['Enterobacteriales|Enterobacteriaceae']
+U: 477.002018
+
+
+10 # CO-OCURRENCE # 
+['Firmicutes|Clostridia', 'Clostridia|Clostridiales', 'Clostridiales|Incertae_Sedis_XIV', 'Clostridiales|unclassified', 'Bacteria|Firmicutes', 'Clostridiales|Lachnospiraceae', 'Lachnospiraceae|Dorea', 'Incertae_Sedis_XIV|Blautia']
+p=0.211801 
+Independent probability: 0.003905
+0.499952 ['Clostridiales|Incertae_Sedis_XIV']
+0.499993 ['Clostridiales|unclassified']
+0.500012 ['Firmicutes|Clostridia']
+0.500014 ['Bacteria|Firmicutes']
+0.500015 ['Clostridia|Clostridiales']
+0.499956 ['Incertae_Sedis_XIV|Blautia']
+0.499954 ['Lachnospiraceae|Dorea']
+0.500006 ['Clostridiales|Lachnospiraceae']
+U: 147.272467
+
+
+11 # CO-OCURRENCE # 
+['Prevotellaceae|Prevotella', 'Lactobacillales|Streptococcaceae', 'Firmicutes|Erysipelotrichi', 'Bacteroidales|Prevotellaceae', 'Erysipelotrichi|Erysipelotrichales', 'Streptococcaceae|Streptococcus', 'Erysipelotrichales|Erysipelotrichaceae']
+p=0.203405 
+Independent probability: 0.007767
+0.497184 ['Prevotellaceae|Prevotella']
+0.500006 ['Lactobacillales|Streptococcaceae']
+0.499985 ['Erysipelotrichi|Erysipelotrichales']
+0.499969 ['Erysipelotrichales|Erysipelotrichaceae']
+0.499960 ['Bacteroidales|Prevotellaceae']
+0.500001 ['Streptococcaceae|Streptococcus']
+0.499963 ['Firmicutes|Erysipelotrichi']
+U: 87.394290
+
+
+12 # CO-EXCLUSION #:
+['Firmicutes|Clostridia', 'Clostridia|Clostridiales', 'Ruminococcaceae|Ruminococcus', 'Ruminococcaceae|unclassified', 'Bacteria|Firmicutes', 'Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|Sporobacter'] - ['Bacteroidetes|Bacteroidia']
+p=0.110822 lhs=0.221638 rhs=0.500014 phi=0.000000 X->Y:(conf:0.500014, lift:1.000000) Y->X:(conf:0.221638, lift:1.000000) 
+Independent probability: 0.003907
+0.500009 ['Ruminococcaceae|Ruminococcus']
+0.500009 ['Ruminococcaceae|unclassified']
+0.500012 ['Firmicutes|Clostridia']
+0.500014 ['Bacteria|Firmicutes']
+0.500015 ['Clostridia|Clostridiales']
+0.500009 ['Ruminococcaceae|Sporobacter']
+0.500014 ['Bacteroidetes|Bacteroidia']
+0.500005 ['Ruminococcaceae|Oscillibacter']
+
+
+13 # CO-OCURRENCE # 
+['Porphyromonadaceae|unclassified', 'Rikenellaceae|Alistipes', 'Bacteroidales|unclassified', 'Porphyromonadaceae|Barnesiella', 'Bacteroidales|Rikenellaceae']
+p=0.209039 
+Independent probability: 0.031251
+0.500002 ['Porphyromonadaceae|unclassified']
+0.500003 ['Rikenellaceae|Alistipes']
+0.500008 ['Bacteroidales|Rikenellaceae']
+0.500005 ['Bacteroidales|unclassified']
+0.500000 ['Porphyromonadaceae|Barnesiella']
+U: 36.641443
+
+
+14 # CO-EXCLUSION #:
+['Bacteria|Bacteroidetes', 'Clostridiales|Eubacteriaceae', 'Bacteroidia|Bacteroidales', 'Bacteroidetes|Bacteroidia', 'Eubacteriaceae|Eubacterium'] - ['Bacteria|Firmicutes']
+p=0.133969 lhs=0.267930 rhs=0.500014 phi=0.000000 X->Y:(conf:0.500014, lift:1.000000) Y->X:(conf:0.267930, lift:1.000000) 
+Independent probability: 0.015638
+0.500119 ['Bacteria|Bacteroidetes']
+0.499983 ['Clostridiales|Eubacteriaceae']
+0.500106 ['Eubacteriaceae|Eubacterium']
+0.500014 ['Bacteria|Firmicutes']
+0.500014 ['Bacteroidetes|Bacteroidia']
+0.500174 ['Bacteroidia|Bacteroidales']
+
+
+15 # CO-OCURRENCE # 
+['Proteobacteria|Alphaproteobacteria', 'Alphaproteobacteria|unclassified']
+p=0.223164 
+Independent probability: 0.052220
+0.231723 ['Proteobacteria|Alphaproteobacteria']
+0.225356 ['Alphaproteobacteria|unclassified']
+U: 9113.130832
+
+
+17 # CO-EXCLUSION #:
+['Betaproteobacteria|Burkholderiales', 'Porphyromonadaceae|Parabacteroides', 'Burkholderiales|Alcaligenaceae', 'Proteobacteria|Betaproteobacteria', 'Bacteroidales|Porphyromonadaceae'] - ['Enterobacteriaceae|Klebsiella']
+p=0.015757 lhs=0.232410 rhs=0.067797 phi=-0.007992 X->Y:(conf:0.067797, lift:1.000000) Y->X:(conf:0.232410, lift:1.000000) 
+Independent probability: 0.002119
+0.499990 ['Betaproteobacteria|Burkholderiales']
+0.500003 ['Porphyromonadaceae|Parabacteroides']
+0.500001 ['Burkholderiales|Alcaligenaceae']
+0.499998 ['Bacteroidales|Porphyromonadaceae']
+0.067797 ['Enterobacteriaceae|Klebsiella']
+0.499998 ['Proteobacteria|Betaproteobacteria']
+
+
+18 # CO-EXCLUSION #:
+['Bacteria|Bacteroidetes', 'Bacteroidia|Bacteroidales', 'Bacteroidetes|Bacteroidia'] - ['Clostridia|Clostridiales']
+p=0.230257 lhs=0.460501 rhs=0.500015 phi=0.000000 X->Y:(conf:0.500015, lift:1.000000) Y->X:(conf:0.460501, lift:1.000000) 
+Independent probability: 0.062540
+0.500119 ['Bacteria|Bacteroidetes']
+0.500174 ['Bacteroidia|Bacteroidales']
+0.500014 ['Bacteroidetes|Bacteroidia']
+0.500015 ['Clostridia|Clostridiales']
+
+
+19 # CO-OCURRENCE # 
+['Pasteurellales|Pasteurellaceae', 'Veillonellaceae|Veillonella', 'Proteobacteria|Gammaproteobacteria', 'Gammaproteobacteria|Pasteurellales']
+p=0.234447 
+Independent probability: 0.038491
+0.403959 ['Pasteurellales|Pasteurellaceae']
+0.471757 ['Veillonellaceae|Veillonella']
+0.500004 ['Proteobacteria|Gammaproteobacteria']
+0.403953 ['Gammaproteobacteria|Pasteurellales']
+U: 29.521586
+
+
+20 # CO-OCURRENCE # 
+['Clostridiales|Clostridiaceae', 'Clostridiaceae|Clostridium']
+p=0.285311 
+Independent probability: 0.088556
+0.307921 ['Clostridiales|Clostridiaceae']
+0.287595 ['Clostridiaceae|Clostridium']
+U: 3810.761053
+

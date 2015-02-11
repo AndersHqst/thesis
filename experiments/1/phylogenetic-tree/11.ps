@@ -1,0 +1,48 @@
+digraph G { 
+	PrevotellaceaePrevotella [label="Prevotella", color="green", style=filled];
+	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
+	PrevotellaceaePrevotella [label="Prevotella"];
+	BacteroidalesPrevotellaceae -> PrevotellaceaePrevotella;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesPrevotellaceae;
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidetesBacteroidia -> BacteroidiaBacteroidales;
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteriaBacteroidetes -> BacteroidetesBacteroidia;
+	Bacteria [label="Bacteria"];
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	Bacteria -> BacteriaBacteroidetes;
+	LactobacillalesStreptococcaceae [label="Streptococcaceae", color="green", style=filled];
+	BacilliLactobacillales [label="Lactobacillales"];
+	LactobacillalesStreptococcaceae [label="Streptococcaceae"];
+	BacilliLactobacillales -> LactobacillalesStreptococcaceae;
+	FirmicutesBacilli [label="Bacilli"];
+	BacilliLactobacillales [label="Lactobacillales"];
+	FirmicutesBacilli -> BacilliLactobacillales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesBacilli [label="Bacilli"];
+	BacteriaFirmicutes -> FirmicutesBacilli;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	FirmicutesErysipelotrichi [label="Erysipelotrichi", color="green", style=filled];
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesErysipelotrichi [label="Erysipelotrichi"];
+	BacteriaFirmicutes -> FirmicutesErysipelotrichi;
+	ErysipelotrichiErysipelotrichales [label="Erysipelotrichales", color="green", style=filled];
+	FirmicutesErysipelotrichi [label="Erysipelotrichi"];
+	ErysipelotrichiErysipelotrichales [label="Erysipelotrichales"];
+	FirmicutesErysipelotrichi -> ErysipelotrichiErysipelotrichales;
+	StreptococcaceaeStreptococcus [label="Streptococcus", color="green", style=filled];
+	LactobacillalesStreptococcaceae [label="Streptococcaceae"];
+	StreptococcaceaeStreptococcus [label="Streptococcus"];
+	LactobacillalesStreptococcaceae -> StreptococcaceaeStreptococcus;
+	ErysipelotrichalesErysipelotrichaceae [label="Erysipelotrichaceae", color="green", style=filled];
+	ErysipelotrichiErysipelotrichales [label="Erysipelotrichales"];
+	ErysipelotrichalesErysipelotrichaceae [label="Erysipelotrichaceae"];
+	ErysipelotrichiErysipelotrichales -> ErysipelotrichalesErysipelotrichaceae;
+
+ }

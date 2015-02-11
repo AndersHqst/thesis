@@ -49,6 +49,7 @@ from plots.faust_result_discretized import plot_faust_relationships
 def write_dataset_to_experiment(file_name, ds):
     from itemsets import binary_vectors_to_ints
     from utils.files import write_dat_file
+    import pickle
     import itemsets
     # Write .dat file
     abundance = abundance_matrix(ds)
@@ -64,10 +65,13 @@ def write_dataset_to_experiment(file_name, ds):
         else:
             headers.append(vals[0])
 
-
     with open(file_name + '.headers', 'wb') as fd:
         line = ' '.join(headers)
         fd.write(line)
+
+    # save the raw dataset
+    with open(file_name + '.pickle', 'wb') as fd:
+        pickle.dump(ds, fd)
 
 
 def run_discretization_all_nodes():
@@ -207,6 +211,13 @@ def plot_running_time(running_time, path):
     ylabel('MTV iteration in secs.')
     plot([x for x in range(len(running_time))], running_time)
     savefig(os.path.join(path, 'running_time.png'))
+    close()
+
+def plot_size_of_c(size_of_c, path):
+    xlabel('MTV iteration')
+    ylabel('Max model size |Ci|')
+    plot([x for x in range(len(size_of_c))], size_of_c)
+    savefig(os.path.join(path, 'size_of_c.png'))
     close()
 
 
@@ -382,7 +393,7 @@ def clade_pair_abundances():
 
     plot_clades_relationships(clades, '../experiments/1/plots/')
 
-clade_pair_abundances()
+# clade_pair_abundances()
 
 def plot_clades():
     from plots.clade_correlation import plot_clades_relationships
@@ -399,12 +410,14 @@ def plot_clades():
               ('Ruminococcaceae|unclassified', 'Bacteroidales|Porphyromonadaceae'),
               ('Ruminococcaceae|unclassified', 'Bacteroidales|Rikenellaceae'),
               ('Ruminococcaceae|unclassified', 'Bacteroidales|unclassified'),
-              ('Ruminococcaceae|unclassified', 'Ruminococcaceae|Anaerofilum')]
+              ('Ruminococcaceae|unclassified', 'Ruminococcaceae|Anaerofilum'),
+              ('Ruminococcaceae|unclassified', 'Rikenellaceae|Alistipes')]
     # clades = [['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']]
     # clades = [('Bacteroidaceae|Bacteroides', 'Prevotellaceae|unclassified')]
 
-    plot_clades_relationships(clades, './')
+    plot_clades_relationships(clades, '../experiments/4/plots/')
 
+# plot_clades()
 
 def read_run_results(run_results_file):
     heuristics = []
@@ -444,6 +457,7 @@ def plot_run_results(run_result_folder):
     plot_BIC_score(BIC_scores, run_result_folder)
     plot_heuristic(heuristics, run_result_folder)
     plot_independent_models(independent_models, run_result_folder)
+    plot_size_of_c(size_of_c, run_result_folder)
     plot_running_time(iteration_time, run_result_folder)
 
 # plot_run_results('../experiments/1/')
@@ -488,3 +502,18 @@ def write_tree():
        fd.write(xml)
 
 # write_tree()
+
+# from preprocessing.tree import Tree
+#
+# from preprocessing import parser
+#
+# ds = parser.get_dataset()
+#
+# t = Tree(ds)
+# clades = ['Bacteroidaceae|Bacteroides', 'Bacteroidia|Bacteroidales',
+#           'Bacteroidales|Prevotellaceae', 'Bacteroidales|Porphyromonadaceae',
+#           'Bacteroidales|Rikenellaceae', 'Bacteroidales|unclassified',
+#             'Ruminococcaceae|unclassified', 'Ruminococcaceae|Anaerofilum']
+#
+# s = t.dot_graph_for_clades(clades)
+# print s

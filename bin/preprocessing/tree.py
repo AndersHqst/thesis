@@ -17,6 +17,8 @@ class Node(object):
         # w.r.t. the clade at a given leaf
         self.abundances = None
         self.tree = tree
+        self.tag = False
+        self.meta_data = ''
 
 
     def to_xml(self):
@@ -52,6 +54,27 @@ class Node(object):
             xml += '</%s>' % tag_name
 
             return xml
+
+    def digraph_to_ancestor(self, ancestor):
+
+        if self.tag:
+            return ''
+
+        # Node names are not unique so use the label to set the node text
+        s = '\t%s [label="%s", color="green", style=filled];\n' % (self.name.replace("|","").replace('/',''), self.name.split('|')[-1].replace('/',''))
+
+        node = self
+        while node != ancestor:
+            if not node.tag:
+                parent_unique = node.parent.name.replace("|","").replace('/','')
+                child_unique = node.name.replace("|","").replace('/','')
+                s += '\t%s [label="%s"];\n' % (parent_unique, node.parent.name.split('|')[-1].replace('/',''))
+                s += '\t%s [label="%s"];\n' % (child_unique, node.name.split('|')[-1].replace('/',''))
+                s += '\t%s -> %s;\n' % (parent_unique, child_unique)
+            node.tag = True
+            node = node.parent
+
+        return s
 
     def is_ancestor(self, node):
         """
@@ -441,8 +464,79 @@ class Tree(object):
         """
         return node_a.is_in_lineage(node_b)
 
+
     def has_clade(self, clade_name):
         return clade_name in self.nodes
+
+
+    def clear_node_tags(self):
+        for node in self.nodes.values():
+            node.tag = False
+            node.meta_data = ''
+
+
+    def dot_graph_for_clades(self, clades):
+        """
+        Specialized method to produce a digraph
+        file for the dot program in graphviz.
+
+        By simply passing in a list of clades tuple
+        a digraph tree is constructed with a least common
+        ancestor.
+
+        The list of clades passed in should be (pattern, co-exclusion)
+        where co-exclusion should be None if it is not there.
+        A co-exclusion node will be colored with red.
+
+        :param clades:
+        :return:
+        """
+        # given a list of clades, find common ancestors,
+        # and construct subtree from involved nodes
+
+        self.clear_node_tags()
+
+        # Targeted nodes
+        nodes = []
+        for clade in clades:
+            nodes.append(self.nodes[clade])
+
+
+        # find minimum shared depth
+        min_depth = nodes[0].depth
+        for node in nodes:
+            if node.depth < min_depth:
+                min_depth = node.depth
+
+        nodes_at_equal_depth = []
+        # Move to share min depth
+        for node in nodes:
+            equal_depth_ancestor = node
+            while equal_depth_ancestor.depth != min_depth:
+                equal_depth_ancestor = equal_depth_ancestor.parent
+            nodes_at_equal_depth.append(equal_depth_ancestor)
+
+        # Initialize set of least common ancestors
+        # with set of parent nodes
+        least_common_ancestor = set(nodes_at_equal_depth)
+
+        # Bubble up the tree to find least common ancestor
+        while 1 < len(least_common_ancestor):
+            in_common_ancestors = least_common_ancestor.copy()
+            for node in in_common_ancestors:
+                least_common_ancestor.remove(node)
+                least_common_ancestor.add(node.parent)
+
+        ancestor = least_common_ancestor.pop()
+        digraph = 'digraph G { \n'
+        for node in nodes:
+            digraph += node.digraph_to_ancestor(ancestor)
+        digraph += '\n }'
+
+        self.clear_node_tags()
+
+        return digraph
+
 
 def test_tree():
     # Create a toy dataset, with the same .tab format as we use

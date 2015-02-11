@@ -1,0 +1,36 @@
+digraph G {        
+        //size ="10,10";
+        ancestors [shape=box, style=dotted]; // MOre nodes here, but keep it short
+        edge [color=red]; // Mark the Faust correlation relation with red
+        ancestors -> Bacteroidales;
+        // so is this [style=bold,label="100 times"];
+        ancestors -> Clostridiales;
+        Clostridiales -> Ruminococcaceae;
+        Ruminococcaceae -> unclassified;
+        edge [color=black];
+
+        // Mark the MTV pattern green
+        Alistipes [color="green", style=filled]
+        Bacteroides [color="green", style=filled]
+        unclassified [color="green", style=filled]
+        Barnesiella [color="green", style=filled]
+        Alistipes [color="green", style=filled]
+        Oscillibacter [color="green", style=filled]
+        Butyricimonas [color="green", style=filled];
+        PorphyromonadaceaeUnclassified [label="unclassified", color="green", style=filled];
+        RikenellaceaeUnclassified [label="unclassified", color="green", style=filled];
+        Ruminococcaceae -> Oscillibacter;
+        Bacteroidales -> Bacteroidaceae;
+        Bacteroidales -> Porphyromonadaceae
+        Porphyromonadaceae -> Barnesiella; 
+        Porphyromonadaceae -> Butyricimonas;
+        Porphyromonadaceae -> PorphyromonadaceaeUnclassified;
+        Bacteroidales -> Rikenellaceae;        
+        Rikenellaceae -> RikenellaceaeUnclassified;
+        Rikenellaceae -> Alistipes;
+        Bacteroides [color="red", style=filled];
+        Bacteroidaceae -> Bacteroides;
+
+        //make_string [label="make a\nstring"];
+        node [shape=box,style=filled,color="blue"];
+ }

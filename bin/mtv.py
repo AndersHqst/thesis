@@ -381,6 +381,7 @@ class MTV(object):
             if self.z < len(Z):
                 Z.pop()
 
+
         XY = X | itemsets.union_of_itemsets(Y)
         fr_XY = self.fr(XY)
 
@@ -391,7 +392,7 @@ class MTV(object):
         if Z[0][0] == 0 or b > Z[-1][1]:
 
             if self.m == 0 or X_length < self.m:
-                best_bound = 0
+
                 while 0 < len(Y):
                     y = Y.pop()
 

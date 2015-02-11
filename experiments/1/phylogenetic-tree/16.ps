@@ -1,0 +1,46 @@
+digraph G { 
+	BetaproteobacteriaBurkholderiales [label="Burkholderiales", color="green", style=filled];
+	ProteobacteriaBetaproteobacteria [label="Betaproteobacteria"];
+	BetaproteobacteriaBurkholderiales [label="Burkholderiales"];
+	ProteobacteriaBetaproteobacteria -> BetaproteobacteriaBurkholderiales;
+	BacteriaProteobacteria [label="Proteobacteria"];
+	ProteobacteriaBetaproteobacteria [label="Betaproteobacteria"];
+	BacteriaProteobacteria -> ProteobacteriaBetaproteobacteria;
+	Bacteria [label="Bacteria"];
+	BacteriaProteobacteria [label="Proteobacteria"];
+	Bacteria -> BacteriaProteobacteria;
+	PorphyromonadaceaeParabacteroides [label="Parabacteroides", color="green", style=filled];
+	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
+	PorphyromonadaceaeParabacteroides [label="Parabacteroides"];
+	BacteroidalesPorphyromonadaceae -> PorphyromonadaceaeParabacteroides;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesPorphyromonadaceae;
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidetesBacteroidia -> BacteroidiaBacteroidales;
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteriaBacteroidetes -> BacteroidetesBacteroidia;
+	Bacteria [label="Bacteria"];
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	Bacteria -> BacteriaBacteroidetes;
+	BurkholderialesAlcaligenaceae [label="Alcaligenaceae", color="green", style=filled];
+	BetaproteobacteriaBurkholderiales [label="Burkholderiales"];
+	BurkholderialesAlcaligenaceae [label="Alcaligenaceae"];
+	BetaproteobacteriaBurkholderiales -> BurkholderialesAlcaligenaceae;
+	EnterobacteriaceaeKlebsiella [label="Klebsiella", color="green", style=filled];
+	EnterobacterialesEnterobacteriaceae [label="Enterobacteriaceae"];
+	EnterobacteriaceaeKlebsiella [label="Klebsiella"];
+	EnterobacterialesEnterobacteriaceae -> EnterobacteriaceaeKlebsiella;
+	GammaproteobacteriaEnterobacteriales [label="Enterobacteriales"];
+	EnterobacterialesEnterobacteriaceae [label="Enterobacteriaceae"];
+	GammaproteobacteriaEnterobacteriales -> EnterobacterialesEnterobacteriaceae;
+	ProteobacteriaGammaproteobacteria [label="Gammaproteobacteria"];
+	GammaproteobacteriaEnterobacteriales [label="Enterobacteriales"];
+	ProteobacteriaGammaproteobacteria -> GammaproteobacteriaEnterobacteriales;
+	BacteriaProteobacteria [label="Proteobacteria"];
+	ProteobacteriaGammaproteobacteria [label="Gammaproteobacteria"];
+	BacteriaProteobacteria -> ProteobacteriaGammaproteobacteria;
+
+ }

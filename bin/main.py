@@ -119,7 +119,7 @@ def parse_argv(argv):
     return k, m, s, z, c, f, o, a, v, q, H, debug, co_exclusion
 
 
-def summary_write_coocurrence_pattern(fd, itemset, mtv):
+def summary_write_coocurrence_pattern(index, fd, itemset, mtv):
     """
     Write co-occurrence patter to summary file
     :param fd: File
@@ -127,6 +127,8 @@ def summary_write_coocurrence_pattern(fd, itemset, mtv):
     :param mtv: MTV
     :return:
     """
+
+    first_line = '\n%d # CO-OCURRENCE #:\n' % index
     line = '\n# CO-OCURRENCE # \n'
     line += '%s\n' % str(itemsets.to_index_list(itemset, mtv.headers))
     line += 'p=%f \n' % (mtv.query(itemset))
@@ -149,7 +151,7 @@ def summary_write_coocurrence_pattern(fd, itemset, mtv):
     fd.write(line + '\n')
 
 
-def summary_write_coexclusion_pattern(fd, a, b, mtv):
+def summary_write_coexclusion_pattern(index, fd, a, b, mtv):
     """
     Write co-exclusion patter to summary file
     :param fd: File
@@ -160,7 +162,8 @@ def summary_write_coexclusion_pattern(fd, a, b, mtv):
     """
     from rule_miner import association_rule
 
-    fd.write('\n# CO-EXCLUSION #:\n')
+    first_line = '\n%d # CO-EXCLUSION #:\n' % index
+    fd.write(first_line)
     line = '%s - %s\n' % (str(itemsets.to_index_list(a, mtv.headers)), str(itemsets.to_index_list(b, mtv.headers)))
 
     phi = phi_correlation_in_model(mtv, a, b)
@@ -185,6 +188,11 @@ def summary_write_coexclusion_pattern(fd, a, b, mtv):
     line += 'Independent probability: %f\n' % p
     line += independennt_probabilities
 
+    # Write the Ux value
+    if itemset in mtv.U():
+        headers = itemsets.to_index_list(itemset, mtv.headers)
+        line += 'U: %f\n' % mtv.U()[itemset]
+
     fd.write(line+'\n')
 
 
@@ -198,13 +206,13 @@ def write_summary_file(folder, mtv, co_exclusion):
     # Write patterns to a file in a more 'human readable'
     # format, with some result info
     with open(os.path.join(folder, 'summary.txt'), 'wb') as fd:
-        for itemset in mtv.C:
+        for index, itemset in enumerate(mtv.C):
             # IF co-exclusion us added, check whether this is such pattern
             is_co_exclusion_pattern, (a,b) = is_co_exclusion(itemset, mtv.I)
             if co_exclusion and is_co_exclusion_pattern:
-                summary_write_coexclusion_pattern(fd, a, b, mtv)
+                summary_write_coexclusion_pattern(index, fd, a, b, mtv)
             else:
-                summary_write_coocurrence_pattern(fd, itemset, mtv)
+                summary_write_coocurrence_pattern(index, fd, itemset, mtv)
 
 
 def main(argv):
