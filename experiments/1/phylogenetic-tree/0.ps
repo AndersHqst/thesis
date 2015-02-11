@@ -18,6 +18,7 @@ digraph G {
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	Ruminococcaceaeunclassified [label="unclassified"];
 	ClostridialesRuminococcaceae -> Ruminococcaceaeunclassified;
+	BacteriaFirmicutes [label="Firmicutes", color="green", style=filled];
 	VerrucomicrobialesVerrucomicrobiaceae [label="Verrucomicrobiaceae", color="green", style=filled];
 	VerrucomicrobiaeVerrucomicrobiales [label="Verrucomicrobiales"];
 	VerrucomicrobialesVerrucomicrobiaceae [label="Verrucomicrobiaceae"];
@@ -31,11 +32,14 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaVerrucomicrobia [label="Verrucomicrobia"];
 	Bacteria -> BacteriaVerrucomicrobia;
+	VerrucomicrobiaeVerrucomicrobiales [label="Verrucomicrobiales", color="green", style=filled];
+	VerrucomicrobiaVerrucomicrobiae [label="Verrucomicrobiae", color="green", style=filled];
+	BacteriaVerrucomicrobia [label="Verrucomicrobia", color="green", style=filled];
 	VerrucomicrobiaceaeAkkermansia [label="Akkermansia", color="green", style=filled];
 	VerrucomicrobialesVerrucomicrobiaceae [label="Verrucomicrobiaceae"];
 	VerrucomicrobiaceaeAkkermansia [label="Akkermansia"];
 	VerrucomicrobialesVerrucomicrobiaceae -> VerrucomicrobiaceaeAkkermansia;
-	BacteriaBacteroidetes [label="Bacteroidetes", color="green", style=filled];
+	BacteriaBacteroidetes [label="Bacteroidetes", color="red", style=filled];
 	Bacteria [label="Bacteria"];
 	BacteriaBacteroidetes [label="Bacteroidetes"];
 	Bacteria -> BacteriaBacteroidetes;

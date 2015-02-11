@@ -370,6 +370,7 @@ def clade_table():
 
 # clade_table()
 
+
 def clade_pair_abundances():
     from utils.files import parse_header_file, parse_dat_file
     from itemsets import to_index_list
@@ -393,7 +394,21 @@ def clade_pair_abundances():
 
     plot_clades_relationships(clades, '../experiments/1/plots/')
 
+
 # clade_pair_abundances()
+def plot_clades_pairwise(clades):
+    from plots.clade_correlation import plot_clades_relationships
+    from itertools import combinations
+    clade_pairs = []
+
+    for clade1, clade2 in combinations(clades, 2):
+        clade_pairs.append((clade1, clade2))
+
+
+    plot_clades_relationships(clade_pairs, '../experiments/1/plots/k2/')
+
+clades = ['Bacteria|Bacteroidetes', 'Bacteroidia|Bacteroidales', 'Bacteroidetes|Bacteroidia', 'Bacteroidales|Bacteroidaceae', 'Bacteroidaceae|Bacteroides', 'Tenericutes|Mollicutes']
+plot_clades_pairwise(clades)
 
 def plot_clades():
     from plots.clade_correlation import plot_clades_relationships

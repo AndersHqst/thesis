@@ -209,7 +209,7 @@ Independent probability: 0.052220
 U: 9113.130832
 
 
-17 # CO-EXCLUSION #:
+16 # CO-EXCLUSION #:
 ['Betaproteobacteria|Burkholderiales', 'Porphyromonadaceae|Parabacteroides', 'Burkholderiales|Alcaligenaceae', 'Proteobacteria|Betaproteobacteria', 'Bacteroidales|Porphyromonadaceae'] - ['Enterobacteriaceae|Klebsiella']
 p=0.015757 lhs=0.232410 rhs=0.067797 phi=-0.007992 X->Y:(conf:0.067797, lift:1.000000) Y->X:(conf:0.232410, lift:1.000000) 
 Independent probability: 0.002119
@@ -221,7 +221,7 @@ Independent probability: 0.002119
 0.499998 ['Proteobacteria|Betaproteobacteria']
 
 
-18 # CO-EXCLUSION #:
+17 # CO-EXCLUSION #:
 ['Bacteria|Bacteroidetes', 'Bacteroidia|Bacteroidales', 'Bacteroidetes|Bacteroidia'] - ['Clostridia|Clostridiales']
 p=0.230257 lhs=0.460501 rhs=0.500015 phi=0.000000 X->Y:(conf:0.500015, lift:1.000000) Y->X:(conf:0.460501, lift:1.000000) 
 Independent probability: 0.062540
@@ -231,7 +231,7 @@ Independent probability: 0.062540
 0.500015 ['Clostridia|Clostridiales']
 
 
-19 # CO-OCURRENCE # 
+18 # CO-OCURRENCE # 
 ['Pasteurellales|Pasteurellaceae', 'Veillonellaceae|Veillonella', 'Proteobacteria|Gammaproteobacteria', 'Gammaproteobacteria|Pasteurellales']
 p=0.234447 
 Independent probability: 0.038491
@@ -242,7 +242,7 @@ Independent probability: 0.038491
 U: 29.521586
 
 
-20 # CO-OCURRENCE # 
+19 # CO-OCURRENCE # 
 ['Clostridiales|Clostridiaceae', 'Clostridiaceae|Clostridium']
 p=0.285311 
 Independent probability: 0.088556

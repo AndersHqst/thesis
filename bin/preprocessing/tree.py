@@ -55,13 +55,19 @@ class Node(object):
 
             return xml
 
-    def digraph_to_ancestor(self, ancestor):
+    def digraph_to_ancestor(self, ancestor, co_excluded=[]):
 
-        if self.tag:
-            return ''
+        # if self.tag:
+        #
+        #     return ''
 
+        color = 'green'
+        if self.name in co_excluded:
+            color = 'red'
         # Node names are not unique so use the label to set the node text
-        s = '\t%s [label="%s", color="green", style=filled];\n' % (self.name.replace("|","").replace('/',''), self.name.split('|')[-1].replace('/',''))
+        unique_node_name = self.name.replace("|","").replace('/','')
+        node_label = self.name.split('|')[-1].replace('/','')
+        s = '\t%s [label="%s", color="%s", style=filled];\n' % (unique_node_name, node_label, color)
 
         node = self
         while node != ancestor:
@@ -475,7 +481,7 @@ class Tree(object):
             node.meta_data = ''
 
 
-    def dot_graph_for_clades(self, clades):
+    def dot_graph_for_clades(self, clades, co_excluded=[]):
         """
         Specialized method to produce a digraph
         file for the dot program in graphviz.
@@ -530,7 +536,7 @@ class Tree(object):
         ancestor = least_common_ancestor.pop()
         digraph = 'digraph G { \n'
         for node in nodes:
-            digraph += node.digraph_to_ancestor(ancestor)
+            digraph += node.digraph_to_ancestor(ancestor, co_excluded)
         digraph += '\n }'
 
         self.clear_node_tags()

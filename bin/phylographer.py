@@ -68,7 +68,11 @@ def main(argv):
     for index, itemset in enumerate(summary):
         # Append extra set of headeres for negated values
         clade_names = itemsets.to_index_list(itemset, list(headers) + list(headers))
-        di_graph = tree.dot_graph_for_clades(clade_names)
+        co_ex = itemset >> len(headers)
+        co_excluded_clade = ''
+        if co_ex != 0:
+            co_excluded_clade = itemsets.to_index_list(co_ex, list(headers) + list(headers))
+        di_graph = tree.dot_graph_for_clades(clade_names, co_excluded_clade)
         file_name = os.path.join(output_folder, str(index))
         graph_file = file_name + '.ps'
         with open(graph_file, 'wb') as fd:
