@@ -1,0 +1,144 @@
+
+# CO-OCURRENCE # 
+['Erysipelotrichaceae|Coprobacillus', 'Lachnospiraceae|unclassified', 'Lachnospiraceae|Coprococcus', 'Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|Anaerotruncus', 'Ruminococcaceae|unclassified', 'Ruminococcaceae|Ruminococcus', 'Ruminococcaceae|Faecalibacterium', 'Ruminococcaceae|Subdoligranulum', 'Ruminococcaceae|Sporobacter', 'Ruminococcaceae|Butyricicoccus', 'Incertae_Sedis_XIV|Blautia', 'Peptostreptococcaceae|Sporacetigenium', 'Incertae_Sedis_XIII|Anaerovorax', 'Streptococcaceae|Streptococcus', 'Rikenellaceae|Alistipes', 'Coriobacteriaceae|Collinsella']
+p=0.025428 
+Independent probability: 0.000007
+0.500006 ['Lachnospiraceae|unclassified']
+0.500006 ['Lachnospiraceae|Coprococcus']
+0.499999 ['Erysipelotrichaceae|Coprobacillus']
+0.500002 ['Ruminococcaceae|Ruminococcus']
+0.499997 ['Ruminococcaceae|Anaerotruncus']
+0.500004 ['Rikenellaceae|Alistipes']
+0.500006 ['Streptococcaceae|Streptococcus']
+0.500008 ['Ruminococcaceae|Faecalibacterium']
+0.500004 ['Incertae_Sedis_XIV|Blautia']
+0.500007 ['Incertae_Sedis_XIII|Anaerovorax']
+0.457628 ['Peptostreptococcaceae|Sporacetigenium']
+0.500006 ['Ruminococcaceae|Oscillibacter']
+0.500000 ['Coriobacteriaceae|Collinsella']
+0.500005 ['Ruminococcaceae|Butyricicoccus']
+0.500007 ['Ruminococcaceae|Subdoligranulum']
+0.500003 ['Ruminococcaceae|Sporobacter']
+0.500001 ['Ruminococcaceae|unclassified']
+U: 45.424757
+
+
+# CO-OCURRENCE # 
+['Lachnospiraceae|Anaerostipes', 'Lachnospiraceae|unclassified', 'Lachnospiraceae|Dorea', 'Lachnospiraceae|Roseburia', 'Lachnospiraceae|Coprococcus', 'Ruminococcaceae|Butyricicoccus', 'Incertae_Sedis_XIV|Blautia']
+p=0.132769 
+Independent probability: 0.007813
+0.500006 ['Lachnospiraceae|unclassified']
+0.500003 ['Lachnospiraceae|Roseburia']
+0.500005 ['Ruminococcaceae|Butyricicoccus']
+0.500006 ['Lachnospiraceae|Dorea']
+0.500006 ['Lachnospiraceae|Coprococcus']
+0.500004 ['Lachnospiraceae|Anaerostipes']
+0.500004 ['Incertae_Sedis_XIV|Blautia']
+U: 39.558448
+
+
+# CO-OCURRENCE # 
+['Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|unclassified', 'Ruminococcaceae|Sporobacter', 'Incertae_Sedis_XIII|Anaerovorax', 'Porphyromonadaceae|Butyricimonas', 'Porphyromonadaceae|unclassified', 'Porphyromonadaceae|Barnesiella', 'Rikenellaceae|unclassified']
+p=0.101700 
+Independent probability: 0.003885
+0.500006 ['Ruminococcaceae|Oscillibacter']
+0.500001 ['Ruminococcaceae|unclassified']
+0.500008 ['Porphyromonadaceae|Barnesiella']
+0.497183 ['Porphyromonadaceae|Butyricimonas']
+0.500005 ['Rikenellaceae|unclassified']
+0.500009 ['Porphyromonadaceae|unclassified']
+0.500007 ['Incertae_Sedis_XIII|Anaerovorax']
+0.500003 ['Ruminococcaceae|Sporobacter']
+U: 26.256811
+
+
+# CO-OCURRENCE # 
+['Ruminococcaceae|unclassified', 'Ruminococcaceae|Ruminococcus', 'Ruminococcaceae|Acetivibrio', 'Ruminococcaceae|Subdoligranulum', 'Ruminococcaceae|Sporobacter']
+p=0.189271 
+Independent probability: 0.031251
+0.500001 ['Ruminococcaceae|unclassified']
+0.500002 ['Ruminococcaceae|Ruminococcus']
+0.500003 ['Ruminococcaceae|Sporobacter']
+0.500008 ['Ruminococcaceae|Acetivibrio']
+0.500007 ['Ruminococcaceae|Subdoligranulum']
+U: 15.870786
+
+
+# CO-OCURRENCE # 
+['Erysipelotrichaceae|Holdemania', 'Lachnospiraceae|unclassified', 'Lachnospiraceae|Roseburia', 'Lachnospiraceae|Coprococcus', 'Ruminococcaceae|Faecalibacterium', 'Veillonellaceae|Veillonella', 'Streptococcaceae|Streptococcus']
+p=0.098873 
+Independent probability: 0.007372
+0.500006 ['Lachnospiraceae|unclassified']
+0.500003 ['Lachnospiraceae|Roseburia']
+0.500001 ['Erysipelotrichaceae|Holdemania']
+0.500008 ['Ruminococcaceae|Faecalibacterium']
+0.500006 ['Lachnospiraceae|Coprococcus']
+0.500006 ['Streptococcaceae|Streptococcus']
+0.471757 ['Veillonellaceae|Veillonella']
+U: 17.774475
+
+
+# CO-OCURRENCE # 
+['Lachnospiraceae|Coprococcus', 'Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|Anaerotruncus', 'Ruminococcaceae|unclassified', 'Ruminococcaceae|Sporobacter', 'Veillonellaceae|unclassified', 'Alcaligenaceae|Sutterella', 'Porphyromonadaceae|Butyricimonas', 'Porphyromonadaceae|unclassified', 'Prevotellaceae|Prevotella']
+p=0.059322 
+Independent probability: 0.000780
+0.500006 ['Lachnospiraceae|Coprococcus']
+0.500006 ['Ruminococcaceae|Oscillibacter']
+0.497180 ['Prevotellaceae|Prevotella']
+0.500003 ['Ruminococcaceae|Sporobacter']
+0.497183 ['Porphyromonadaceae|Butyricimonas']
+0.403960 ['Alcaligenaceae|Sutterella']
+0.500004 ['Veillonellaceae|unclassified']
+0.500009 ['Porphyromonadaceae|unclassified']
+0.500001 ['Ruminococcaceae|unclassified']
+0.499997 ['Ruminococcaceae|Anaerotruncus']
+U: 30.497408
+
+
+# CO-OCURRENCE # 
+['Ruminococcaceae|Ruminococcus', 'Ruminococcaceae|Acetivibrio', 'Ruminococcaceae|Faecalibacterium', 'Alcaligenaceae|Parasutterella', 'Porphyromonadaceae|Odoribacter', 'Rikenellaceae|unclassified', 'Rikenellaceae|Alistipes', 'Verrucomicrobiaceae|Akkermansia']
+p=0.062153 
+Independent probability: 0.003443
+0.500002 ['Ruminococcaceae|Ruminococcus']
+0.500008 ['Ruminococcaceae|Acetivibrio']
+0.440682 ['Verrucomicrobiaceae|Akkermansia']
+0.500003 ['Porphyromonadaceae|Odoribacter']
+0.500004 ['Rikenellaceae|Alistipes']
+0.500008 ['Ruminococcaceae|Faecalibacterium']
+0.500005 ['Rikenellaceae|unclassified']
+0.500003 ['Alcaligenaceae|Parasutterella']
+U: 14.749423
+
+
+# CO-OCURRENCE # 
+['Erysipelotrichaceae|unclassified', 'Ruminococcaceae|Anaerotruncus', 'Ruminococcaceae|Ruminococcus', 'Ruminococcaceae|Sporobacter', 'Incertae_Sedis_XIII|Anaerovorax', 'Verrucomicrobiaceae|Akkermansia']
+p=0.112998 
+Independent probability: 0.013771
+0.499997 ['Ruminococcaceae|Anaerotruncus']
+0.499997 ['Erysipelotrichaceae|unclassified']
+0.500002 ['Ruminococcaceae|Ruminococcus']
+0.500007 ['Incertae_Sedis_XIII|Anaerovorax']
+0.440682 ['Verrucomicrobiaceae|Akkermansia']
+0.500003 ['Ruminococcaceae|Sporobacter']
+U: 9.761133
+
+
+# CO-OCURRENCE # 
+['Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister']
+p=0.115819 
+Independent probability: 0.249989
+0.499983 ['Veillonellaceae|Phascolarctobacterium']
+0.499994 ['Veillonellaceae|Dialister']
+U: 0.117963
+
+
+# CO-OCURRENCE # 
+['Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister', 'Porphyromonadaceae|Parabacteroides', 'Bacteroidaceae|Bacteroides']
+p=0.005649 
+Independent probability: 0.062497
+0.499983 ['Veillonellaceae|Phascolarctobacterium']
+0.499994 ['Veillonellaceae|Dialister']
+0.500000 ['Porphyromonadaceae|Parabacteroides']
+0.500000 ['Bacteroidaceae|Bacteroides']
+U: 0.140817
+

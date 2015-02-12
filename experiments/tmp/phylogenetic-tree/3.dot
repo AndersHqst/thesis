@@ -1,0 +1,23 @@
+digraph G { 
+	Ruminococcaceaeunclassified [label="unclassified", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	Ruminococcaceaeunclassified [label="unclassified"];
+	ClostridialesRuminococcaceae -> Ruminococcaceaeunclassified;
+	RuminococcaceaeRuminococcus [label="Ruminococcus", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeRuminococcus [label="Ruminococcus"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeRuminococcus;
+	RuminococcaceaeAcetivibrio [label="Acetivibrio", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeAcetivibrio [label="Acetivibrio"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeAcetivibrio;
+	RuminococcaceaeSubdoligranulum [label="Subdoligranulum", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeSubdoligranulum [label="Subdoligranulum"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeSubdoligranulum;
+	RuminococcaceaeSporobacter [label="Sporobacter", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeSporobacter [label="Sporobacter"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeSporobacter;
+
+ }

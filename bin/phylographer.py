@@ -5,7 +5,7 @@ import getopt
 import pickle
 import os
 from utils.files import parse_dat_file
-from utils.dataset_helpers import is_co_exclusion
+from utils.dataset_helpers import is_negated_pattern
 import itemsets
 from preprocessing.tree import Tree
 import subprocess

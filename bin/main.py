@@ -11,7 +11,7 @@ from utils.timer import *
 from utils.counter import *
 from rule_miner import association_rules
 from mtv import MTV
-from utils.dataset_helpers import is_co_exclusion
+from utils.dataset_helpers import is_negated_pattern
 from utils.correlation import phi_correlation_in_model
 from charitems import to_chars
 
@@ -41,7 +41,8 @@ def print_help(s, z, a):
     print '-v verbose'
     print '-z Suggest best top z itemsets, will slow down computation, default %d' % z
     print '-a Print a association and disassociation rules, default %d' % a
-    print '--co-exclusion Also mine co-exclusion patterns. These will always be many to one. Will double the sample space'
+    print '--add-negated Mine co-exclusion patterns by adding a negated attribute set. These will always be many to one. Will double the sample space'
+    print '--greedy Use a greedy heurestic. Will prune large parts of the search space. May give suboptimal results'
     print '--debug print debug and performance info'
     print '-H headers file. mtv.py will convert attribute name to header names'
     print ''
@@ -61,13 +62,14 @@ def parse_argv(argv):
     H = DEFAULT_H
     v = DEFAULT_V
     q = DEFAULT_Q
-    co_exclusion = DEFAULT_CO_EXCLUSION
+    add_negated = DEFAULT_ADD_NEGATED
+    greedy = DEFAULT_GREEDY
     debug = DEFAULT_DEBUG
 
     try:
         # Cmd line arguments.
         # Single letter arguments, args followed by ':' expect a value
-        opts, args = getopt.getopt(argv, "hm:s:k:vz:f:o:c:a:H:q:", ['debug', 'co-exclusion'])
+        opts, args = getopt.getopt(argv, "hm:s:k:vz:f:o:c:a:H:q:", ['debug', 'add-negated', 'greedy'])
     except getopt.GetoptError:
        print 'Unknown arguments: ', args
        print_help(s, z, a)
@@ -110,13 +112,16 @@ def parse_argv(argv):
         elif opt in ("-q"):
             q = int(arg)
 
+        elif opt in ("--greedy"):
+            greedy = True
+
         elif opt in ("--debug"):
             debug = True
 
-        elif opt in ("--co-exclusion"):
-            co_exclusion = True
+        elif opt in ("--add-negated"):
+            add_negated = True
 
-    return k, m, s, z, c, f, o, a, v, q, H, debug, co_exclusion
+    return k, m, s, z, c, f, o, a, v, q, H, debug, greedy, add_negated
 
 
 def summary_write_coocurrence_pattern(index, fd, itemset, mtv):
@@ -151,9 +156,9 @@ def summary_write_coocurrence_pattern(index, fd, itemset, mtv):
     fd.write(line + '\n')
 
 
-def summary_write_coexclusion_pattern(index, fd, a, b, mtv):
+def summary_write_negated_pattern(index, fd, a, b, mtv):
     """
-    Write co-exclusion patter to summary file
+    Write negated pattern to summary file
     :param fd: File
     :param a: Left hand side of pattern
     :param b: Right hand side - the item getting excluded
@@ -164,7 +169,7 @@ def summary_write_coexclusion_pattern(index, fd, a, b, mtv):
 
     headers = mtv.headers + mtv.headers
 
-    first_line = '\n%d # CO-EXCLUSION #:\n' % index
+    first_line = '\n%d # CO-OCCURRENCE - NEGATED #:\n' % index
     fd.write(first_line)
     line = '%s - %s\n' % (str(itemsets.to_index_list(a, headers)), str(itemsets.to_index_list(b, headers)))
 
@@ -193,7 +198,7 @@ def summary_write_coexclusion_pattern(index, fd, a, b, mtv):
 
 
 def write_summary_file(folder, mtv, co_exclusion):
-    from utils.dataset_helpers import is_co_exclusion
+    from utils.dataset_helpers import is_negated_pattern
 
     # Write a raw .dat file. Would be used
     # to seed MTV
@@ -204,16 +209,16 @@ def write_summary_file(folder, mtv, co_exclusion):
     with open(os.path.join(folder, 'summary.txt'), 'wb') as fd:
         for index, itemset in enumerate(mtv.C):
             # IF co-exclusion us added, check whether this is such pattern
-            is_co_exclusion_pattern, (a,b) = is_co_exclusion(itemset, mtv.I)
+            is_co_exclusion_pattern, (a,b) = is_negated_pattern(itemset, mtv.I)
             if co_exclusion and is_co_exclusion_pattern:
-                summary_write_coexclusion_pattern(index, fd, a, b, mtv)
+                summary_write_negated_pattern(index, fd, a, b, mtv)
             else:
                 summary_write_coocurrence_pattern(index, fd, itemset, mtv)
 
 
 def main(argv):
 
-    k, m, s, z, c, f, o, a, v, q, H, debug, co_exclusion = parse_argv(argv)
+    k, m, s, z, c, f, o, a, v, q, H, debug, greedy, add_negated = parse_argv(argv)
     D = dummy_data
 
     # Input dataset
@@ -233,7 +238,7 @@ def main(argv):
         headers = parse_header_file(H)
 
     # Initialize MTV
-    mtv = MTV(D, initial_c, k=k, m=m, s=s, z=z, v=v, q=q, co_exclusion=co_exclusion, headers=headers)
+    mtv = MTV(D, initial_c, k=k, m=m, s=s, z=z, v=v, q=q, add_negated=add_negated, greedy=greedy, headers=headers)
 
     # Total run time
     start = time()
@@ -241,7 +246,7 @@ def main(argv):
 
     # Write final summary to file
     if not (o is None):
-        write_summary_file(o, mtv, co_exclusion)
+        write_summary_file(o, mtv, add_negated)
 
 
     # Print number of items and transactions
@@ -268,13 +273,13 @@ def main(argv):
     for index, x in enumerate(mtv.C):
         if x in mtv.BIC_scores:
 
-            # If the itemset is a co-exclusion patter, we format the to negated attribute
+            # If the itemset is a negated pattern, we format the to negated attribute
             # to make it clear in the outpur which one it is
             itemset = str(itemsets.to_index_list(x))
             relationship = '+'
-            if co_exclusion:
-                me_pattern, (X, Y) = is_co_exclusion(x, mtv.I)
-                if me_pattern:
+            if add_negated:
+                is_negated_pattern, (X, Y) = is_negated_pattern(x, mtv.I)
+                if is_negated_pattern:
                     relationship = '-'
                     itemset = '%s - %s' % (itemsets.to_index_list(X), itemsets.to_index_list(Y))
 

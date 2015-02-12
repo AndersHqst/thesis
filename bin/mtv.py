@@ -13,7 +13,7 @@ import charitems
 
 class MTV(object):
 
-    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, q=DEFAULT_Q, co_exclusion=DEFAULT_CO_EXCLUSION, headers=None):
+    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, q=DEFAULT_Q, add_negated=DEFAULT_ADD_NEGATED, greedy=DEFAULT_GREEDY, headers=None):
         super(MTV, self).__init__()
 
         # Mine up to k itemsets
@@ -37,8 +37,11 @@ class MTV(object):
         # Header strings for attributes
         self.headers = headers
 
-        # If set to True, MTV will also produce co-exclusion patterns
-        self.co_exclusion = co_exclusion
+        # If set to True, MTV will also produce negated patterns
+        self.add_negated = add_negated
+
+        # If true FindBestItemset will be more greedy
+        self.greedy = greedy
 
         # Number of candidate itemsets FindBestItemSet should search for
         # Will result in a list of top-z highest heuristics
@@ -54,7 +57,7 @@ class MTV(object):
         # Singletons
         self.I = itemsets.singletons(self.D)
 
-        if self.co_exclusion:
+        if self.add_negated:
             self.D  = dataset_with_negations(self.D, self.I)
             self.I = itemsets.singletons(self.D)
 
@@ -315,10 +318,10 @@ class MTV(object):
         return Z[0][0]
 
 
-    def validate_itemset_union_for_co_exclusion(self, X, y):
+    def validate_negated_pattern(self, X, y):
         """
         Return true if y unioned with X is a valied itemset
-        under co-exclusion.
+        under when negated patterns are included.
 
         X|y will not be valid if a negated attribute is already in X
         or if the positive counterpart of y, is already in X
@@ -327,7 +330,7 @@ class MTV(object):
         :return: True if y can be unioned with X
         """
 
-        assert self.co_exclusion
+        assert self.add_negated
 
         # MTV should be setup so half of the attributes
         # positive
@@ -367,13 +370,12 @@ class MTV(object):
 
         h_X = h(fr_X, p_X)
 
-        # TODO: is this ok? It seems to work in
-        # with the few tests I've made, but it should fail in some
-        # cases. However it prunes much of the search space
-        # if h_X < parent_h:
-        #     return Z
+        # Greedy approach
+        if self.greedy and h_X < parent_h:
+            return Z
 
         if h_X > Z[-1][1] or len(Z) < self.z:
+            # print 'Z improved: ', h_X
             Z.append((X, h_X))
 
             # Sort by descending  heuristic
@@ -398,9 +400,9 @@ class MTV(object):
 
                     self.search_space[-1] += 1
 
-                    # If we are also mining for co-exclusion
-                    # we have to check that ycan be unioned with X
-                    if not self.co_exclusion or self.validate_itemset_union_for_co_exclusion(X, y):
+                    # If we are mining negated patterns
+                    # we have to check that y can be unioned with X
+                    if not self.add_negated or self.validate_negated_pattern(X, y):
                         Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1, parent_h=h_X)
 
         return Z

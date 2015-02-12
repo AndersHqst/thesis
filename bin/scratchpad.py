@@ -164,10 +164,10 @@ def run_discretization_for_tree_depth(depth):
 
     print 'Attributes: ', len(ds[0][2:])
     ds = median_discretization(ds)
-    ds = discrete_dataset_cleaning(ds, 0.01)
+    ds = discrete_dataset_cleaning(ds, 0.40)
     print 'Attributes after cleaning: ', len(ds[0][2:])
 
-    write_dataset_to_experiment('../experiments/4/Stool_maxent_discretized_nodes_depth_6_001', ds)
+    write_dataset_to_experiment('../experiments/2/Stool_maxent_discretized_nodes_depth_6_040', ds)
 
 
 run_discretization_for_tree_depth(6)
@@ -405,9 +405,10 @@ def plot_clades_pairwise(clades):
         clade_pairs.append((clade1, clade2))
 
 
-    plot_clades_relationships(clade_pairs, '../experiments/1/plots/k2/')
+    plot_clades_relationships(clade_pairs, '../experiments/tmp/plots/')
 
 # clades = ['Bacteria|Bacteroidetes', 'Bacteroidia|Bacteroidales', 'Bacteroidetes|Bacteroidia', 'Bacteroidales|Bacteroidaceae', 'Bacteroidaceae|Bacteroides', 'Tenericutes|Mollicutes']
+# clades = ['Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister', 'Porphyromonadaceae|Parabacteroides', 'Bacteroidaceae|Bacteroides']
 # plot_clades_pairwise(clades)
 
 def plot_clades():
@@ -427,10 +428,11 @@ def plot_clades():
               ('Ruminococcaceae|unclassified', 'Bacteroidales|unclassified'),
               ('Ruminococcaceae|unclassified', 'Ruminococcaceae|Anaerofilum'),
               ('Ruminococcaceae|unclassified', 'Rikenellaceae|Alistipes')]
+    clades = [('Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister')]
     # clades = [['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']]
     # clades = [('Bacteroidaceae|Bacteroides', 'Prevotellaceae|unclassified')]
 
-    plot_clades_relationships(clades, '../experiments/4/plots/')
+    plot_clades_relationships(clades, '../experiments/tmp/plots/')
 
 # plot_clades()
 
