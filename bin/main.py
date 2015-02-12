@@ -162,20 +162,17 @@ def summary_write_coexclusion_pattern(index, fd, a, b, mtv):
     """
     from rule_miner import association_rule
 
+    headers = mtv.headers + mtv.headers
+
     first_line = '\n%d # CO-EXCLUSION #:\n' % index
     fd.write(first_line)
-    line = '%s - %s\n' % (str(itemsets.to_index_list(a, mtv.headers)), str(itemsets.to_index_list(b, mtv.headers)))
+    line = '%s - %s\n' % (str(itemsets.to_index_list(a, headers)), str(itemsets.to_index_list(b, headers)))
 
     phi = phi_correlation_in_model(mtv, a, b)
     X_Y, Y_X = association_rule(mtv, a, b)
 
-    line += 'p=%f lhs=%f rhs=%f phi=%f X->Y:(conf:%f, lift:%f) Y->X:(conf:%f, lift:%f) \n' % (mtv.query(a|b), mtv.query(a), mtv.query(b), phi, X_Y.confidence, X_Y.lift, Y_X.confidence, Y_X.lift)
-
-    # Write the Ux value
-    itemset = a | b
-    if itemset in mtv.U():
-        headers = itemsets.to_index_list(a|b, mtv.headers)
-        line += 'U: %f\n' % mtv.U()[itemset]
+    line += 'p=%f lhs=%f rhs=%f phi=%f (X->Y: conf:%f, lift:%f) (Y->X:conf:%f, lift:%f) \n' % (mtv.query(a|b), mtv.query(a), mtv.query(b), phi, X_Y.confidence, X_Y.lift, Y_X.confidence, Y_X.lift)
+    # line += 'p=%f lhs=%f rhs=%f\n' % (mtv.query(a|b), mtv.query(a), mtv.query(b))
 
     p = 1.0
     for i in itemsets.singletons_of_itemsets([a,b]):
@@ -184,14 +181,13 @@ def summary_write_coexclusion_pattern(index, fd, a, b, mtv):
     # Independence probabilities:
     independennt_probabilities = ''
     for i in itemsets.singletons_of_itemsets([a,b]):
-        independennt_probabilities += '%f %s\n' % (mtv.query(i), itemsets.to_index_list(i, mtv.headers))
+        independennt_probabilities += '%f %s\n' % (mtv.query(i), itemsets.to_index_list(i, headers))
     line += 'Independent probability: %f\n' % p
     line += independennt_probabilities
 
     # Write the Ux value
-    if itemset in mtv.U():
-        headers = itemsets.to_index_list(itemset, mtv.headers)
-        line += 'U: %f\n' % mtv.U()[itemset]
+    if a|b in mtv.U():
+        line += 'U: %f\n' % mtv.U()[a|b]
 
     fd.write(line+'\n')
 

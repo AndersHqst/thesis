@@ -1,45 +1,12 @@
 
-# CO-OCURRENCE # 
-['Pasteurellales|Pasteurellaceae', 'Gammaproteobacteria|Pasteurellales']
-p=0.403955 
-Independent probability: 0.166167
-0.406433 ['Pasteurellales|Pasteurellaceae']
-0.408843 ['Gammaproteobacteria|Pasteurellales']
-U: 19626.985957
-
-
-# CO-OCURRENCE # 
-['Proteobacteria|Deltaproteobacteria', 'Deltaproteobacteria|Desulfovibrionales']
-p=0.409605 
-Independent probability: 0.170820
-0.412095 ['Proteobacteria|Deltaproteobacteria']
-0.414516 ['Deltaproteobacteria|Desulfovibrionales']
-U: 19520.935636
-
-
-# CO-OCURRENCE # 
-['Verrucomicrobiae|Verrucomicrobiales', 'Verrucomicrobiaceae|Akkermansia']
-p=0.438893 
-Independent probability: 0.197183
-0.449258 ['Verrucomicrobiae|Verrucomicrobiales']
-0.438907 ['Verrucomicrobiaceae|Akkermansia']
-U: 1668414.661460
-
-
-# CO-OCURRENCE # 
-['Verrucomicrobiales|Verrucomicrobiaceae', 'Verrucomicrobia|Verrucomicrobiae']
-p=0.431441 
-Independent probability: 0.196147
-0.445039 ['Verrucomicrobiales|Verrucomicrobiaceae']
-0.440740 ['Verrucomicrobia|Verrucomicrobiae']
-U: 1862.268368
-
-
-# CO-OCURRENCE # 
-['Verrucomicrobiales|Verrucomicrobiaceae', 'Verrucomicrobiae|Verrucomicrobiales']
-p=0.435183 
-Independent probability: 0.199937
-0.445039 ['Verrucomicrobiales|Verrucomicrobiaceae']
-0.449258 ['Verrucomicrobiae|Verrucomicrobiales']
-U: 1697.188775
+0 # CO-EXCLUSION #:
+['Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|unclassified', 'Ruminococcaceae|Sporobacter', 'Incertae_Sedis_XIII|Anaerovorax'] - ['Bacteroidaceae|Bacteroides']
+p=0.220339 lhs=0.228995 rhs=0.500001 phi=0.501652 (X->Y: conf:0.962200, lift:1.924398) (Y->X:conf:0.440677, lift:1.924398) 
+Independent probability: 0.031252
+0.500003 ['Ruminococcaceae|Oscillibacter']
+0.500004 ['Ruminococcaceae|unclassified']
+0.500008 ['Incertae_Sedis_XIII|Anaerovorax']
+0.500015 ['Ruminococcaceae|Sporobacter']
+0.500001 ['Bacteroidaceae|Bacteroides']
+U: 44.723149
 

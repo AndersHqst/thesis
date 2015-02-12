@@ -333,12 +333,12 @@ class MTV(object):
         # positive
         positive_attributes = int(len(self.I)/2.)
 
-        # check no other negated attribute is set
-        if X >> positive_attributes != 0:
-            return False
-
         # Check if y is a negated attribute
         if 2**positive_attributes <= y:
+
+            # check no other negated attribute is set
+            if X >> positive_attributes != 0:
+                return False
 
             # Check if positive counterpart of y is set
             pos = y >> positive_attributes
@@ -360,7 +360,7 @@ class MTV(object):
         """
 
         fr_X = self.fr(X)
-        if fr_X < self.s:
+        if fr_X < self.s or X in self.C:
             return Z
 
         p_X = self.cached_itemset_query(X)

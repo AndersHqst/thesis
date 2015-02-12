@@ -91,11 +91,11 @@ def run_discretization_all_nodes():
     print 'tree leafs before: ', t.count_leafs()
     ds = t.dataset_for_all_nodes()
     ds = median_discretization(ds)
-    ds = discrete_dataset_cleaning(ds, 0.05)
+    ds = discrete_dataset_cleaning(ds, 0.20)
 
     print 'Final number of attributes: ', len(ds[0]) - 2
 
-    write_dataset_to_experiment('../experiments/1/Stool_maxent_discretized_all_nodes', ds)
+    write_dataset_to_experiment('../experiments/1/Stool_maxent_discretized_all_nodes_020', ds)
 
 
 # run_discretization_all_nodes()
@@ -164,13 +164,13 @@ def run_discretization_for_tree_depth(depth):
 
     print 'Attributes: ', len(ds[0][2:])
     ds = median_discretization(ds)
-    ds = discrete_dataset_cleaning(ds, 0.20)
+    ds = discrete_dataset_cleaning(ds, 0.01)
     print 'Attributes after cleaning: ', len(ds[0][2:])
 
-    write_dataset_to_experiment('../experiments/4/Stool_maxent_discretized_nodes_depth_6_020', ds)
+    write_dataset_to_experiment('../experiments/4/Stool_maxent_discretized_nodes_depth_6_001', ds)
 
 
-# run_discretization_for_tree_depth(6)
+run_discretization_for_tree_depth(6)
 
 def load_model():
     from mtv import MTV
@@ -407,8 +407,8 @@ def plot_clades_pairwise(clades):
 
     plot_clades_relationships(clade_pairs, '../experiments/1/plots/k2/')
 
-clades = ['Bacteria|Bacteroidetes', 'Bacteroidia|Bacteroidales', 'Bacteroidetes|Bacteroidia', 'Bacteroidales|Bacteroidaceae', 'Bacteroidaceae|Bacteroides', 'Tenericutes|Mollicutes']
-plot_clades_pairwise(clades)
+# clades = ['Bacteria|Bacteroidetes', 'Bacteroidia|Bacteroidales', 'Bacteroidetes|Bacteroidia', 'Bacteroidales|Bacteroidaceae', 'Bacteroidaceae|Bacteroides', 'Tenericutes|Mollicutes']
+# plot_clades_pairwise(clades)
 
 def plot_clades():
     from plots.clade_correlation import plot_clades_relationships
@@ -475,7 +475,7 @@ def plot_run_results(run_result_folder):
     plot_size_of_c(size_of_c, run_result_folder)
     plot_running_time(iteration_time, run_result_folder)
 
-# plot_run_results('../experiments/1/')
+plot_run_results('../experiments/4/')
 
 def format_stats(summary_file):
     """

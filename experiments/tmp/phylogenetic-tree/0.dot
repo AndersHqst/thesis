@@ -1,0 +1,47 @@
+digraph G { 
+	RuminococcaceaeOscillibacter [label="Oscillibacter", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeOscillibacter [label="Oscillibacter"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeOscillibacter;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	Ruminococcaceaeunclassified [label="unclassified", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	Ruminococcaceaeunclassified [label="unclassified"];
+	ClostridialesRuminococcaceae -> Ruminococcaceaeunclassified;
+	RuminococcaceaeRuminococcus [label="Ruminococcus", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeRuminococcus [label="Ruminococcus"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeRuminococcus;
+	RuminococcaceaeSporobacter [label="Sporobacter", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeSporobacter [label="Sporobacter"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeSporobacter;
+	Fusobacteriaceaeunclassified [label="unclassified", color="red", style=filled];
+	FusobacterialesFusobacteriaceae [label="Fusobacteriaceae"];
+	Fusobacteriaceaeunclassified [label="unclassified"];
+	FusobacterialesFusobacteriaceae -> Fusobacteriaceaeunclassified;
+	FusobacteriaFusobacteriales [label="Fusobacteriales"];
+	FusobacterialesFusobacteriaceae [label="Fusobacteriaceae"];
+	FusobacteriaFusobacteriales -> FusobacterialesFusobacteriaceae;
+	FusobacteriaFusobacteria [label="Fusobacteria"];
+	FusobacteriaFusobacteriales [label="Fusobacteriales"];
+	FusobacteriaFusobacteria -> FusobacteriaFusobacteriales;
+	BacteriaFusobacteria [label="Fusobacteria"];
+	FusobacteriaFusobacteria [label="Fusobacteria"];
+	BacteriaFusobacteria -> FusobacteriaFusobacteria;
+	Bacteria [label="Bacteria"];
+	BacteriaFusobacteria [label="Fusobacteria"];
+	Bacteria -> BacteriaFusobacteria;
+
+ }

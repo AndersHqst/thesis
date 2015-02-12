@@ -63,6 +63,6 @@ def is_co_exclusion(itemset, singletons):
     positive_attributes = (2**positive_bits - 1) & itemset
 
     if negated_attribute != 0:
-        return (True, (positive_attributes, negated_attribute))
+        return (True, (positive_attributes, negated_attribute<<positive_bits))
 
     return (False, (0,0))

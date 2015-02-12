@@ -74,7 +74,7 @@ def main(argv):
             co_excluded_clade = itemsets.to_index_list(co_ex, list(headers) + list(headers))
         di_graph = tree.dot_graph_for_clades(clade_names, co_excluded_clade)
         file_name = os.path.join(output_folder, str(index))
-        graph_file = file_name + '.ps'
+        graph_file = file_name + '.dot'
         with open(graph_file, 'wb') as fd:
             fd.write(di_graph)
 
