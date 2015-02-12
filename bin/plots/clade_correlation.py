@@ -1,4 +1,4 @@
-from matplotlib.pylab import plot, hist, ylabel, xlabel, savefig, close, title, figtext
+from matplotlib.pylab import plot, scatter, hist, ylabel, xlabel, savefig, close, title, figtext, grid, yscale, xscale
 from preprocessing.parser import *
 from preprocessing.discretization import *
 from preprocessing.tree import Tree
@@ -43,6 +43,8 @@ def plot_clades_relationships(clade_pairs, folder):
             xs.append(from_abundance)
             ys.append(to_abundance)
 
+        grid(True)
+
         text_x = 0.67
         sample_points = 'Sample points: %d' % len(xs)
         figtext(text_x, 0.85, sample_points, fontsize=10)
@@ -56,8 +58,8 @@ def plot_clades_relationships(clade_pairs, folder):
         disc_y, discrete_ys = median_discretization_row(ys)
 
         # plot discretization lines
-        a, b = [disc_x, disc_x], [0, max(ys)]
-        c, d = [0, max(xs)], [disc_y, disc_y]
+        a, b = [disc_x, disc_x], [-0.001, max(ys)]
+        c, d = [-0.001, max(xs)], [disc_y, disc_y]
         plot(a, b, c='r')
         plot(c, d, c='r')
 
@@ -110,7 +112,7 @@ def plot_clades_relationships(clade_pairs, folder):
             print 'ys: %s', ys
 
         # vals = vals[:-20]
-        plot(xs, ys, 'g.', color='#0066FF')
+        scatter(xs, ys, s=2, color='#0066FF')
         file_name = folder + from_node.name.replace('|', '-').replace('/', '%') + '---' + to_node.name.replace('|', '-').replace('/', '%')
         # file_name = os.path.join(dir, file_name)
         # print '[RESULT] ', file_name

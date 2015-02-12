@@ -170,7 +170,7 @@ def run_discretization_for_tree_depth(depth):
     write_dataset_to_experiment('../experiments/2/Stool_maxent_discretized_nodes_depth_6_040', ds)
 
 
-run_discretization_for_tree_depth(6)
+# run_discretization_for_tree_depth(6)
 
 def load_model():
     from mtv import MTV
@@ -428,13 +428,13 @@ def plot_clades():
               ('Ruminococcaceae|unclassified', 'Bacteroidales|unclassified'),
               ('Ruminococcaceae|unclassified', 'Ruminococcaceae|Anaerofilum'),
               ('Ruminococcaceae|unclassified', 'Rikenellaceae|Alistipes')]
-    clades = [('Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister')]
+    # clades = [('Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister')]
     # clades = [['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']]
     # clades = [('Bacteroidaceae|Bacteroides', 'Prevotellaceae|unclassified')]
 
-    plot_clades_relationships(clades, '../experiments/tmp/plots/')
+    plot_clades_relationships(clades, './tmp/')
 
-# plot_clades()
+plot_clades()
 
 def read_run_results(run_results_file):
     heuristics = []
