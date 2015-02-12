@@ -1,0 +1,46 @@
+digraph G { 
+	VeillonellaceaePhascolarctobacterium [label="Phascolarctobacterium", color="green", style=filled];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	VeillonellaceaePhascolarctobacterium [label="Phascolarctobacterium"];
+	ClostridialesVeillonellaceae -> VeillonellaceaePhascolarctobacterium;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	ClostridiaClostridiales -> ClostridialesVeillonellaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	VeillonellaceaeDialister [label="Dialister", color="green", style=filled];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	VeillonellaceaeDialister [label="Dialister"];
+	ClostridialesVeillonellaceae -> VeillonellaceaeDialister;
+	PorphyromonadaceaeParabacteroides [label="Parabacteroides", color="green", style=filled];
+	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
+	PorphyromonadaceaeParabacteroides [label="Parabacteroides"];
+	BacteroidalesPorphyromonadaceae -> PorphyromonadaceaeParabacteroides;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesPorphyromonadaceae;
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidetesBacteroidia -> BacteroidiaBacteroidales;
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteriaBacteroidetes -> BacteroidetesBacteroidia;
+	Bacteria [label="Bacteria"];
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	Bacteria -> BacteriaBacteroidetes;
+	BacteroidaceaeBacteroides [label="Bacteroides", color="green", style=filled];
+	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
+	BacteroidaceaeBacteroides [label="Bacteroides"];
+	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesBacteroidaceae;
+
+ }

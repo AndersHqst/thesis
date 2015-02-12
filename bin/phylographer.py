@@ -64,6 +64,9 @@ def main(argv):
     output_folder = os.path.join(o, 'phylogenetic-tree')
     if not os.path.exists(output_folder):
         os.mkdir(output_folder)
+    dot_file_folder = output_folder = os.path.join(output_folder, 'dotfiles')
+    if not os.path.exists(dot_file_folder):
+        os.mkdir(dot_file_folder)
 
     for index, itemset in enumerate(summary):
         # Append extra set of headeres for negated values
@@ -73,14 +76,14 @@ def main(argv):
         if co_ex != 0:
             co_excluded_clade = itemsets.to_index_list(co_ex, list(headers) + list(headers))
         di_graph = tree.dot_graph_for_clades(clade_names, co_excluded_clade)
-        file_name = os.path.join(output_folder, str(index))
-        graph_file = file_name + '.dot'
-        with open(graph_file, 'wb') as fd:
+
+        dot_file = os.path.join(dot_file_folder, str(index)) + '.dot'
+        with open(dot_file, 'wb') as fd:
             fd.write(di_graph)
 
-        png_file = file_name + '.png'
+        png_file = os.path.join(dot_file_folder, '../' + str(index)) + '.png'
 
-        subprocess.call(["dot", "-Tpng", graph_file, "-o", png_file])
+        subprocess.call(["dot", "-Tpng", dot_file, "-o", png_file])
 
 
 
