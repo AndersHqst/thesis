@@ -1,0 +1,16 @@
+digraph G { 
+	EnterobacteriaceaeEscherichiaShigella [label="EscherichiaShigella", color="green", style=filled];
+	EnterobacterialesEnterobacteriaceae [label="Enterobacteriaceae"];
+	EnterobacteriaceaeEscherichiaShigella [label="EscherichiaShigella"];
+	EnterobacterialesEnterobacteriaceae -> EnterobacteriaceaeEscherichiaShigella;
+	GammaproteobacteriaEnterobacteriales [label="Enterobacteriales"];
+	EnterobacterialesEnterobacteriaceae [label="Enterobacteriaceae"];
+	GammaproteobacteriaEnterobacteriales -> EnterobacterialesEnterobacteriaceae;
+	ProteobacteriaGammaproteobacteria [label="Gammaproteobacteria"];
+	GammaproteobacteriaEnterobacteriales [label="Enterobacteriales"];
+	ProteobacteriaGammaproteobacteria -> GammaproteobacteriaEnterobacteriales;
+	GammaproteobacteriaEnterobacteriales [label="Enterobacteriales", color="green", style=filled];
+	ProteobacteriaGammaproteobacteria [label="Gammaproteobacteria", color="green", style=filled];
+	EnterobacterialesEnterobacteriaceae [label="Enterobacteriaceae", color="green", style=filled];
+
+ }

@@ -62,8 +62,8 @@ def plot_faust_relationships(relative_values=True):
         xlabel(from_clade, fontsize=10)
         ylabel(to_clade, fontsize=10)
 
-        disc_x, discrete_xs = median_discretization_row(xs)
-        disc_y, discrete_ys = median_discretization_row(ys)
+        disc_x, discrete_xs = maxent_discretization_row(xs)
+        disc_y, discrete_ys = maxent_discretization_row(ys)
 
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]
@@ -85,8 +85,8 @@ def plot_faust_relationships(relative_values=True):
         figtext(0.7, 0.70, phi, fontsize=10)
 
         # Depth of nodes in the phylogenetic tree
-        from_depth = 'From depth: %d' % from_node.depth
-        to_depth = 'To depth: %d' % to_node.depth
+        from_depth = 'x depth: %d' % from_node.depth
+        to_depth = 'y depth: %d' % to_node.depth
         figtext(0.7, 0.67, from_depth, fontsize=10)
         figtext(0.7, 0.64, to_depth, fontsize=10)
 
@@ -111,8 +111,8 @@ def plot_faust_relationships(relative_values=True):
             pearson = pearsonr(xs, ys)
             spearman = spearmanr(xs, ys)
 
-            pearson = 'Pearson: (%.3f,%.3f)' % (pearson[0], pearson[1])
-            spearman = 'Spearman: (%.3f,%.3f)' % (spearman[0], spearman[1])
+            pearson = 'Pearson: %.3f, %.3f' % (pearson[0], pearson[1])
+            spearman = 'Spearman: %.3f, %.3f' % (spearman[0], spearman[1])
 
             figtext(0.7, 0.49, pearson, fontsize=10)
             figtext(0.7, 0.46, spearman, fontsize=10)
@@ -128,7 +128,7 @@ def plot_faust_relationships(relative_values=True):
         plot(xs, ys, 'g.', color='#0066FF')
 
         # Save the figure to file
-        file_name = '../../plots/plots/stool_normalized_clade/' +str(faust_result.id) + '_' + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/stool_normalized_clade_maxent/' +str(faust_result.id) + '_' + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
         file_name = os.path.join(dir, file_name)
         savefig(file_name)
         close()

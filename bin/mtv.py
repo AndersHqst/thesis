@@ -9,10 +9,11 @@ from utils.timer import *
 from utils.counter import *
 from math import log
 from time import time
+import charitems
 
 class MTV(object):
 
-    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, q=DEFAULT_Q, mutual_exclusion=DEFAULT_MUTUAL_EXCLUSION, headers=None):
+    def __init__(self, D, initial_C=[], k=DEFAULT_K, m=DEFAULT_M, s=DEFAULT_S, z=DEFAULT_Z, v=DEFAULT_V, q=DEFAULT_Q, co_exclusion=DEFAULT_CO_EXCLUSION, headers=None):
         super(MTV, self).__init__()
 
         # Mine up to k itemsets
@@ -36,8 +37,8 @@ class MTV(object):
         # Header strings for attributes
         self.headers = headers
 
-        # If set to True, MTV will also produce mutual exclusion patterns
-        self.mutual_exclusion = mutual_exclusion
+        # If set to True, MTV will also produce co-exclusion patterns
+        self.co_exclusion = co_exclusion
 
         # Number of candidate itemsets FindBestItemSet should search for
         # Will result in a list of top-z highest heuristics
@@ -53,15 +54,17 @@ class MTV(object):
         # Singletons
         self.I = itemsets.singletons(self.D)
 
-        if self.mutual_exclusion:
+        if self.co_exclusion:
             self.D  = dataset_with_negations(self.D, self.I)
             self.I = itemsets.singletons(self.D)
+
 
         # Cached frequency counts in D
         self.fr_cache = {}
 
         # Global summary
-        self.C = initial_C
+        self.C = list()
+
         self.union_of_C = itemsets.union_of_itemsets(self.C)
 
         self.BIC_scores = {}
@@ -72,13 +75,7 @@ class MTV(object):
         # will be in this model
         self.singleton_model = Model(self)
         self.singleton_model.I = self.I.copy()
-
-        # Graph of independent models
-        self.graph = Graph()
-        self.__init_graph()
-
-        # Cache for merged models
-        self.model_cache = {}
+        self.singleton_model.iterative_scaling()
 
         # Cached queries
         self.query_cache = {}
@@ -87,20 +84,31 @@ class MTV(object):
         self.independent_components = []
 
         # List to track history of C size
-        self.largest_summary = []
+        self.summary_sizes = []
+
+        # List to track how large a search space was searched
+        self.search_space = []
 
         # List to track history of timings of a loop in mtv
         self.loop_times = []
 
+        # Initialize Graph of independent models
+        self.graph = Graph()
+        self.__init_graph(initial_C)
 
-    def run(self):
+        self.BIC_scores['initial_score'] = self.score()
+
+
+    def mtv(self):
         """
         Run the mtv algorithm
         """
 
         timer_stopwatch('run')
 
-        self.BIC_scores['initial_score'] = self.score()
+        # Added 0 loop_times for seeded itemsets
+        for X in self.C:
+            self.loop_times.append(0)
 
         # Run until we have converged
         while not self.finished():
@@ -117,7 +125,7 @@ class MTV(object):
             self.loop_times.append(time()-start)
 
             if self.v:
-                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, max(|C|): %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X), self.BIC_scores[X], self.independent_components[-1], self.largest_summary[-1])
+                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, Ci: %s, searched-nodes: %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X), self.BIC_scores[X], self.independent_components[-1], self.summary_sizes[-1], self.search_space[-1])
 
 
     def query(self, y):
@@ -129,7 +137,7 @@ class MTV(object):
         # query intersected models independently
         mask = y
         p = 1.0
-        for model in self.graph.independent_models():
+        for model in self.graph.model_iterator():
 
             # Is this an intersected model?
             if y & model.union_of_C != 0:
@@ -172,7 +180,7 @@ class MTV(object):
 
         total_score = self.singleton_model.score()
 
-        for model in self.graph.independent_models():
+        for model in self.graph.model_iterator():
             total_score += model.score()
 
         total_score += 0.5 * len(self.C) * log(len(self.D), 2)
@@ -217,24 +225,24 @@ class MTV(object):
         self.BIC_scores[X] = self.score()
 
 
-    def __init_graph(self):
+    def __init_graph(self, initial_c):
         """
         Init the graph with itemsets in C
         :return:
         """
 
         # Build graph
-        for X in self.C:
-            self.graph.add_node(X, Model(self))
+        for X in initial_c:
+            self.add_itemset(X)
 
         # initialize independent models
         # and removed singletons from singleton model
-        for model in self.graph.independent_models():
-            model.iterative_scaling()
-            self.singleton_model.I -= model.I
+        # for model in self.graph.independent_models():
+        #     model.iterative_scaling()
+        #     self.singleton_model.I -= model.I
 
         # finally initialize the singleton model
-        self.singleton_model.iterative_scaling()
+        # self.singleton_model.iterative_scaling()
 
 
     def update_graph(self, X):
@@ -246,7 +254,7 @@ class MTV(object):
         """
         timer_start('Build independent models')
 
-        new_model, components = self.graph.add_node(X, Model(self))
+        new_model, components = self.graph.add_nodes(X, Model(self))
         new_model.iterative_scaling()
 
         self.update_model_constraints(new_model)
@@ -292,9 +300,9 @@ class MTV(object):
 
         # reset query caches
         self.query_cache = {}
-        self.model_cache = {}
 
         timer_start('Find best itemset')
+        self.search_space.append(0)
         Z = self.find_best_itemset_rec(0, self.I.copy() - self.black_list_singletons, [(0,0)])
         timer_stop('Find best itemset')
 
@@ -307,10 +315,10 @@ class MTV(object):
         return Z[0][0]
 
 
-    def validate_itemset_union_for_mutual_exclusion(self, X, y):
+    def validate_itemset_union_for_co_exclusion(self, X, y):
         """
         Return true if y unioned with X is a valied itemset
-        under mutual exclusion.
+        under co-exclusion.
 
         X|y will not be valid if a negated attribute is already in X
         or if the positive counterpart of y, is already in X
@@ -319,18 +327,18 @@ class MTV(object):
         :return: True if y can be unioned with X
         """
 
-        assert self.mutual_exclusion
+        assert self.co_exclusion
 
         # MTV should be setup so half of the attributes
         # positive
         positive_attributes = int(len(self.I)/2.)
 
-        # check no other negated attribute is set
-        if X >> positive_attributes != 0:
-            return False
-
         # Check if y is a negated attribute
         if 2**positive_attributes <= y:
+
+            # check no other negated attribute is set
+            if X >> positive_attributes != 0:
+                return False
 
             # Check if positive counterpart of y is set
             pos = y >> positive_attributes
@@ -339,7 +347,7 @@ class MTV(object):
 
         return True
 
-    def find_best_itemset_rec(self, X, Y, Z, X_length=0):
+    def find_best_itemset_rec(self, X, Y, Z, X_length=0, parent_h=0):
         """
         :param X: itemset
         :param Y: remaining itemsets
@@ -352,12 +360,19 @@ class MTV(object):
         """
 
         fr_X = self.fr(X)
-        if fr_X < self.s:
+        if fr_X < self.s or X in self.C:
             return Z
 
         p_X = self.cached_itemset_query(X)
 
         h_X = h(fr_X, p_X)
+
+        # TODO: is this ok? It seems to work in
+        # with the few tests I've made, but it should fail in some
+        # cases. However it prunes much of the search space
+        # if h_X < parent_h:
+        #     return Z
+
         if h_X > Z[-1][1] or len(Z) < self.z:
             Z.append((X, h_X))
 
@@ -377,13 +392,16 @@ class MTV(object):
         if Z[0][0] == 0 or b > Z[-1][1]:
 
             if self.m == 0 or X_length < self.m:
+
                 while 0 < len(Y):
                     y = Y.pop()
 
-                    # If we are also mining for mutual exclusion
+                    self.search_space[-1] += 1
+
+                    # If we are also mining for co-exclusion
                     # we have to check that ycan be unioned with X
-                    if not self.mutual_exclusion or self.validate_itemset_union_for_mutual_exclusion(X, y):
-                        Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1)
+                    if not self.co_exclusion or self.validate_itemset_union_for_co_exclusion(X, y):
+                        Z = self.find_best_itemset_rec(X | y, Y.copy(), Z, X_length + 1, parent_h=h_X)
 
         return Z
 
@@ -409,6 +427,17 @@ class MTV(object):
 
         return p
 
+    def U(self):
+        """
+        Returns U over all models
+        :return: U
+        """
+        U = {}
+
+        for model in self.graph.model_iterator():
+            U.update(model.U)
+
+        return U
 
     def update_model_constraints(self, newest_model):
         if not (self.q is None):
@@ -447,9 +476,9 @@ class MTV(object):
         """
         self.independent_components.append(len(components))
 
-        largest_C = 0
+        C_sizes = []
         for component in components:
-            largest_C = max(largest_C, len(component.model.C))
-        self.largest_summary.append(largest_C)
+            C_sizes.append(len(component.model.C))
+        self.summary_sizes.append(C_sizes)
 
         counter_max('Independent models', len(components))

@@ -1,0 +1,34 @@
+digraph G { 
+	PasteurellalesPasteurellaceae [label="Pasteurellaceae", color="green", style=filled];
+	GammaproteobacteriaPasteurellales [label="Pasteurellales"];
+	PasteurellalesPasteurellaceae [label="Pasteurellaceae"];
+	GammaproteobacteriaPasteurellales -> PasteurellalesPasteurellaceae;
+	ProteobacteriaGammaproteobacteria [label="Gammaproteobacteria"];
+	GammaproteobacteriaPasteurellales [label="Pasteurellales"];
+	ProteobacteriaGammaproteobacteria -> GammaproteobacteriaPasteurellales;
+	BacteriaProteobacteria [label="Proteobacteria"];
+	ProteobacteriaGammaproteobacteria [label="Gammaproteobacteria"];
+	BacteriaProteobacteria -> ProteobacteriaGammaproteobacteria;
+	Bacteria [label="Bacteria"];
+	BacteriaProteobacteria [label="Proteobacteria"];
+	Bacteria -> BacteriaProteobacteria;
+	VeillonellaceaeVeillonella [label="Veillonella", color="green", style=filled];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	VeillonellaceaeVeillonella [label="Veillonella"];
+	ClostridialesVeillonellaceae -> VeillonellaceaeVeillonella;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	ClostridiaClostridiales -> ClostridialesVeillonellaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	ProteobacteriaGammaproteobacteria [label="Gammaproteobacteria", color="green", style=filled];
+	GammaproteobacteriaPasteurellales [label="Pasteurellales", color="green", style=filled];
+
+ }

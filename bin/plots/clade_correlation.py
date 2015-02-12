@@ -43,8 +43,9 @@ def plot_clades_relationships(clade_pairs, folder):
             xs.append(from_abundance)
             ys.append(to_abundance)
 
+        text_x = 0.67
         sample_points = 'Sample points: %d' % len(xs)
-        figtext(0.7, 0.85, sample_points, fontsize=10)
+        figtext(text_x, 0.85, sample_points, fontsize=10)
 
         from_clade = from_node.name.replace('|', '-')
         to_clade = to_node.name.replace('|', '-')
@@ -66,41 +67,41 @@ def plot_clades_relationships(clade_pairs, folder):
         _01 = '01: ' + str(len([x for x in pairs if x == (0,1)]))
         _10 = '10: ' + str(len([x for x in pairs if x == (1,0)]))
         _11 = '11: ' + str(len([x for x in pairs if x == (1,1)]))
-        figtext(0.7, 0.82, _00, fontsize=10)
-        figtext(0.7, 0.79, _01, fontsize=10)
-        figtext(0.7, 0.76, _10, fontsize=10)
-        figtext(0.7, 0.73, _11, fontsize=10)
+        figtext(text_x, 0.82, _00, fontsize=10)
+        figtext(text_x, 0.79, _01, fontsize=10)
+        figtext(text_x, 0.76, _10, fontsize=10)
+        figtext(text_x, 0.73, _11, fontsize=10)
         phi = 'phi: %f' % phicoeff_lists(discrete_xs, discrete_ys)
-        figtext(0.7, 0.70, phi, fontsize=10)
+        figtext(text_x, 0.70, phi, fontsize=10)
 
         # Depth of nodes in the phylogenetic tree
-        from_depth = 'From depth: %d' % from_node.depth
-        to_depth = 'To depth: %d' % to_node.depth
-        figtext(0.7, 0.67, from_depth, fontsize=10)
-        figtext(0.7, 0.64, to_depth, fontsize=10)
+        from_depth = 'x depth: %d' % from_node.depth
+        to_depth = 'y depth: %d' % to_node.depth
+        figtext(text_x, 0.67, from_depth, fontsize=10)
+        figtext(text_x, 0.64, to_depth, fontsize=10)
 
         # Discretization values
         median_x = 'median x: %f' % disc_x
         median_y = 'median y: %f' % disc_y
-        figtext(0.7, 0.61, median_x, fontsize=10)
-        figtext(0.7, 0.58, median_y, fontsize=10)
+        figtext(text_x, 0.61, median_x, fontsize=10)
+        figtext(text_x, 0.58, median_y, fontsize=10)
 
         # Same lineage
         same_lineage = 'False'
         if tree.nodes_have_same_lineage(from_node, to_node):
             same_lineage = ' True'
-        figtext(0.7, 0.55, 'Same lineage: ' + same_lineage, fontsize=10)
+        figtext(text_x, 0.55, 'Same lineage: ' + same_lineage, fontsize=10)
 
         # Pearson and spearman correlations
         try:
             pearson = pearsonr(xs, ys)
             spearman = spearmanr(xs, ys)
 
-            pearson = 'Pearson: %.3f' % pearson[0]
-            spearman = 'Spearman: %.3f' % spearman[0]
+            pearson = 'Pearson: %.3f, %.3f' % (pearson[0], pearson[1])
+            spearman = 'Spearman: %.3f, %.3f' % (spearman[0], spearman[1])
 
-            figtext(0.7, 0.52, pearson, fontsize=10)
-            figtext(0.7, 0.49, spearman, fontsize=10)
+            figtext(text_x, 0.52, pearson, fontsize=10)
+            figtext(text_x, 0.49, spearman, fontsize=10)
         except Exception, e:
             print e
             print 'clades1: ', from_node.name

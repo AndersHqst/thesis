@@ -1,0 +1,12 @@
+
+0 # CO-EXCLUSION #:
+['Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|unclassified', 'Ruminococcaceae|Sporobacter', 'Incertae_Sedis_XIII|Anaerovorax'] - ['Bacteroidaceae|Bacteroides']
+p=0.220339 lhs=0.228995 rhs=0.500001 phi=0.501652 (X->Y: conf:0.962200, lift:1.924398) (Y->X:conf:0.440677, lift:1.924398) 
+Independent probability: 0.031252
+0.500003 ['Ruminococcaceae|Oscillibacter']
+0.500004 ['Ruminococcaceae|unclassified']
+0.500008 ['Incertae_Sedis_XIII|Anaerovorax']
+0.500015 ['Ruminococcaceae|Sporobacter']
+0.500001 ['Bacteroidaceae|Bacteroides']
+U: 44.723149
+

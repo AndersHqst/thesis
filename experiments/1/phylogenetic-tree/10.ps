@@ -1,0 +1,32 @@
+digraph G { 
+	FirmicutesClostridia [label="Clostridia", color="green", style=filled];
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	ClostridiaClostridiales [label="Clostridiales", color="green", style=filled];
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	ClostridialesIncertae_Sedis_XIV [label="Incertae_Sedis_XIV", color="green", style=filled];
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesIncertae_Sedis_XIV [label="Incertae_Sedis_XIV"];
+	ClostridiaClostridiales -> ClostridialesIncertae_Sedis_XIV;
+	Clostridialesunclassified [label="unclassified", color="green", style=filled];
+	ClostridiaClostridiales [label="Clostridiales"];
+	Clostridialesunclassified [label="unclassified"];
+	ClostridiaClostridiales -> Clostridialesunclassified;
+	BacteriaFirmicutes [label="Firmicutes", color="green", style=filled];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae", color="green", style=filled];
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	ClostridiaClostridiales -> ClostridialesLachnospiraceae;
+	LachnospiraceaeDorea [label="Dorea", color="green", style=filled];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	LachnospiraceaeDorea [label="Dorea"];
+	ClostridialesLachnospiraceae -> LachnospiraceaeDorea;
+	Incertae_Sedis_XIVBlautia [label="Blautia", color="green", style=filled];
+	ClostridialesIncertae_Sedis_XIV [label="Incertae_Sedis_XIV"];
+	Incertae_Sedis_XIVBlautia [label="Blautia"];
+	ClostridialesIncertae_Sedis_XIV -> Incertae_Sedis_XIVBlautia;
+
+ }

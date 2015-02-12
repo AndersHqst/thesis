@@ -1,0 +1,33 @@
+digraph G { 
+	BacteriaBacteroidetes [label="Bacteroidetes", color="green", style=filled];
+	Bacteria [label="Bacteria"];
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	Bacteria -> BacteriaBacteroidetes;
+	ClostridialesEubacteriaceae [label="Eubacteriaceae", color="green", style=filled];
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesEubacteriaceae [label="Eubacteriaceae"];
+	ClostridiaClostridiales -> ClostridialesEubacteriaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	BacteroidiaBacteroidales [label="Bacteroidales", color="green", style=filled];
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidetesBacteroidia -> BacteroidiaBacteroidales;
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteriaBacteroidetes -> BacteroidetesBacteroidia;
+	BacteroidetesBacteroidia [label="Bacteroidia", color="green", style=filled];
+	EubacteriaceaeEubacterium [label="Eubacterium", color="green", style=filled];
+	ClostridialesEubacteriaceae [label="Eubacteriaceae"];
+	EubacteriaceaeEubacterium [label="Eubacterium"];
+	ClostridialesEubacteriaceae -> EubacteriaceaeEubacterium;
+	BacteriaFirmicutes [label="Firmicutes", color="red", style=filled];
+
+ }

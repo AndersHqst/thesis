@@ -48,7 +48,7 @@ def dataset_with_negations(dataset, singletons):
         return dataset_with_negations
 
 
-def is_mutual_exclusion(itemset, singletons):
+def is_co_exclusion(itemset, singletons):
     """
     :param itemset: Itemset
     :param singletons: All singleton, positive and negated
@@ -56,11 +56,13 @@ def is_mutual_exclusion(itemset, singletons):
     and tuple of (positive (values, negated_value), or False and (0.0)
     """
 
+    # With cooccurrences, the data has been double, thus
+    # dividing by 2 should always be the splitting value
     positive_bits = int(len(singletons) / 2.0)
     negated_attribute = itemset >> positive_bits
     positive_attributes = (2**positive_bits - 1) & itemset
 
     if negated_attribute != 0:
-        return (True, (positive_attributes, negated_attribute))
+        return (True, (positive_attributes, negated_attribute<<positive_bits))
 
     return (False, (0,0))
