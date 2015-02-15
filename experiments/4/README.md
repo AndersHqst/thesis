@@ -27,7 +27,7 @@ Attributes:  166
 discrete dataset cleaning, removed bacteria:  87
 Attributes after cleaning:  79
 
-./main.py -f ../experiments/4/Stool_maxent_discretized_nodes_depth_6_005.dat -s 0.1 --debug -v -o ../experiments/4/ -k 10 -H ../experiments/4/Stool_maxent_discretized_nodes_depth_6_005.headers --co-exclusion
+./main.py -f ../experiments/4/Stool_maxent_discretized_nodes_depth_6_010.dat -s 0.1 --debug -v -o ../experiments/4/ -k 10 -H ../experiments/4/Stool_maxent_discretized_nodes_depth_6_010.headers --add-negated
 /Users/ahkj/pypy-2.4.0-osx64/site-packages/numpy/linalg/_umath_linalg.py:1322: UserWarning: no cffi linalg functions and no _umath_linalg_capi module, expect problems.
   warn('no cffi linalg functions and no _umath_linalg_capi module, expect problems.')
 

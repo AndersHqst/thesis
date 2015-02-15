@@ -1,0 +1,40 @@
+digraph G { 
+	ErysipelotrichaceaeTuricibacter [label="Turicibacter", color="green", style=filled];
+	ErysipelotrichalesErysipelotrichaceae [label="Erysipelotrichaceae"];
+	ErysipelotrichaceaeTuricibacter [label="Turicibacter"];
+	ErysipelotrichalesErysipelotrichaceae -> ErysipelotrichaceaeTuricibacter;
+	ErysipelotrichiErysipelotrichales [label="Erysipelotrichales"];
+	ErysipelotrichalesErysipelotrichaceae [label="Erysipelotrichaceae"];
+	ErysipelotrichiErysipelotrichales -> ErysipelotrichalesErysipelotrichaceae;
+	FirmicutesErysipelotrichi [label="Erysipelotrichi"];
+	ErysipelotrichiErysipelotrichales [label="Erysipelotrichales"];
+	FirmicutesErysipelotrichi -> ErysipelotrichiErysipelotrichales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesErysipelotrichi [label="Erysipelotrichi"];
+	BacteriaFirmicutes -> FirmicutesErysipelotrichi;
+	ClostridiaceaeClostridium [label="Clostridium", color="green", style=filled];
+	ClostridialesClostridiaceae [label="Clostridiaceae"];
+	ClostridiaceaeClostridium [label="Clostridium"];
+	ClostridialesClostridiaceae -> ClostridiaceaeClostridium;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesClostridiaceae [label="Clostridiaceae"];
+	ClostridiaClostridiales -> ClostridialesClostridiaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	PeptostreptococcaceaeSporacetigenium [label="Sporacetigenium", color="green", style=filled];
+	ClostridialesPeptostreptococcaceae [label="Peptostreptococcaceae"];
+	PeptostreptococcaceaeSporacetigenium [label="Sporacetigenium"];
+	ClostridialesPeptostreptococcaceae -> PeptostreptococcaceaeSporacetigenium;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesPeptostreptococcaceae [label="Peptostreptococcaceae"];
+	ClostridiaClostridiales -> ClostridialesPeptostreptococcaceae;
+	Peptostreptococcaceaeunclassified [label="unclassified", color="green", style=filled];
+	ClostridialesPeptostreptococcaceae [label="Peptostreptococcaceae"];
+	Peptostreptococcaceaeunclassified [label="unclassified"];
+	ClostridialesPeptostreptococcaceae -> Peptostreptococcaceaeunclassified;
+
+ }

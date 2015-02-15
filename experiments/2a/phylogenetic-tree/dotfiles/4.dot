@@ -1,0 +1,25 @@
+digraph G { 
+	PorphyromonadaceaeButyricimonas [label="Butyricimonas", color="green", style=filled];
+	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
+	PorphyromonadaceaeButyricimonas [label="Butyricimonas"];
+	BacteroidalesPorphyromonadaceae -> PorphyromonadaceaeButyricimonas;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesPorphyromonadaceae;
+	PorphyromonadaceaeBarnesiella [label="Barnesiella", color="green", style=filled];
+	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
+	PorphyromonadaceaeBarnesiella [label="Barnesiella"];
+	BacteroidalesPorphyromonadaceae -> PorphyromonadaceaeBarnesiella;
+	Prevotellaceaeunclassified [label="unclassified", color="green", style=filled];
+	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
+	Prevotellaceaeunclassified [label="unclassified"];
+	BacteroidalesPrevotellaceae -> Prevotellaceaeunclassified;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesPrevotellaceae;
+	PrevotellaceaeParaprevotella [label="Paraprevotella", color="green", style=filled];
+	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
+	PrevotellaceaeParaprevotella [label="Paraprevotella"];
+	BacteroidalesPrevotellaceae -> PrevotellaceaeParaprevotella;
+
+ }

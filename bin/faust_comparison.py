@@ -16,12 +16,12 @@ def load_model():
     from utils.files import parse_dat_file
     from utils.files import parse_header_file
 
-    D = parse_dat_file('../experiments/1/Stool_maxent_discretized_all_nodes.dat')
+    D = parse_dat_file('../experiments/4/Stool_maxent_discretized_all_nodes.dat')
     headers = parse_header_file('../experiments/1/Stool_maxent_discretized_all_nodes.headers')
     summary = parse_dat_file('../experiments/1/summary.dat')
 
     print 'Creating MTV object'
-    mtv = MTV(D, summary[:-6], s=0.25)
+    mtv = MTV(D, summary, s=0.0)
     print 'Done'
     mtv.headers = headers
     return mtv
@@ -124,4 +124,4 @@ def faust_comparison(body_site='Stool'):
         # 67 faust results in total
         print 'count: ', count
 
-faust_comparison()
+# faust_comparison()

@@ -2,6 +2,7 @@
 from itertools import combinations
 from itemsets import singletons_of_itemset, union_of_itemsets, to_index_list
 from model import Model
+import math
 from settings import float_precision
 
 class AssociationRule(object):
@@ -108,11 +109,26 @@ def association_rules(mtv, itemsets, use_observed_frequency=False):
     # either association or disassociation rules
     # Association rules, descending prob, lift > 1 for true rules
     association_rules = filter(lambda rule: rule.lift > 1, rules)
-    association_rules.sort(lambda ar1, ar2: ar1.confidence < ar2.confidence and 1 or -1)
+
+    # Sort association rules descendingly, and cut away lower half
+    association_rules.sort(lambda ar1, ar2: ar1.lift < ar2.lift and 1 or -1)
+    split = int(math.ceil(len(association_rules)/2.))
+    association_rules_high_lift = association_rules[:split]
+    association_rules_low_lift = association_rules[split:]
+    association_rules_high_lift.sort(lambda ar1, ar2: ar1.confidence < ar2.confidence and 1 or -1)
+    association_rules_low_lift.sort(lambda ar1, ar2: ar1.confidence < ar2.confidence and 1 or -1)
+    association_rules = association_rules_high_lift + association_rules_low_lift
 
     # Disassociation rules, ascending prob, lift < 1 for true rules
     disassociation_rules = filter(lambda rule: rule.lift < 1, rules)
-    disassociation_rules.sort(lambda ar1, ar2: ar1.confidence < ar2.confidence and -1 or 1)
+    # Sort disassociation rules, ascindinglyly, and cut away lower half
+    disassociation_rules.sort(lambda ar1, ar2: ar1.lift < ar2.lift and -1 or 1)
+    d_split = int(math.ceil(len(disassociation_rules)/2.))
+    disassociation_lower_lift = disassociation_rules[:d_split]
+    disassociation_higher_lift = disassociation_rules[d_split:]
+    disassociation_lower_lift.sort(lambda ar1, ar2: ar1.confidence < ar2.confidence and -1 or 1)
+    disassociation_higher_lift.sort(lambda ar1, ar2: ar1.confidence < ar2.confidence and -1 or 1)
+    disassociation_rules = disassociation_lower_lift + disassociation_higher_lift
 
     return association_rules, disassociation_rules
 

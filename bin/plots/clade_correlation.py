@@ -1,4 +1,4 @@
-from matplotlib.pylab import plot, scatter, hist, ylabel, xlabel, savefig, close, title, figtext, grid, yscale, xscale
+from matplotlib.pylab import plot, scatter, hist, ylabel, xlabel, savefig, close, title, figtext, grid
 from preprocessing.parser import *
 from preprocessing.discretization import *
 from preprocessing.tree import Tree
@@ -112,7 +112,7 @@ def plot_clades_relationships(clade_pairs, folder):
             print 'ys: %s', ys
 
         # vals = vals[:-20]
-        scatter(xs, ys, s=2, color='#0066FF')
+        scatter(xs, ys, s=1, color='#0066FF')
         file_name = folder + from_node.name.replace('|', '-').replace('/', '%') + '---' + to_node.name.replace('|', '-').replace('/', '%')
         # file_name = os.path.join(dir, file_name)
         # print '[RESULT] ', file_name

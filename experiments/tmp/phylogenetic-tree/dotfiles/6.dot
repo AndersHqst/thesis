@@ -1,0 +1,21 @@
+digraph G { 
+	LachnospiraceaeCoprococcus [label="Coprococcus", color="green", style=filled];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	LachnospiraceaeCoprococcus [label="Coprococcus"];
+	ClostridialesLachnospiraceae -> LachnospiraceaeCoprococcus;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	ClostridiaClostridiales -> ClostridialesLachnospiraceae;
+	RuminococcaceaeFaecalibacterium [label="Faecalibacterium", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeFaecalibacterium [label="Faecalibacterium"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeFaecalibacterium;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	RuminococcaceaeSporobacter [label="Sporobacter", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeSporobacter [label="Sporobacter"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeSporobacter;
+
+ }

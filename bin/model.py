@@ -7,7 +7,7 @@ from utils.timer import *
 from utils.counter import *
 from settings import *
 import itemsets
-from heurestic import h
+from heuristic import h
 import sys
 sys.setrecursionlimit(1500)
 
@@ -263,15 +263,19 @@ class Model(object):
 
                 estimate = self.query(x, scaling=True)
 
-                if self.mtv.fr(x) == 0 or estimate == 0:
-                    msg = 'itemset %d has frequency=%f and p=%f. It should not be added to the summary' % (x, self.mtv.fr(x), estimate)
-                    assert False, msg
+                # if self.mtv.fr(x) == 0 or estimate == 0:
+                #     msg = 'itemset %d has frequency=%f and p=%f. It should not be added to the summary' % (x, self.mtv.fr(x), estimate)
+                #     assert False, msg
 
                 fr_x = self.mtv.fr(x)
                 if  abs(1 - fr_x) < float_precision:
                     fr_x = 0.9999999999
+                elif fr_x < float_precision:
+                    fr_x = 0.0000000001
                 if  abs(1 - estimate) < float_precision:
                     estimate = 0.9999999999
+                elif estimate < float_precision:
+                    estimate = 0.0000000001
 
                 self.U[x] = self.U[x] * (fr_x / estimate) * ((1 - estimate) / (1 - fr_x))
                 self.u0 = self.u0 * (1 - fr_x) / (1 - estimate)

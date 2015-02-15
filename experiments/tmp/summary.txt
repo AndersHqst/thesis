@@ -1,0 +1,120 @@
+
+0
+U=0.085254
+[19, 83]
+['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']
+p=0.112984 
+Independent probability: 0.249968
+0.499990 ['Ruminococcaceae|unclassified']
+0.499946 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.225973, lift:0.451994) [19] -> [83]
+	(conf:0.225992, lift:0.451994) [83] -> [19]
+
+1
+U=0.093926
+[81, 83]
+['Prevotellaceae|unclassified', 'Bacteroidaceae|Bacteroides']
+p=0.045194 
+Independent probability: 0.151111
+0.302255 ['Prevotellaceae|unclassified']
+0.499946 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.149524, lift:0.299080) [81] -> [83]
+	(conf:0.090398, lift:0.299080) [83] -> [81]
+
+2
+U=0.090897
+[31, 35]
+['Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister']
+p=0.115819 
+Independent probability: 0.249994
+0.500006 ['Veillonellaceae|Phascolarctobacterium']
+0.499981 ['Veillonellaceae|Dialister']
+Disassociation rules:
+	(conf:0.231635, lift:0.463287) [31] -> [35]
+	(conf:0.231646, lift:0.463287) [35] -> [31]
+
+3
+U=0.138515
+[83, 89]
+['Bacteroidaceae|Bacteroides', 'Coriobacteriaceae|unclassified']
+p=0.067791 
+Independent probability: 0.166646
+0.499946 ['Bacteroidaceae|Bacteroides']
+0.333329 ['Coriobacteriaceae|unclassified']
+Disassociation rules:
+	(conf:0.135597, lift:0.406798) [83] -> [89]
+	(conf:0.203377, lift:0.406798) [89] -> [83]
+
+4
+U=0.157495
+[63, 65]
+['Alcaligenaceae|Sutterella', 'Alcaligenaceae|Parasutterella']
+p=0.098870 
+Independent probability: 0.201969
+0.403942 ['Alcaligenaceae|Sutterella']
+0.499995 ['Alcaligenaceae|Parasutterella']
+Disassociation rules:
+	(conf:0.197742, lift:0.489530) [65] -> [63]
+	(conf:0.244763, lift:0.489530) [63] -> [65]
+
+5
+U=0.159004
+[23, 83]
+['Ruminococcaceae|Acetanaerobacterium', 'Bacteroidaceae|Bacteroides']
+p=0.070615 
+Independent probability: 0.162407
+0.324849 ['Ruminococcaceae|Acetanaerobacterium']
+0.499946 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.217378, lift:0.434804) [23] -> [83]
+	(conf:0.141245, lift:0.434804) [83] -> [23]
+
+6
+U=0.155061
+[26, 83]
+['Ruminococcaceae|Sporobacter', 'Bacteroidaceae|Bacteroides']
+p=0.141241 
+Independent probability: 0.249961
+0.499977 ['Ruminococcaceae|Sporobacter']
+0.499946 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.282512, lift:0.565051) [83] -> [26]
+	(conf:0.282495, lift:0.565051) [26] -> [83]
+
+7
+U=0.155009
+[16, 83]
+['Ruminococcaceae|Oscillibacter', 'Bacteroidaceae|Bacteroides']
+p=0.141229 
+Independent probability: 0.249967
+0.499987 ['Ruminococcaceae|Oscillibacter']
+0.499946 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.282465, lift:0.564992) [16] -> [83]
+	(conf:0.282489, lift:0.564992) [83] -> [16]
+
+8
+U=0.168441
+[80, 83]
+['Prevotellaceae|Prevotella', 'Bacteroidaceae|Bacteroides']
+p=0.144056 
+Independent probability: 0.248541
+0.497137 ['Prevotellaceae|Prevotella']
+0.499946 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.289772, lift:0.579607) [80] -> [83]
+	(conf:0.288144, lift:0.579607) [83] -> [80]
+
+9
+U=0.371102
+[33, 35]
+['Veillonellaceae|unclassified', 'Veillonellaceae|Dialister']
+p=0.189266 
+Independent probability: 0.249983
+0.499984 ['Veillonellaceae|unclassified']
+0.499981 ['Veillonellaceae|Dialister']
+Disassociation rules:
+	(conf:0.378543, lift:0.757115) [33] -> [35]
+	(conf:0.378545, lift:0.757115) [35] -> [33]

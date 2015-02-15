@@ -1,0 +1,39 @@
+digraph G { 
+	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeAnaerotruncus [label="Anaerotruncus"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeAnaerotruncus;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	Ruminococcaceaeunclassified [label="unclassified", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	Ruminococcaceaeunclassified [label="unclassified"];
+	ClostridialesRuminococcaceae -> Ruminococcaceaeunclassified;
+	BacteroidaceaeBacteroides [label="Bacteroides", color="green", style=filled];
+	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
+	BacteroidaceaeBacteroides [label="Bacteroides"];
+	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesBacteroidaceae;
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidetesBacteroidia -> BacteroidiaBacteroidales;
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteriaBacteroidetes -> BacteroidetesBacteroidia;
+	Bacteria [label="Bacteria"];
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	Bacteria -> BacteriaBacteroidetes;
+
+ }

@@ -64,6 +64,7 @@ class Node(object):
         color = 'green'
         if self.name in co_excluded:
             color = 'red'
+
         # Node names are not unique so use the label to set the node text
         unique_node_name = self.name.replace("|","").replace('/','')
         node_label = self.name.split('|')[-1].replace('/','')

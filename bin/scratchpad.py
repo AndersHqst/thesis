@@ -7,44 +7,19 @@ from matplotlib.pylab import plot, ylabel, xlabel, savefig, close, title, figtex
 from preprocessing.discretization import *
 from preprocessing.preprocessors import remove_empty_samples, compute_relative_values, discrete_dataset_cleaning
 import os
+from plots.mtv_results import read_run_results
+from plots.mtv_results import plot_run_results
+
+plot_run_results('../experiments/4/')
+plot_run_results('../experiments/2a/')
+plot_run_results('../experiments/2b/')
+exit()
 
 from plots.faust_result_discretized import plot_faust_relationships
 # plot_faust_relationships()
 # run()
+# exit()
 
-
-# def run_discretization():
-#     """
-#     TODO: Work in progress. Code to use a phylogenetic tree, and get a
-#     daset at a particular depth.
-#     """
-#     from preprocessing import parser
-#     from preprocessing.tree import Tree
-#     from utils.dataset_helpers import abundance_matrix
-#     from itemsets import binary_vectors_to_ints
-#     from utils.files import write_dat_file
-#
-#     ds = parser.get_dataset()
-#     ds = parser.compute_relative_values(ds)
-#     t = Tree(ds)
-#     bin_ds = t.dataset_at_max_depth(3)
-#
-#     abundance = abundance_matrix(bin_ds)
-#
-#     D = binary_vectors_to_ints(abundance)
-#
-#     write_dat_file('../experiments/1/stool_depth3_discrete.dat', D)
-#     headers = []
-#     for header in bin_ds[0][2:]:
-#         vals = header.split('|')
-#         if len(vals) > 1:
-#             headers.append('|'.join(vals[-2:]))
-#         else:
-#             headers.append(vals[0])
-#
-#     with open('../experiments/1/stool_depth3_discrete.headers', 'wb') as fd:
-#         line = ' '.join(headers)
-#         fd.write(line)
 
 def write_dataset_to_experiment(file_name, ds):
     from itemsets import binary_vectors_to_ints
@@ -164,10 +139,10 @@ def run_discretization_for_tree_depth(depth):
 
     print 'Attributes: ', len(ds[0][2:])
     ds = median_discretization(ds)
-    ds = discrete_dataset_cleaning(ds, 0.40)
+    ds = discrete_dataset_cleaning(ds, 0.05)
     print 'Attributes after cleaning: ', len(ds[0][2:])
 
-    write_dataset_to_experiment('../experiments/2/Stool_maxent_discretized_nodes_depth_6_040', ds)
+    write_dataset_to_experiment('../experiments/4/Stool_maxent_discretized_nodes_depth_6_005', ds)
 
 
 # run_discretization_for_tree_depth(6)
@@ -182,43 +157,6 @@ def load_model():
     # print clade names
     for X in C:
         print itemsets.to_index_list(X, headers)
-
-
-
-def plot_BIC_score(BIC_SCORE, path):
-    xlabel('|C|')
-    ylabel('BIC score')
-    plot(BIC_SCORE)
-    savefig(os.path.join(path, 'BIC.png'))
-    close()
-
-def plot_heuristic(heuristic, path):
-    xlabel('|C|')
-    ylabel('h')
-    plot(heuristic)
-    savefig(os.path.join(path, 'heuristic.png'))
-    close()
-
-def plot_independent_models(independent_models, path):
-    xlabel('|C|')
-    ylabel('Independent models')
-    plot(independent_models)
-    savefig(os.path.join(path, 'independent_models.png'))
-    close()
-
-def plot_running_time(running_time, path):
-    xlabel('|C|')
-    ylabel('MTV iteration in secs.')
-    plot([x for x in range(len(running_time))], running_time)
-    savefig(os.path.join(path, 'running_time.png'))
-    close()
-
-def plot_size_of_c(size_of_c, path):
-    xlabel('MTV iteration')
-    ylabel('Max model size |Ci|')
-    plot([x for x in range(len(size_of_c))], size_of_c)
-    savefig(os.path.join(path, 'size_of_c.png'))
-    close()
 
 
 
@@ -335,15 +273,15 @@ def compare_to_faust():
 def clade_table():
     from utils.files import parse_header_file, parse_dat_file
     from itemsets import to_index_list
-    headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6_020.headers')
+    headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6_005.headers')
 
-    summary = parse_dat_file('../experiments/4/summary.dat')
+    summary = parse_dat_file('../experiments/2b/summary.dat')
     # Get the indeces of the pair
     bin_indeces = [to_index_list(x) for x in summary]
 
 
     clades = []
-    for indeces in bin_indeces:
+    for i, indeces in enumerate(bin_indeces):
         pattern = []
         for index in indeces:
             # co-occurrence
@@ -354,13 +292,14 @@ def clade_table():
 
         clades.append(pattern)
         # print '[' + ', '.join(pattern) + ']'
+        print '%', i
         print '\item {\small '
-        for clade in pattern:
+        for index, clade in enumerate(pattern):
             line = '%s, ' % clade.replace('|', '-')
             if clade == pattern[-1]:
                 line = line.replace(',', '')
             line = line.replace('_', '\\_')
-            print line
+            print '\t' + line
         print '}'
         print ''
     print 'Clades in itemset: '
@@ -368,7 +307,7 @@ def clade_table():
     # for clade1, clade2 in clades:
     #     print '%s & %s\\\\' % (clade1, clade2)
 
-# clade_table()
+clade_table()
 
 
 def clade_pair_abundances():
@@ -392,7 +331,7 @@ def clade_pair_abundances():
             clade2 = headers[binindex2]
             clades.append((clade1, clade2))
 
-    plot_clades_relationships(clades, '../experiments/1/plots/')
+    plot_clades_relationships(clades, '../experiments/2b/plots/')
 
 
 # clade_pair_abundances()
@@ -405,10 +344,12 @@ def plot_clades_pairwise(clades):
         clade_pairs.append((clade1, clade2))
 
 
-    plot_clades_relationships(clade_pairs, '../experiments/tmp/plots/')
+    plot_clades_relationships(clade_pairs, '../experiments/2a/plots/')
 
 # clades = ['Bacteria|Bacteroidetes', 'Bacteroidia|Bacteroidales', 'Bacteroidetes|Bacteroidia', 'Bacteroidales|Bacteroidaceae', 'Bacteroidaceae|Bacteroides', 'Tenericutes|Mollicutes']
 # clades = ['Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister', 'Porphyromonadaceae|Parabacteroides', 'Bacteroidaceae|Bacteroides']
+# clades = ['Porphyromonadaceae|Barnesiella', 'Porphyromonadaceae|unclassified']
+# clades = ['Erysipelotrichaceae|Turicibacter', 'Veillonellaceae|Veillonella', 'Pasteurellaceae|Haemophilus', 'Pasteurellaceae|unclassified']
 # plot_clades_pairwise(clades)
 
 def plot_clades():
@@ -431,34 +372,13 @@ def plot_clades():
     # clades = [('Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister')]
     # clades = [['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']]
     # clades = [('Bacteroidaceae|Bacteroides', 'Prevotellaceae|unclassified')]
+    # clades = [('Alcaligenaceae|Sutterella', 'Alcaligenaceae|Parasutterella')]
 
-    plot_clades_relationships(clades, './tmp/')
+    plot_clades_relationships(clades, '../experiments/2b/plots/')
 
-plot_clades()
+# plot_clades()
 
-def read_run_results(run_results_file):
-    heuristics = []
-    BIC_scores = []
-    independent_models = []
-    size_of_c = []
-    iteration_time = []
-    relation_ships = []
-    queries = []
-    with open(run_results_file) as fd:
-        for line in fd:
-            if '\n' in line:
-                line = line.replace('\n', '')
-            chunks = line.split(' ')
-            chunks = [c for c in chunks if c != '' and not ('\t' in c)]
-            heuristics.append(float(chunks[0]))
-            BIC_scores.append(float(chunks[1]))
-            queries.append(float(chunks[2]))
-            size_of_c.append(int(chunks[3]))
-            independent_models.append(int(chunks[4]))
-            iteration_time.append(float(chunks[5]))
-            relation_ships.append(chunks[6])
 
-    return heuristics, BIC_scores, independent_models, size_of_c, iteration_time, relation_ships, queries
 
 # plot_clades()
 
@@ -467,17 +387,7 @@ def read_run_results(run_results_file):
 # for r in res:
 #     print r.clade_1 + ' + ' + r.clade_1
 
-def plot_run_results(run_result_folder):
-    path = os.path.join(run_result_folder, 'run_result.txt')
-    heuristics, BIC_scores, independent_models, size_of_c, iteration_time, relation_ships, queries = read_run_results(path)
 
-    plot_BIC_score(BIC_scores, run_result_folder)
-    plot_heuristic(heuristics, run_result_folder)
-    plot_independent_models(independent_models, run_result_folder)
-    plot_size_of_c(size_of_c, run_result_folder)
-    plot_running_time(iteration_time, run_result_folder)
-
-plot_run_results('../experiments/4/')
 
 def format_stats(summary_file):
     """
@@ -534,3 +444,15 @@ def write_tree():
 #
 # s = t.dot_graph_for_clades(clades)
 # print s
+
+def print_appendix_figures(figures=10):
+    for i in range(figures):
+
+        print '\\begin{figure}[h]'
+        print '\\begin{center}'
+        print '\\makebox[\\textwidth][c]{\\includegraphics[scale=0.5, width=1.2\\textwidth]{figures/experiment2a/%d.png}}%%' % i
+        print '\\end{center}'
+        print '\\caption{Phylogenetic tree for summary result %d in experiment 2a}' % i
+        print '\\end{figure}\n'
+
+# print_appendix_figures(10)

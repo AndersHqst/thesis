@@ -1,0 +1,43 @@
+digraph G { 
+	RuminococcaceaeAcetanaerobacterium [label="Acetanaerobacterium", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeAcetanaerobacterium [label="Acetanaerobacterium"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeAcetanaerobacterium;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	RuminococcaceaeSporobacter [label="Sporobacter", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeSporobacter [label="Sporobacter"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeSporobacter;
+	Porphyromonadaceaeunclassified [label="unclassified", color="green", style=filled];
+	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
+	Porphyromonadaceaeunclassified [label="unclassified"];
+	BacteroidalesPorphyromonadaceae -> Porphyromonadaceaeunclassified;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesPorphyromonadaceae;
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidetesBacteroidia -> BacteroidiaBacteroidales;
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteriaBacteroidetes -> BacteroidetesBacteroidia;
+	Bacteria [label="Bacteria"];
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	Bacteria -> BacteriaBacteroidetes;
+	PorphyromonadaceaeBarnesiella [label="Barnesiella", color="green", style=filled];
+	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
+	PorphyromonadaceaeBarnesiella [label="Barnesiella"];
+	BacteroidalesPorphyromonadaceae -> PorphyromonadaceaeBarnesiella;
+
+ }

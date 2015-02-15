@@ -1,0 +1,25 @@
+digraph G { 
+	LachnospiraceaeAnaerostipes [label="Anaerostipes", color="green", style=filled];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	LachnospiraceaeAnaerostipes [label="Anaerostipes"];
+	ClostridialesLachnospiraceae -> LachnospiraceaeAnaerostipes;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	ClostridiaClostridiales -> ClostridialesLachnospiraceae;
+	LachnospiraceaeDorea [label="Dorea", color="green", style=filled];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	LachnospiraceaeDorea [label="Dorea"];
+	ClostridialesLachnospiraceae -> LachnospiraceaeDorea;
+	LachnospiraceaeCoprococcus [label="Coprococcus", color="green", style=filled];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	LachnospiraceaeCoprococcus [label="Coprococcus"];
+	ClostridialesLachnospiraceae -> LachnospiraceaeCoprococcus;
+	Incertae_Sedis_XIVBlautia [label="Blautia", color="green", style=filled];
+	ClostridialesIncertae_Sedis_XIV [label="Incertae_Sedis_XIV"];
+	Incertae_Sedis_XIVBlautia [label="Blautia"];
+	ClostridialesIncertae_Sedis_XIV -> Incertae_Sedis_XIVBlautia;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesIncertae_Sedis_XIV [label="Incertae_Sedis_XIV"];
+	ClostridiaClostridiales -> ClostridialesIncertae_Sedis_XIV;
+
+ }

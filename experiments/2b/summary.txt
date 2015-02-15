@@ -1,0 +1,132 @@
+
+0
+U=0.085270
+[19, 83]
+['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']
+p=0.112994 
+Independent probability: 0.249987
+0.499995 ['Ruminococcaceae|unclassified']
+0.499980 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.225990, lift:0.451999) [19] -> [83]
+	(conf:0.225997, lift:0.451999) [83] -> [19]
+
+1
+U=0.042457
+[25, 81, 83]
+['Ruminococcaceae|Subdoligranulum', 'Prevotellaceae|unclassified', 'Bacteroidaceae|Bacteroides']
+p=0.005650 
+Independent probability: 0.075562
+0.499999 ['Ruminococcaceae|Subdoligranulum']
+0.302260 ['Prevotellaceae|unclassified']
+0.499980 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.011299, lift:0.101163) [25] -> [81, 83]
+	(conf:0.011300, lift:0.101160) [83] -> [25, 81]
+	(conf:0.018691, lift:0.084296) [81] -> [25, 83]
+
+2
+U=0.090907
+[31, 35]
+['Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister']
+p=0.115823 
+Independent probability: 0.249993
+0.499985 ['Veillonellaceae|Phascolarctobacterium']
+0.500000 ['Veillonellaceae|Dialister']
+Disassociation rules:
+	(conf:0.231653, lift:0.463306) [31] -> [35]
+	(conf:0.231646, lift:0.463306) [35] -> [31]
+
+3
+U=0.125515
+[33, 80, 83]
+['Veillonellaceae|unclassified', 'Prevotellaceae|Prevotella', 'Bacteroidaceae|Bacteroides']
+p=0.031073 
+Independent probability: 0.124289
+0.500002 ['Veillonellaceae|unclassified']
+0.497174 ['Prevotellaceae|Prevotella']
+0.499980 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.062146, lift:0.304886) [33] -> [80, 83]
+	(conf:0.062149, lift:0.304880) [83] -> [33, 80]
+	(conf:0.062499, lift:0.304136) [80] -> [33, 83]
+
+4
+U=0.061201
+[14, 17, 79, 83]
+['Lachnospiraceae|Coprococcus', 'Ruminococcaceae|Anaerotruncus', 'Porphyromonadaceae|Odoribacter', 'Bacteroidaceae|Bacteroides']
+p=0.005650 
+Independent probability: 0.062497
+0.500000 ['Lachnospiraceae|Coprococcus']
+0.499999 ['Ruminococcaceae|Anaerotruncus']
+0.499999 ['Porphyromonadaceae|Odoribacter']
+0.499980 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.011299, lift:0.133996) [14] -> [17, 79, 83]
+	(conf:0.011299, lift:0.133996) [17] -> [14, 79, 83]
+	(conf:0.011299, lift:0.133996) [79] -> [14, 17, 83]
+
+5
+U=0.138515
+[83, 89]
+['Bacteroidaceae|Bacteroides', 'Coriobacteriaceae|unclassified']
+p=0.067796 
+Independent probability: 0.166663
+0.499980 ['Bacteroidaceae|Bacteroides']
+0.333339 ['Coriobacteriaceae|unclassified']
+Disassociation rules:
+	(conf:0.135597, lift:0.406784) [83] -> [89]
+	(conf:0.203384, lift:0.406784) [89] -> [83]
+
+6
+U=0.157495
+[63, 65]
+['Alcaligenaceae|Sutterella', 'Alcaligenaceae|Parasutterella']
+p=0.098870 
+Independent probability: 0.201969
+0.403942 ['Alcaligenaceae|Sutterella']
+0.499995 ['Alcaligenaceae|Parasutterella']
+Disassociation rules:
+	(conf:0.197742, lift:0.489530) [65] -> [63]
+	(conf:0.244763, lift:0.489530) [63] -> [65]
+
+7
+U=0.037445
+[0, 26, 83]
+['Fusobacteriaceae|Fusobacterium', 'Ruminococcaceae|Sporobacter', 'Bacteroidaceae|Bacteroides']
+p=0.002825 
+Independent probability: 0.048021
+0.500000 ['Ruminococcaceae|Sporobacter']
+0.192092 ['Fusobacteriaceae|Fusobacterium']
+0.499980 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.005649, lift:0.082240) [26] -> [0, 83]
+	(conf:0.005650, lift:0.082238) [83] -> [0, 26]
+	(conf:0.012120, lift:0.063095) [26, 83] -> [0]
+
+8
+U=0.159010
+[23, 83]
+['Ruminococcaceae|Acetanaerobacterium', 'Bacteroidaceae|Bacteroides']
+p=0.070619 
+Independent probability: 0.162419
+0.324852 ['Ruminococcaceae|Acetanaerobacterium']
+0.499980 ['Bacteroidaceae|Bacteroides']
+Disassociation rules:
+	(conf:0.217388, lift:0.434794) [23] -> [83]
+	(conf:0.141244, lift:0.434794) [83] -> [23]
+
+9
+U=0.000000
+[9, 16, 32, 35]
+['Lachnospiraceae|Anaerostipes', 'Ruminococcaceae|Oscillibacter', 'Veillonellaceae|Acidaminococcus', 'Veillonellaceae|Dialister']
+p=0.000000 
+Independent probability: 0.021893
+0.500000 ['Lachnospiraceae|Anaerostipes']
+0.500000 ['Ruminococcaceae|Oscillibacter']
+0.175141 ['Veillonellaceae|Acidaminococcus']
+0.500000 ['Veillonellaceae|Dialister']
+Disassociation rules:
+	(conf:0.000000, lift:0.000000) [35] -> [9, 16, 32]
+	(conf:0.000000, lift:0.000000) [9] -> [16, 32, 35]
+	(conf:0.000000, lift:0.000000) [16] -> [9, 32, 35]

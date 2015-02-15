@@ -1,7 +1,7 @@
 from settings import *
 import itemsets
 from model import Model
-from heurestic import h
+from heuristic import h
 from utils.timer import *
 from utils.dataset_helpers import dataset_with_negations
 from graph import Graph
@@ -348,6 +348,12 @@ class MTV(object):
             if pos & X == pos:
                 return False
 
+        else:
+            # Check y negative counter part is not set
+            pos = y << positive_attributes
+            if pos & X == pos:
+                return False
+
         return True
 
     def find_best_itemset_rec(self, X, Y, Z, X_length=0, parent_h=0):
@@ -361,6 +367,7 @@ class MTV(object):
                          this is the fastest way to know its length
         :return: Best itemsets Z
         """
+        # double score_bound = max(heuristic(freq, est_tail_freq), heuristic(est_freq_free, tail_freq))
 
         fr_X = self.fr(X)
         if fr_X < self.s or X in self.C:

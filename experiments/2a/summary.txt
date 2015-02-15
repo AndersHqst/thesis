@@ -1,0 +1,150 @@
+
+0
+U=22.170926
+[16, 19, 20, 26]
+['Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|unclassified', 'Ruminococcaceae|Ruminococcus', 'Ruminococcaceae|Sporobacter']
+p=0.245767 
+Independent probability: 0.062501
+0.500005 ['Ruminococcaceae|Oscillibacter']
+0.500004 ['Ruminococcaceae|unclassified']
+0.500004 ['Ruminococcaceae|Ruminococcus']
+0.499992 ['Ruminococcaceae|Sporobacter']
+Association rules:
+	(conf:0.921963, lift:1.843907) [19, 20, 26] -> [16]
+	(conf:0.921958, lift:1.843944) [16, 19, 20] -> [26]
+	(conf:0.921661, lift:1.843306) [16, 20, 26] -> [19]
+
+1
+U=26.768555
+[6, 36, 44, 45]
+['Erysipelotrichaceae|Turicibacter', 'Clostridiaceae|Clostridium', 'Peptostreptococcaceae|Sporacetigenium', 'Peptostreptococcaceae|unclassified']
+p=0.112994 
+Independent probability: 0.014138
+0.324854 ['Erysipelotrichaceae|Turicibacter']
+0.285302 ['Clostridiaceae|Clostridium']
+0.457627 ['Peptostreptococcaceae|Sporacetigenium']
+0.333328 ['Peptostreptococcaceae|unclassified']
+Association rules:
+	(conf:0.900164, lift:2.700537) [6, 36, 44] -> [45]
+	(conf:0.895477, lift:2.756554) [36, 44, 45] -> [6]
+	(conf:0.868624, lift:3.044581) [6, 44, 45] -> [36]
+
+2
+U=15.342390
+[10, 12, 14, 28]
+['Lachnospiraceae|unclassified', 'Lachnospiraceae|Roseburia', 'Lachnospiraceae|Coprococcus', 'Ruminococcaceae|Butyricicoccus']
+p=0.223163 
+Independent probability: 0.062503
+0.500004 ['Lachnospiraceae|unclassified']
+0.500007 ['Lachnospiraceae|Roseburia']
+0.500006 ['Lachnospiraceae|Coprococcus']
+0.500005 ['Ruminococcaceae|Butyricicoccus']
+Association rules:
+	(conf:0.899410, lift:1.798794) [10, 14, 28] -> [12]
+	(conf:0.899409, lift:1.798798) [10, 12, 28] -> [14]
+	(conf:0.899409, lift:1.798800) [10, 12, 14] -> [28]
+
+3
+U=19.384438
+[80, 81, 89, 91]
+['Prevotellaceae|Prevotella', 'Prevotellaceae|unclassified', 'Coriobacteriaceae|unclassified', 'Coriobacteriaceae|Collinsella']
+p=0.138418 
+Independent probability: 0.025047
+0.497176 ['Prevotellaceae|Prevotella']
+0.302264 ['Prevotellaceae|unclassified']
+0.333336 ['Coriobacteriaceae|unclassified']
+0.500006 ['Coriobacteriaceae|Collinsella']
+Association rules:
+	(conf:0.935078, lift:1.870132) [80, 81, 89] -> [91]
+	(conf:0.933800, lift:1.878209) [81, 89, 91] -> [80]
+	(conf:0.854550, lift:2.563630) [80, 81, 91] -> [89]
+
+4
+U=22.550973
+[74, 78, 81, 82]
+['Porphyromonadaceae|Butyricimonas', 'Porphyromonadaceae|Barnesiella', 'Prevotellaceae|unclassified', 'Prevotellaceae|Paraprevotella']
+p=0.107345 
+Independent probability: 0.015920
+0.497178 ['Porphyromonadaceae|Butyricimonas']
+0.500003 ['Porphyromonadaceae|Barnesiella']
+0.302264 ['Prevotellaceae|unclassified']
+0.211867 ['Prevotellaceae|Paraprevotella']
+Association rules:
+	(conf:0.947637, lift:1.895265) [74, 81, 82] -> [78]
+	(conf:0.946515, lift:1.903778) [78, 81, 82] -> [74]
+	(conf:0.866635, lift:2.867147) [74, 78, 82] -> [81]
+
+5
+U=11.716639
+[9, 11, 14, 42]
+['Lachnospiraceae|Anaerostipes', 'Lachnospiraceae|Dorea', 'Lachnospiraceae|Coprococcus', 'Incertae_Sedis_XIV|Blautia']
+p=0.206215 
+Independent probability: 0.062500
+0.500000 ['Lachnospiraceae|Anaerostipes']
+0.499998 ['Lachnospiraceae|Dorea']
+0.500006 ['Lachnospiraceae|Coprococcus']
+0.500000 ['Incertae_Sedis_XIV|Blautia']
+Association rules:
+	(conf:0.879474, lift:1.758929) [9, 11, 42] -> [14]
+	(conf:0.879471, lift:1.758942) [11, 14, 42] -> [9]
+	(conf:0.879471, lift:1.758944) [9, 11, 14] -> [42]
+
+6
+U=13.636587
+[23, 26, 75, 78]
+['Ruminococcaceae|Acetanaerobacterium', 'Ruminococcaceae|Sporobacter', 'Porphyromonadaceae|unclassified', 'Porphyromonadaceae|Barnesiella']
+p=0.163842 
+Independent probability: 0.040607
+0.324861 ['Ruminococcaceae|Acetanaerobacterium']
+0.499992 ['Ruminococcaceae|Sporobacter']
+0.500002 ['Porphyromonadaceae|unclassified']
+0.500003 ['Porphyromonadaceae|Barnesiella']
+Association rules:
+	(conf:0.905282, lift:1.810555) [23, 26, 75] -> [78]
+	(conf:0.905278, lift:1.810584) [23, 75, 78] -> [26]
+	(conf:0.904725, lift:1.809441) [23, 26, 78] -> [75]
+
+7
+U=11.162885
+[16, 17, 47, 91]
+['Ruminococcaceae|Oscillibacter', 'Ruminococcaceae|Anaerotruncus', 'Incertae_Sedis_XIII|Anaerovorax', 'Coriobacteriaceae|Collinsella']
+p=0.203390 
+Independent probability: 0.062503
+0.500005 ['Ruminococcaceae|Oscillibacter']
+0.500010 ['Ruminococcaceae|Anaerotruncus']
+0.500004 ['Incertae_Sedis_XIII|Anaerovorax']
+0.500006 ['Coriobacteriaceae|Collinsella']
+Association rules:
+	(conf:0.876030, lift:1.752039) [16, 17, 47] -> [91]
+	(conf:0.876030, lift:1.752042) [17, 47, 91] -> [16]
+	(conf:0.875454, lift:1.750874) [16, 47, 91] -> [17]
+
+8
+U=21.746467
+[6, 29, 57, 58]
+['Erysipelotrichaceae|Turicibacter', 'Veillonellaceae|Veillonella', 'Pasteurellaceae|Haemophilus', 'Pasteurellaceae|unclassified']
+p=0.087568 
+Independent probability: 0.011017
+0.324854 ['Erysipelotrichaceae|Turicibacter']
+0.471749 ['Veillonellaceae|Veillonella']
+0.217514 ['Pasteurellaceae|Haemophilus']
+0.330508 ['Pasteurellaceae|unclassified']
+Association rules:
+	(conf:0.889160, lift:2.690278) [6, 29, 57] -> [58]
+	(conf:0.886010, lift:2.727410) [29, 57, 58] -> [6]
+	(conf:0.788283, lift:3.624058) [6, 29, 58] -> [57]
+
+9
+U=12.301172
+[8, 10, 17, 24]
+['Lachnospiraceae|Pseudobutyrivibrio', 'Lachnospiraceae|unclassified', 'Ruminococcaceae|Anaerotruncus', 'Ruminococcaceae|Faecalibacterium']
+p=0.163846 
+Independent probability: 0.042728
+0.341808 ['Lachnospiraceae|Pseudobutyrivibrio']
+0.500004 ['Lachnospiraceae|unclassified']
+0.500010 ['Ruminococcaceae|Anaerotruncus']
+0.500003 ['Ruminococcaceae|Faecalibacterium']
+Association rules:
+	(conf:0.895815, lift:1.791594) [8, 10, 24] -> [17]
+	(conf:0.895812, lift:1.791609) [8, 17, 24] -> [10]
+	(conf:0.895812, lift:1.791612) [8, 10, 17] -> [24]
