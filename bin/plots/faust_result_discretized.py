@@ -65,16 +65,15 @@ def plot_faust_relationships(relative_values=True):
         xlabel(from_clade, fontsize=10)
         ylabel(to_clade, fontsize=10)
 
-        disc_x, discrete_xs = maxent_discretization_row(xs)
-        disc_y, discrete_ys = maxent_discretization_row(ys)
+
+        disc_x, discrete_xs = median_discretization_row(xs)
+        disc_y, discrete_ys = median_discretization_row(ys)
 
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]
         c, d = [0, max(xs)], [disc_y, disc_y]
         plot(a, b, c='r')
         plot(c, d, c='r')
-
-
 
         # Discrete bin sizes
         pairs = zip(discrete_ys, discrete_xs)
@@ -86,6 +85,7 @@ def plot_faust_relationships(relative_values=True):
         figtext(text_x, 0.79, _01, fontsize=10)
         figtext(text_x, 0.76, _10, fontsize=10)
         figtext(text_x, 0.73, _11, fontsize=10)
+
         phi_corr, phi_r = pearsonr(discrete_xs, discrete_ys)
         phi = 'phi: %.3f, %.3f' % (phi_corr, phi_r)
         figtext(text_x, 0.70, phi, fontsize=10)
@@ -135,13 +135,13 @@ def plot_faust_relationships(relative_values=True):
         if  wrong_direction:
           print 'Wrong direction. phi:%f direction:%d rel:%s, %s' % (phi_corr, faust_result.direction, from_clade, to_clade)
         elif abs(phi_corr) < 0.01:
-            print 'No correlation. phi:%f direction:%d' % (phi_corr, faust_result.direction)
+            print 'No correlation. phi:%f direction:%d rel:%s, %s' % (phi_corr, faust_result.direction, from_clade, to_clade)
 
         # Plot values
         scatter(xs, ys, s=1, color='#0066FF')
 
         # Save the figure to file
-        file_name = '../../plots/plots/stool_normalized_clade_maxent/' +str(faust_result.id) + '_' + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/stool_normalized_clade/' +str(faust_result.id) + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
         file_name = os.path.join(dir, file_name)
         savefig(file_name)
         close()

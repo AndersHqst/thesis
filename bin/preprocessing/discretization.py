@@ -2,7 +2,7 @@
 from utils.dataset_helpers import *
 
 
-def median_discretization_row(row):
+def median_discretization_row(row, non_zero_threshold=False):
     """
     Discretize a list of numeric values by the median
     :param row:
@@ -13,6 +13,12 @@ def median_discretization_row(row):
 
     discrete_row = []
     threshold = median(row)
+
+    if non_zero_threshold and threshold == 0:
+        for val in sorted(row):
+            if val > 0:
+                threshold = val
+                break
 
     for val in row:
         if val <= threshold:

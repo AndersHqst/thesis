@@ -473,9 +473,9 @@ def print_appendix_figures(figures=10):
 
         print '\\begin{figure}[h]'
         print '\\begin{center}'
-        print '\\makebox[\\textwidth][c]{\\includegraphics[scale=0.5, width=1.2\\textwidth]{figures/experiment2a/%d.png}}%%' % i
+        print '\\makebox[\\textwidth][c]{\\includegraphics[scale=0.3, width=1.2\\textwidth]{figures/experiment2a/%d.png}}%%' % i
         print '\\end{center}'
-        print '\\caption{Phylogenetic tree for summary result %d in experiment 2a}' % i
+        print '\\caption{Phylogenetic tree for summary result %d in experiment 2a}' % i+1
         print '\\end{figure}\n'
 
 # print_appendix_figures(10)

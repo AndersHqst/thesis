@@ -73,7 +73,8 @@ def plot_clades_relationships(clade_pairs, folder):
         figtext(text_x, 0.79, _01, fontsize=10)
         figtext(text_x, 0.76, _10, fontsize=10)
         figtext(text_x, 0.73, _11, fontsize=10)
-        phi = 'phi: %f' % phicoeff_lists(discrete_xs, discrete_ys)
+        phi_coeff, phi_r = pearsonr(discrete_xs, discrete_ys)
+        phi = 'phi: %f, %f' % (phi_coeff, phi_r)
         figtext(text_x, 0.70, phi, fontsize=10)
 
         # Depth of nodes in the phylogenetic tree
