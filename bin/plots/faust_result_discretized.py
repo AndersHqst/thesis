@@ -17,6 +17,8 @@ def plot_faust_relationships(relative_values=True):
     # and plot the numeric correlations
     tree = Tree(ds)
 
+
+
     # Plot all relations in the faust results
     faust_results = faust_parser.results('Stool')
     for faust_result in faust_results:
@@ -63,8 +65,8 @@ def plot_faust_relationships(relative_values=True):
         xlabel(from_clade, fontsize=10)
         ylabel(to_clade, fontsize=10)
 
-        disc_x, discrete_xs = median_discretization_row(xs)
-        disc_y, discrete_ys = median_discretization_row(ys)
+        disc_x, discrete_xs = maxent_discretization_row(xs)
+        disc_y, discrete_ys = maxent_discretization_row(ys)
 
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]
@@ -84,7 +86,8 @@ def plot_faust_relationships(relative_values=True):
         figtext(text_x, 0.79, _01, fontsize=10)
         figtext(text_x, 0.76, _10, fontsize=10)
         figtext(text_x, 0.73, _11, fontsize=10)
-        phi = 'phi: %f' % phicoeff_lists(discrete_xs, discrete_ys)
+        phi_corr, phi_r = pearsonr(discrete_xs, discrete_ys)
+        phi = 'phi: %.3f, %.3f' % (phi_corr, phi_r)
         figtext(text_x, 0.70, phi, fontsize=10)
 
         # Depth of nodes in the phylogenetic tree
@@ -127,11 +130,18 @@ def plot_faust_relationships(relative_values=True):
             print 'xs: %s', xs
             print 'ys: %s', ys
 
+        # Print info on wrong correlation after discretization
+        wrong_direction = (faust_result.direction < 0 and phi_corr > 0) or (faust_result.direction > 0 and phi_corr < 0)
+        if  wrong_direction:
+          print 'Wrong direction. phi:%f direction:%d rel:%s, %s' % (phi_corr, faust_result.direction, from_clade, to_clade)
+        elif abs(phi_corr) < 0.01:
+            print 'No correlation. phi:%f direction:%d' % (phi_corr, faust_result.direction)
+
         # Plot values
         scatter(xs, ys, s=1, color='#0066FF')
 
         # Save the figure to file
-        file_name = '../../plots/plots/stool_normalized_clade/' +str(faust_result.id) + '_' + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/stool_normalized_clade_maxent/' +str(faust_result.id) + '_' + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
         file_name = os.path.join(dir, file_name)
         savefig(file_name)
         close()

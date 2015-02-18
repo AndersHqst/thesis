@@ -30,65 +30,62 @@ Attributes after cleaning:  79
 ./main.py -f ../experiments/4/Stool_maxent_discretized_nodes_depth_6_010.dat -s 0.1 --debug -v -o ../experiments/4/ -k 10 -H ../experiments/4/Stool_maxent_discretized_nodes_depth_6_010.headers --add-negated
 /Users/ahkj/pypy-2.4.0-osx64/site-packages/numpy/linalg/_umath_linalg.py:1322: UserWarning: no cffi linalg functions and no _umath_linalg_capi module, expect problems.
   warn('no cffi linalg functions and no _umath_linalg_capi module, expect problems.')
-
-
-
-Found itemset (144.11 secs): [16, 17, 19, 20, 25, 26, 47, 91, 184], score: 53243.604494, models: 1, Ci: [1], searched-nodes: 23177758
-Found itemset (39.07 secs): [9, 10, 11, 12, 14, 24, 28, 42], score: 53084.431776, models: 2, Ci: [1, 1], searched-nodes: 23178058
-Found itemset (29.89 secs): [16, 19, 74, 75, 78, 84, 85, 184], score: 52938.986088, models: 2, Ci: [1, 2], searched-nodes: 23178071
-Found itemset (26.30 secs): [80, 81, 89, 91, 184], score: 52807.403626, models: 2, Ci: [1, 3], searched-nodes: 23178069
-Found itemset (27.57 secs): [6, 36, 44, 45], score: 52713.775850, models: 3, Ci: [3, 1, 1], searched-nodes: 23178063
-Found itemset (28.59 secs): [14, 19, 21, 23, 26, 184], score: 52623.793610, models: 2, Ci: [1, 5], searched-nodes: 23178014
-Found itemset (55.45 secs): [8, 10, 17, 24, 50, 184], score: 52543.282367, models: 2, Ci: [1, 6], searched-nodes: 23178018
-Found itemset (99.24 secs): [29, 57, 58, 171], score: 52463.650621, models: 3, Ci: [6, 1, 1], searched-nodes: 23178070
-Found itemset (29.28 secs): [74, 78, 81, 82, 152], score: 52392.307969, models: 3, Ci: [1, 1, 7], searched-nodes: 23178019
-Found itemset (266.13 secs): [3, 4, 10, 12, 14, 20, 184], score: 52327.938809, models: 3, Ci: [1, 1, 8], searched-nodes: 23178007
-202 items in 354 transactions
+Found itemset (480.34 secs): [13, 14, 16, 17, 22, 23, 41, 73, 147], score: 47489.438932, models: 1, Ci: [1], searched-nodes: 34208302
+Found itemset (95.90 secs): [7, 8, 9, 10, 11, 21, 25, 36], score: 47330.266214, models: 2, Ci: [1, 1], searched-nodes: 34208298
+Found itemset (81.84 secs): [13, 16, 59, 60, 63, 69, 70, 147], score: 47184.820525, models: 2, Ci: [1, 2], searched-nodes: 34208254
+Found itemset (87.16 secs): [65, 66, 71, 73, 147], score: 47053.238064, models: 2, Ci: [1, 3], searched-nodes: 34208249
+Found itemset (86.17 secs): [4, 32, 38, 39], score: 46959.610287, models: 3, Ci: [3, 1, 1], searched-nodes: 34208178
+Found itemset (84.77 secs): [11, 16, 18, 20, 23, 147], score: 46869.628047, models: 2, Ci: [1, 5], searched-nodes: 34208161
+Found itemset (106.45 secs): [6, 8, 14, 21, 43, 147], score: 46789.116805, models: 2, Ci: [1, 6], searched-nodes: 34208154
+Found itemset (144.92 secs): [26, 47, 48, 136], score: 46709.485059, models: 3, Ci: [6, 1, 1], searched-nodes: 34208118
+Found itemset (89.02 secs): [2, 3, 8, 10, 11, 17, 147], score: 46645.112607, models: 3, Ci: [1, 1, 7], searched-nodes: 34208109
+Found itemset (282.93 secs): [14, 16, 40, 41, 78, 147], score: 46579.654929, models: 3, Ci: [1, 1, 8], searched-nodes: 34208065
+158 items in 354 transactions
 
 Model predictions:
-query [16, 17, 19, 20, 25, 26, 47, 91, 184] with fr 0.104520 query 0.104522
-query [9, 10, 11, 12, 14, 24, 28, 42] with fr 0.110169 query 0.110171
-query [16, 19, 74, 75, 78, 84, 85, 184] with fr 0.112994 query 0.112999
-query [80, 81, 89, 91, 184] with fr 0.135593 query 0.135596
-query [6, 36, 44, 45] with fr 0.112994 query 0.112994
-query [14, 19, 21, 23, 26, 184] with fr 0.115819 query 0.115819
-query [8, 10, 17, 24, 50, 184] with fr 0.107345 query 0.107347
-query [29, 57, 58, 171] with fr 0.132768 query 0.132768
-query [74, 78, 81, 82, 152] with fr 0.107345 query 0.107349
-query [3, 4, 10, 12, 14, 20, 184] with fr 0.104520 query 0.104523
+query [13, 14, 16, 17, 22, 23, 41, 73, 147] with fr 0.104520 query 0.104523
+query [7, 8, 9, 10, 11, 21, 25, 36] with fr 0.110169 query 0.110167
+query [13, 16, 59, 60, 63, 69, 70, 147] with fr 0.112994 query 0.112995
+query [65, 66, 71, 73, 147] with fr 0.135593 query 0.135598
+query [4, 32, 38, 39] with fr 0.112994 query 0.112994
+query [11, 16, 18, 20, 23, 147] with fr 0.115819 query 0.115827
+query [6, 8, 14, 21, 43, 147] with fr 0.107345 query 0.107347
+query [26, 47, 48, 136] with fr 0.132768 query 0.132768
+query [2, 3, 8, 10, 11, 17, 147] with fr 0.104520 query 0.104519
+query [14, 16, 40, 41, 78, 147] with fr 0.107345 query 0.107345
 
 k=10, m=0, s=0.100000
 
-MTV run time:  745.789314032
+MTV run time:  1545.06706595
 
 Summary: 
-Heuristic    BIC score   p       |c|     models  Time    Relationship    Itemsets
-x.xxxxxx     53429.726044    (No query)      0   0   0   +/-         I+seed
-0.460042     53243.604494    0.104522    1   1   144.11      -       [16, 17, 19, 20, 25, 26, 47, 91] - [184]
-0.385953     53084.431776    0.110171    1   2   39.07   +       [9, 10, 11, 12, 14, 24, 28, 42]
-0.342594     52938.986088    0.112999    2   2   29.89   -       [16, 19, 74, 75, 78, 84, 85] - [184]
-0.280405     52807.403626    0.135596    3   2   26.30   -       [80, 81, 89, 91] - [184]
-0.203603     52713.775850    0.112994    3   3   27.57   +       [6, 36, 44, 45]
-0.199905     52623.793610    0.115819    5   2   28.59   -       [14, 19, 21, 23, 26] - [184]
-0.185909     52543.282367    0.107347    6   2   55.45   -       [8, 10, 17, 24, 50] - [184]
-0.150352     52463.650621    0.132768    6   3   99.24   -       [29, 57, 58] - [171]
-0.147821     52392.307969    0.107349    7   3   29.28   -       [74, 78, 81, 82] - [152]
-0.143550     52327.938809    0.104523    8   3   266.13      -       [3, 4, 10, 12, 14, 20] - [184]
+Heuristic    BIC score   p       |c|     models  Time    U       Itemsets
+x.xxxxxx     47675.560482    (No query)      0   0   0   >1<         I+seed
+0.460042     47489.438932    0.104523    1   1   480.34      33.703004   [13, 14, 16, 17, 22, 23, 41, 73] - [147]
+0.385953     47330.266214    0.110167    1   2   95.90   53.463529   [7, 8, 9, 10, 11, 21, 25, 36]
+0.342594     47184.820525    0.112995    2   2   81.84   60.916493   [13, 16, 59, 60, 63, 69, 70] - [147]
+0.280406     47053.238064    0.135598    3   2   87.16   40.227947   [65, 66, 71, 73] - [147]
+0.203603     46959.610287    0.112994    3   3   86.17   26.764591   [4, 32, 38, 39]
+0.199904     46869.628047    0.115827    5   2   84.77   17.651754   [11, 16, 18, 20, 23] - [147]
+0.185909     46789.116805    0.107347    6   2   106.45      15.424504   [6, 8, 14, 21, 43] - [147]
+0.150352     46709.485059    0.132768    6   3   144.92      18.738639   [26, 47, 48] - [136]
+0.143567     46645.112607    0.104519    7   3   89.02   14.581164   [2, 3, 8, 10, 11, 17] - [147]
+0.138511     46579.654929    0.107345    8   3   282.93      15.462481   [14, 16, 40, 41, 78] - [147]
 
-[TIMER] Compute p: 25.596505
-[TIMER] independence_estimate: 36.307801
-[TIMER] mtv_query: 389.332130
-[TIMER] Block weight: 121.273367
-[TIMER] Cached query: 409.350854
-[TIMER] Find best itemset: 739.276985
-[TIMER] union_of_itemsets: 29.666200
-[TIMER] Iterative scaling: 6.305821
-[TIMER] Cummulative weight: 183.935984
-[TIMER] Singletons of itemsets: 0.000108
-[TIMER] Compute blocks: 0.050766
-[TIMER] Build independent models: 6.339073
-[COUNTER] Independence estimates: 2251605
-[COUNTER] Block queries: 436958
-[COUNTER] Total queries: 2688563
-[COUNTER] Iterative scaling max iterations: 33
+[TIMER] Compute p: 22.488985
+[TIMER] independence_estimate: 45.253439
+[TIMER] mtv_query: 360.721742
+[TIMER] Block weight: 108.524761
+[TIMER] Cached query: 387.504329
+[TIMER] Find best itemset: 1534.093432
+[TIMER] union_of_itemsets: 45.254550
+[TIMER] Iterative scaling: 5.349499
+[TIMER] Cummulative weight: 144.184626
+[TIMER] Singletons of itemsets: 0.000111
+[TIMER] Compute blocks: 0.062029
+[TIMER] Build independent models: 5.396122
+[COUNTER] Independence estimates: 3570985
+[COUNTER] Block queries: 371837
+[COUNTER] Total queries: 3942822
+[COUNTER] Iterative scaling max iterations: 28
 [COUNTER] Independent models: 3

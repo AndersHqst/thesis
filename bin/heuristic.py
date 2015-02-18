@@ -8,8 +8,8 @@ def h(x, y):
     :param y:
     :return:
     """
-    if x > y:
-        return 0
+    # if x > y:
+    #     return 0
 
     # x == 0 and y == 1
     if x < float_precision and abs(1.0 - y) < float_precision:

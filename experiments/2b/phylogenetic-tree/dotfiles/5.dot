@@ -1,0 +1,35 @@
+digraph G { 
+	BacteroidaceaeBacteroides [label="Bacteroides", color="green", style=filled];
+	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
+	BacteroidaceaeBacteroides [label="Bacteroides"];
+	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesBacteroidaceae;
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidetesBacteroidia -> BacteroidiaBacteroidales;
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteriaBacteroidetes -> BacteroidetesBacteroidia;
+	Bacteria [label="Bacteria"];
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	Bacteria -> BacteriaBacteroidetes;
+	Coriobacteriaceaeunclassified [label="unclassified", color="green", style=filled];
+	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
+	Coriobacteriaceaeunclassified [label="unclassified"];
+	CoriobacterialesCoriobacteriaceae -> Coriobacteriaceaeunclassified;
+	ActinobacteriaCoriobacteriales [label="Coriobacteriales"];
+	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
+	ActinobacteriaCoriobacteriales -> CoriobacterialesCoriobacteriaceae;
+	ActinobacteriaActinobacteria [label="Actinobacteria"];
+	ActinobacteriaCoriobacteriales [label="Coriobacteriales"];
+	ActinobacteriaActinobacteria -> ActinobacteriaCoriobacteriales;
+	BacteriaActinobacteria [label="Actinobacteria"];
+	ActinobacteriaActinobacteria [label="Actinobacteria"];
+	BacteriaActinobacteria -> ActinobacteriaActinobacteria;
+	Bacteria [label="Bacteria"];
+	BacteriaActinobacteria [label="Actinobacteria"];
+	Bacteria -> BacteriaActinobacteria;
+
+ }

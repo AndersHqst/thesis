@@ -58,6 +58,3 @@ target/
 
 # PyCharm
 .idea
-
-# mtv
-*.dat

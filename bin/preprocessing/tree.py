@@ -55,11 +55,8 @@ class Node(object):
 
             return xml
 
-    def digraph_to_ancestor(self, ancestor, co_excluded=[]):
 
-        # if self.tag:
-        #
-        #     return ''
+    def digraph_to_ancestor(self, ancestor, co_excluded=[]):
 
         color = 'green'
         if self.name in co_excluded:
@@ -82,6 +79,7 @@ class Node(object):
             node = node.parent
 
         return s
+
 
     def is_ancestor(self, node):
         """

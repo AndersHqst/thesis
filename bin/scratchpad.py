@@ -10,13 +10,17 @@ import os
 from plots.mtv_results import read_run_results
 from plots.mtv_results import plot_run_results
 
-plot_run_results('../experiments/4/')
-plot_run_results('../experiments/2a/')
-plot_run_results('../experiments/2b/')
-exit()
+# from plots.bacteria_histogram import plot_bacteria_hist
+# plot_bacteria_hist('../plots/hist/normalized_depth_4/', depth=4)
+# exit()
+
+# plot_run_results('../experiments/4/')
+# plot_run_results('../experiments/2a/')
+# plot_run_results('../experiments/2b/')
+# exit()
 
 from plots.faust_result_discretized import plot_faust_relationships
-# plot_faust_relationships()
+plot_faust_relationships()
 # run()
 # exit()
 
@@ -139,10 +143,10 @@ def run_discretization_for_tree_depth(depth):
 
     print 'Attributes: ', len(ds[0][2:])
     ds = median_discretization(ds)
-    ds = discrete_dataset_cleaning(ds, 0.05)
+    ds = discrete_dataset_cleaning(ds, 0.10)
     print 'Attributes after cleaning: ', len(ds[0][2:])
 
-    write_dataset_to_experiment('../experiments/4/Stool_maxent_discretized_nodes_depth_6_005', ds)
+    write_dataset_to_experiment('../experiments/4/Stool_maxent_discretized_nodes_depth_6_010', ds)
 
 
 # run_discretization_for_tree_depth(6)
@@ -185,7 +189,19 @@ def compare_to_faust():
     ds = parser.get_dataset()
     tree = Tree(ds)
 
-    headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6_020.headers')
+    genus_nodes = 0
+    leaf_nodes = 0
+    for node in tree.nodes.values():
+        if node.depth == 6:
+            genus_nodes += 1
+        if node.is_leaf():
+            leaf_nodes += 1
+    print 'nodes: ', len(tree.nodes)
+    print 'genus nodes: ', genus_nodes
+    print 'leaf nodes: ', leaf_nodes
+
+
+    headers = parse_header_file('../experiments/4/Stool_maxent_discretized_nodes_depth_6_010.headers')
     summary = parse_dat_file('../experiments/4/summary.dat')
     # Get the indeces of the pair
     bin_indeces = [to_index_list(x) for x in summary]
@@ -202,6 +218,10 @@ def compare_to_faust():
         patterns.append(pattern)
 
     faust_results = results()
+    faust_results_copy = faust_results
+
+    print 'Total faust results: ', len(faust_results)
+
     genues_in_faust = []
     for faust_result in faust_results:
         a = faust_result.clade_1
@@ -229,44 +249,47 @@ def compare_to_faust():
                     if faust_result.clade_1 == b or faust_result.clade_2 == b:
                         print 'Genus results:'
                         print 'Faust: %s %s, %d' % (faust_result.clade_1, faust_result.clade_2, faust_result.direction)
-                        print '%s, %s' % (a.replace('|', '-'), b.replace('|', '-'))
+                        print 'MTV: %s, %s' % (a.replace('|', '-'), b.replace('|', '-'))
 
+                        if faust_result in faust_results_copy:
+                            faust_results_copy.remove(faust_result)
                         if (faust_result.clade_1, faust_result.clade_2) in genues_in_faust:
                             genues_in_faust.remove((faust_result.clade_1, faust_result.clade_2))
-                    elif faust_result.clade_1 in tree.nodes and faust_result.clade_2 in tree.nodes:
-                        faust_a = tree.nodes[faust_result.clade_1]
-                        faust_b = tree.nodes[faust_result.clade_2]
+                elif faust_result.clade_1 in tree.nodes and faust_result.clade_2 in tree.nodes:
+                    faust_a = tree.nodes[faust_result.clade_1]
+                    faust_b = tree.nodes[faust_result.clade_2]
 
-                        # Do not look for stuff that is too general
-                        # only parent nodes
-                        parent_depth = 3
-                        if faust_a.depth <= parent_depth or faust_b.depth <= parent_depth:
-                            continue
+                    # Do not look for stuff that is too general
+                    # only parent nodes
+                    parent_depth = 3
+                    if faust_a.depth <= parent_depth or faust_b.depth <= parent_depth:
+                        continue
 
-                        # Node a
-                        is_descendents = 0
-                        res = ''
-                        if node_a.is_in_lineage(faust_a)  and node_b.is_in_lineage(faust_b):
-                            res += 'a in a, b in b'
-                            is_descendents = True
-                        if node_a.is_in_lineage(faust_b)  and node_b.is_in_lineage(faust_a):
-                            res += 'a in b, b in a'
-                            is_descendents = True
+                    # Node a
+                    is_descendents = 0
+                    res = ''
+                    if node_a.is_in_lineage(faust_a)  and node_b.is_in_lineage(faust_b):
+                        res += 'a in a, b in b'
+                        is_descendents = True
+                    if node_a.is_in_lineage(faust_b)  and node_b.is_in_lineage(faust_a):
+                        res += 'a in b, b in a'
+                        is_descendents = True
 
-                        if is_descendents:
-                            print '####'
-                            print 'Result in same lineage: ' + res
-                            print '%s, %s' % (a, b)
-                            print 'Faust %d' % faust_result.direction
-                            print '%s, %s' % (faust_a.name, faust_b.name)
-                            print '####'
+                    if is_descendents:
+                        if faust_result in faust_results_copy:
+                            faust_results_copy.remove(faust_result)
+                        print '####'
+                        print 'Result in same lineage: ' + res
+                        print 'Faust %d' % faust_result.direction
+                        print 'Faust: %s, %s' % (faust_a.name, faust_b.name)
+                        print 'MTV %s, %s' % (a, b)
+                        print '####'
 
 
-
-
-
+    print 'Faust results not found: ', [(fr.clade_1, fr.clade_2) for fr in faust_results_copy]
     print 'Not found at genus level: ', genues_in_faust
-# compare_to_faust()
+
+compare_to_faust()
 
 
 
@@ -307,7 +330,7 @@ def clade_table():
     # for clade1, clade2 in clades:
     #     print '%s & %s\\\\' % (clade1, clade2)
 
-clade_table()
+# clade_table()
 
 
 def clade_pair_abundances():

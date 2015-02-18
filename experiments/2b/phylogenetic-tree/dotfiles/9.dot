@@ -1,0 +1,28 @@
+digraph G { 
+	LachnospiraceaeAnaerostipes [label="Anaerostipes", color="green", style=filled];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	LachnospiraceaeAnaerostipes [label="Anaerostipes"];
+	ClostridialesLachnospiraceae -> LachnospiraceaeAnaerostipes;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	ClostridiaClostridiales -> ClostridialesLachnospiraceae;
+	RuminococcaceaeOscillibacter [label="Oscillibacter", color="green", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeOscillibacter [label="Oscillibacter"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeOscillibacter;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	VeillonellaceaeAcidaminococcus [label="Acidaminococcus", color="green", style=filled];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	VeillonellaceaeAcidaminococcus [label="Acidaminococcus"];
+	ClostridialesVeillonellaceae -> VeillonellaceaeAcidaminococcus;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	ClostridiaClostridiales -> ClostridialesVeillonellaceae;
+	VeillonellaceaeDialister [label="Dialister", color="green", style=filled];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	VeillonellaceaeDialister [label="Dialister"];
+	ClostridialesVeillonellaceae -> VeillonellaceaeDialister;
+
+ }

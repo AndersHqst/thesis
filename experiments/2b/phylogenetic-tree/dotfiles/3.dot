@@ -1,0 +1,42 @@
+digraph G { 
+	Veillonellaceaeunclassified [label="unclassified", color="green", style=filled];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	Veillonellaceaeunclassified [label="unclassified"];
+	ClostridialesVeillonellaceae -> Veillonellaceaeunclassified;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	ClostridiaClostridiales -> ClostridialesVeillonellaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	PrevotellaceaePrevotella [label="Prevotella", color="green", style=filled];
+	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
+	PrevotellaceaePrevotella [label="Prevotella"];
+	BacteroidalesPrevotellaceae -> PrevotellaceaePrevotella;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesPrevotellaceae;
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidetesBacteroidia -> BacteroidiaBacteroidales;
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	BacteroidetesBacteroidia [label="Bacteroidia"];
+	BacteriaBacteroidetes -> BacteroidetesBacteroidia;
+	Bacteria [label="Bacteria"];
+	BacteriaBacteroidetes [label="Bacteroidetes"];
+	Bacteria -> BacteriaBacteroidetes;
+	BacteroidaceaeBacteroides [label="Bacteroides", color="green", style=filled];
+	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
+	BacteroidaceaeBacteroides [label="Bacteroides"];
+	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;
+	BacteroidiaBacteroidales [label="Bacteroidales"];
+	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesBacteroidaceae;
+
+ }
