@@ -11,7 +11,7 @@ from plots.mtv_results import read_run_results
 from plots.mtv_results import plot_run_results
 
 # from plots.bacteria_histogram import plot_bacteria_hist
-# plot_bacteria_hist('../plots/hist/normalized_depth_4/', depth=4)
+# plot_bacteria_hist('../plots/hist/normalized_depth_6/', depth=6)
 # exit()
 
 # plot_run_results('../experiments/4/')
@@ -20,9 +20,8 @@ from plots.mtv_results import plot_run_results
 # exit()
 
 from plots.faust_result_discretized import plot_faust_relationships
-plot_faust_relationships()
-# run()
-# exit()
+plot_faust_relationships(remove_highest=50)
+exit()
 
 
 def write_dataset_to_experiment(file_name, ds):
@@ -289,7 +288,7 @@ def compare_to_faust():
     print 'Faust results not found: ', [(fr.clade_1, fr.clade_2) for fr in faust_results_copy]
     print 'Not found at genus level: ', genues_in_faust
 
-compare_to_faust()
+# compare_to_faust()
 
 
 
@@ -396,6 +395,8 @@ def plot_clades():
     # clades = [['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']]
     # clades = [('Bacteroidaceae|Bacteroides', 'Prevotellaceae|unclassified')]
     # clades = [('Alcaligenaceae|Sutterella', 'Alcaligenaceae|Parasutterella')]
+    clades = [('Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister')]
+    clades= [('Alcaligenaceae|Sutterella', 'Alcaligenaceae|Parasutterella')]
 
     plot_clades_relationships(clades, '../experiments/2b/plots/')
 

@@ -5,8 +5,9 @@ from preprocessing.tree import Tree
 from preprocessing import faust_parser
 from scipy.stats import pearsonr, spearmanr
 from utils.correlation import phicoeff_lists
+from utils.dataset_helpers import pairwise_remove_highest_values
 
-def plot_faust_relationships(relative_values=True):
+def plot_faust_relationships(relative_values=True, remove_highest=0):
 
     ds = get_dataset('Stool')
 
@@ -23,7 +24,9 @@ def plot_faust_relationships(relative_values=True):
     faust_results = faust_parser.results('Stool')
     for faust_result in faust_results:
 
-        # if faust_result.number_of_supporting_methods < 5:
+        # if faust_result.id != 310:
+        #     continue
+        # if faust_result.number_of_supporting_methods < 3:
         #     continue
 
         # make sure the faust result is in the tree
@@ -54,6 +57,16 @@ def plot_faust_relationships(relative_values=True):
             xs.append(from_abundance)
             ys.append(to_abundance)
 
+        if remove_highest > 0.0:
+
+            xs, ys = pairwise_remove_highest_values(remove_highest, xs, ys)
+            ys, xs = pairwise_remove_highest_values(remove_highest, ys, xs)
+
+            # All data was eventyally removed
+            if len(xs) == 0:
+                print 'Warning. lowest values:%f removed all data from caldes:%s-%s' % (remove_highest, from_node.name, to_node.name)
+                continue
+
         grid(True)
         text_x = 0.67
 
@@ -66,8 +79,8 @@ def plot_faust_relationships(relative_values=True):
         ylabel(to_clade, fontsize=10)
 
 
-        disc_x, discrete_xs = median_discretization_row(xs)
-        disc_y, discrete_ys = median_discretization_row(ys)
+        disc_x, discrete_xs = discretize_row(xs, maxent_discretization_splitter)
+        disc_y, discrete_ys = discretize_row(ys, maxent_discretization_splitter)
 
         # plot discretization lines
         a, b = [disc_x, disc_x], [0, max(ys)]
@@ -97,8 +110,8 @@ def plot_faust_relationships(relative_values=True):
         figtext(text_x, 0.64, to_depth, fontsize=10)
 
         # Discretization values
-        median_x = 'median x: %f' % disc_x
-        median_y = 'median y: %f' % disc_y
+        median_x = 'splitter x: %f' % disc_x
+        median_y = 'splitter y: %f' % disc_y
         figtext(text_x, 0.61, median_x, fontsize=10)
         figtext(text_x, 0.58, median_y, fontsize=10)
 
@@ -134,11 +147,12 @@ def plot_faust_relationships(relative_values=True):
         wrong_direction = (faust_result.direction < 0 and phi_corr > 0) or (faust_result.direction > 0 and phi_corr < 0)
         if  wrong_direction:
           print 'Wrong direction. phi:%f direction:%d rel:%s, %s' % (phi_corr, faust_result.direction, from_clade, to_clade)
-        elif abs(phi_corr) < 0.01:
+        elif abs(phi_corr) < 0.1:
             print 'No correlation. phi:%f direction:%d rel:%s, %s' % (phi_corr, faust_result.direction, from_clade, to_clade)
 
         # Plot values
         scatter(xs, ys, s=1, color='#0066FF')
+
 
         # Save the figure to file
         file_name = '../../plots/plots/stool_normalized_clade/' +str(faust_result.id) + from_clade + '---' + to_clade + '_' + str(faust_result.direction)

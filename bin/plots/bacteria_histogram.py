@@ -44,7 +44,7 @@ def plot_bacteria_hist(folder, depth=6, mid_quantile=False):
         bins, bin_sizes, patches = hist(abundances, bins=np.arange(min(abundances), max(abundances) + binwidth, binwidth), color='#0066FF')
 
         # Write discretized values
-        threshold, discretized_abundances = median_discretization_row(abundances)
+        threshold, discretized_abundances = discretize_row(abundances, maxent_discretization_splitter)
         _0 = '0: ' + str(len([x for x in discretized_abundances if x == 0]))
         _1 = '1: ' + str(len([x for x in discretized_abundances if x == 1]))
 
@@ -53,7 +53,7 @@ def plot_bacteria_hist(folder, depth=6, mid_quantile=False):
         smaples_text = 'Samples: %d' % len(abundances)
         figtext(text_x, 0.85, smaples_text, fontsize=10)
 
-        threshold_text = 'Threshold: %f' % threshold
+        threshold_text = 'Splitter: %f' % threshold
         figtext(text_x, 0.82, threshold_text, fontsize=10)
         figtext(text_x, 0.79, _0, fontsize=10)
         figtext(text_x, 0.76, _1, fontsize=10)

@@ -1,5 +1,38 @@
 import numpy as np
 
+def pairwise_remove_highest_values(amount, values, pair_list, remove_zero_pairs=False):
+    """
+    Removes highest percentage of some values
+    and removes to corresponding indeces in a paired list
+    :param pct:
+    :param values:
+    :param pair_list:
+    :return:
+    """
+    assert len(values) == len(pair_list)
+
+    # The check for ignoring the lowest values when this is
+    # larger than the input, is not strictly correct,
+    # but is ok as we would like to not have empty
+    # lists of abundance for plotting
+    if len(values) == 0 or amount >= len(values):
+        return values, pair_list
+
+
+    pairs = zip(values, pair_list)
+    if remove_zero_pairs:
+        pairs = filter(lambda (x,y): x != 0.0 and y != 0.0, pairs)
+    pairs.sort(lambda x,y: x[0] < y[0] and -1 or 1)
+
+    list_a = []
+    list_b = []
+
+    for tup in pairs[:-int(amount)]:
+        list_a.append(tup[0])
+        list_b.append(tup[1])
+
+    return list_a, list_b
+
 def abundance_matrix(matrix):
     """ Return the submatrix of abundances"""
     # From row 1, from column 2
