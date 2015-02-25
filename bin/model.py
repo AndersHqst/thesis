@@ -351,15 +351,6 @@ class Model(object):
         return False
 
 
-    def total_probability(self):
-        """ Assert and print the total probability of the model """
-        total_prob = 0.0
-        for T in self.T_c:
-            total_prob += self.p(T, 0)
-        assert abs(total_prob - 1.0) < 0.0001, "Total probability was: %f " % total_prob
-        print 'total prob: ', total_prob
-
-
     def __str__(self):
 
         str = u'Summary: {0:s} '.format(self.C)

@@ -47,21 +47,3 @@ def to_chars(binary):
             char_val = position + 97
             string += str(unichr(char_val))
     return string
-
-def test_to_binary():
-    assert to_binary('a') == 1
-    assert to_binary('ab') == 3
-    assert to_binary('b') == 2
-    assert to_binary('') == 0
-    assert to_binary('ad') == 9
-    assert to_binary('da') == 9
-
-def test_to_chars():
-    assert to_chars(0) == ''
-    assert to_chars(1) == 'a'
-    assert to_chars(2) == 'b'
-    assert to_chars(3) == 'ab'
-    assert to_chars(9) == 'ad'
-
-test_to_binary()
-test_to_chars()

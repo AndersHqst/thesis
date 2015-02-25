@@ -20,8 +20,8 @@ from plots.mtv_results import plot_run_results
 # exit()
 
 from plots.faust_result_discretized import plot_faust_relationships
-plot_faust_relationships(remove_highest=50)
-exit()
+# plot_faust_relationships(remove_highest=50)
+# exit()
 
 
 def write_dataset_to_experiment(file_name, ds):
@@ -480,3 +480,13 @@ def print_appendix_figures(figures=10):
         print '\\end{figure}\n'
 
 # print_appendix_figures(10)
+
+def print_report_clade_lots():
+    from plots.clade_correlation import plot_clades_relationships
+    clades= [('Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides'),
+             ('Ruminococcaceae|unclassified','Bacteroidia|Bacteroidales'),
+             ('Ruminococcaceae|unclassified', 'Rikenellaceae|Alistipes')]
+
+    plot_clades_relationships(clades, '../experiments/4/plots/')
+
+print_report_clade_lots()
