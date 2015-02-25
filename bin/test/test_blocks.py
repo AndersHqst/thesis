@@ -1,7 +1,8 @@
 from unittest import TestCase
 
-import charitems
 import test_helper
+from utils import charitems
+
 
 class TestBlocks(TestCase):
 

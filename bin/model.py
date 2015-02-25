@@ -1,14 +1,16 @@
 from __future__ import division
-from charitems import to_binary, to_chars
 from math import log
 from itertools import combinations
+import sys
+
+from utils.charitems import to_chars
 from block import Block
 from utils.timer import *
 from utils.counter import *
 from settings import *
 import itemsets
 from heuristic import h
-import sys
+
 sys.setrecursionlimit(1500)
 
 

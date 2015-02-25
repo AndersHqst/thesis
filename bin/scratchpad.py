@@ -449,7 +449,7 @@ def write_tree():
     ds=get_dataset()
     t = Tree(ds)
     xml=t.root.to_xml()
-    with open('tree.xml', 'wb') as fd:
+    with open('../../../Desktop/tree.xml', 'wb') as fd:
        fd.write(xml)
 
 # write_tree()

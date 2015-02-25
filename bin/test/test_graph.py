@@ -1,7 +1,9 @@
 from unittest import TestCase
-import charitems
+
 from graph import Graph
 import test_helper
+from utils import charitems
+
 
 class TestGraph(TestCase):
 

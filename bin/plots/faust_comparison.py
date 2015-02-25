@@ -33,7 +33,7 @@ def faust_comparison(body_site='Stool'):
     from scipy.stats import pearsonr, spearmanr
     from utils.correlation import phicoeff
     import itemsets
-    from rule_miner import association_rule
+    from utils.rule_miner import association_rule
 
     mtv = load_model()
 

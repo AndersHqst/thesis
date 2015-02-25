@@ -1,15 +1,15 @@
+from math import log
+from time import time
+
 from settings import *
 import itemsets
 from model import Model
 from heuristic import h
-from utils.timer import *
 from utils.dataset_helpers import dataset_with_negations
 from graph import Graph
 from utils.timer import *
 from utils.counter import *
-from math import log
-from time import time
-import charitems
+
 
 class MTV(object):
 

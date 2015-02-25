@@ -1,5 +1,6 @@
 import mtv
-import charitems
+from utils import charitems
+
 
 def init_simple_model():
     """

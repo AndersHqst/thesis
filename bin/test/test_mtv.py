@@ -1,7 +1,9 @@
-import test_helper
 from unittest import TestCase
+
+import test_helper
 from settings import float_precision
-import charitems
+from utils import charitems
+
 
 class TestMTV(TestCase):
 

@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-import charitems
+from utils import charitems
+
 
 class TestCharItems(TestCase):
 
