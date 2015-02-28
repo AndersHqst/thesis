@@ -384,6 +384,7 @@ def plot_clades():
     # for c in lh:
     #     clades.append((c, 'Bacteroidaceae|Bacteroides'))
 
+
     clades = [('Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides'),
               ('Ruminococcaceae|unclassified', 'Bacteroidia|Bacteroidales'),
               ('Ruminococcaceae|unclassified', 'Bacteroidales|Prevotellaceae'),
