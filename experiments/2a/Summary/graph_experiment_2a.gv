@@ -1,105 +1,105 @@
 graph G{        
 
-Clostridium [color="green", style=filled]
-Collinsella [color="green", style=filled]
-CoriobacteriaceaeUnclassified [color="green", style=filled]
-Turicibacter [color="green", style=filled]
-Anaerovorax [color="green", style=filled]
-Anaerostipes [color="green", style=filled]
-Coprococcus [color="green", style=filled]
-Dorea [color="green", style=filled]
-Pseudobutyrivibrio [color="green", style=filled]
-Roseburia [color="green", style=filled]
-LachnospiraceaeUnclassified [color="green", style=filled]
-Haemophilus [color="green", style=filled]
-PasteurellaceaeUnclassified [color="green", style=filled]
-PeptostreptococcaceaeUnclassified [color="green", style=filled]
-Sporacetigenium [color="green", style=filled]
-Barnesiella [color="green", style=filled]
-Butyricimonas [color="green", style=filled]
-PorphyromonadaceaeUnclassified [color="green", style=filled]
-Paraprevotella [color="green", style=filled]
-Prevotella [color="green", style=filled]
-PrevotellaceaeUnclassified [color="green", style=filled]
-Acetanaerobacterium [color="green", style=filled]
-Anaerotruncus [color="green", style=filled]
-Butyricicoccus [color="green", style=filled]
-Faecalibacterium [color="green", style=filled]
-Oscillibacter [color="green", style=filled]
-Ruminococcus [color="green", style=filled]
-Sporobacter [color="green", style=filled]
-RuminococcaceaeUnclassified [color="green", style=filled]
-Anaerotruncus [color="green", style=filled]
-Veillonella [color="green", style=filled]
-Blautia[color="green", style=filled]
+Clostridium [color="#43AC43", style=filled]
+Collinsella [color="#43AC43", style=filled]
+Coriobacteriaceae_Unclassified [color="#43AC43", style=filled]
+Turicibacter [color="#43AC43", style=filled]
+Anaerovorax [color="#43AC43", style=filled]
+Anaerostipes [color="#43AC43", style=filled]
+Coprococcus [color="#43AC43", style=filled]
+Dorea [color="#43AC43", style=filled]
+Pseudobutyrivibrio [color="#43AC43", style=filled]
+Roseburia [color="#43AC43", style=filled]
+Lachnospiraceae_Unclassified [color="#43AC43", style=filled]
+Haemophilus [color="#43AC43", style=filled]
+Pasteurellaceae_Unclassified [color="#43AC43", style=filled]
+Peptostreptococcaceae_Unclassified [color="#43AC43", style=filled]
+Sporacetigenium [color="#43AC43", style=filled]
+Barnesiella [color="#43AC43", style=filled]
+Butyricimonas [color="#43AC43", style=filled]
+Porphyromonadaceae_Unclassified [color="#43AC43", style=filled]
+Paraprevotella [color="#43AC43", style=filled]
+Prevotella [color="#43AC43", style=filled]
+Prevotellaceae_Unclassified [color="#43AC43", style=filled]
+Acetanaerobacterium [color="#43AC43", style=filled]
+Anaerotruncus [color="#43AC43", style=filled]
+Butyricicoccus [color="#43AC43", style=filled]
+Faecalibacterium [color="#43AC43", style=filled]
+Oscillibacter [color="#43AC43", style=filled]
+Ruminococcus [color="#43AC43", style=filled]
+Sporobacter [color="#43AC43", style=filled]
+Ruminococcaceae_Unclassified [color="#43AC43", style=filled]
+Anaerotruncus [color="#43AC43", style=filled]
+Veillonella [color="#43AC43", style=filled]
+Blautia[color="#43AC43", style=filled]
 
-edge [color=red] //pattern 1
+edge [color=red, penwidth=3] //pattern 1
 
-RuminococcaceaeUnclassified --  Oscillibacter 
+Ruminococcaceae_Unclassified --  Oscillibacter 
 Ruminococcus -- Oscillibacter 
 Sporobacter --  Oscillibacter 
-Ruminococcus -- RuminococcaceaeUnclassified 
-Sporobacter --  RuminococcaceaeUnclassified  
+Ruminococcus -- Ruminococcaceae_Unclassified 
+Sporobacter --  Ruminococcaceae_Unclassified  
 Sporobacter --  Ruminococcus
 
 edge [color=blue] //pattern 2
 
 Clostridium -- Turicibacter 
 Sporacetigenium -- Turicibacter 
-PeptostreptococcaceaeUnclassified -- Turicibacter 
+Peptostreptococcaceae_Unclassified -- Turicibacter 
 Sporacetigenium -- Clostridium 
-PeptostreptococcaceaeUnclassified -- Clostridium   
-PeptostreptococcaceaeUnclassified -- Sporacetigenium  
+Peptostreptococcaceae_Unclassified -- Clostridium   
+Peptostreptococcaceae_Unclassified -- Sporacetigenium  
 
 edge [color=forestgreen] //pattern 3
 
-LachnospiraceaeUnclassified -- Roseburia 
-LachnospiraceaeUnclassified -- Coprococcus 
-LachnospiraceaeUnclassified -- Butyricicoccus 
+Lachnospiraceae_Unclassified -- Roseburia 
+Lachnospiraceae_Unclassified -- Coprococcus 
+Lachnospiraceae_Unclassified -- Butyricicoccus 
 Roseburia -- Coprococcus 
 Roseburia -- Butyricicoccus 
 Coprococcus -- Butyricicoccus 
 
 edge [color=darkviolet] //pattern 4
 
-Prevotella -- PrevotellaceaeUnclassified 
-Prevotella -- CoriobacteriaceaeUnclassified 
+Prevotella -- Prevotellaceae_Unclassified 
+Prevotella -- Coriobacteriaceae_Unclassified 
 Prevotella -- Collinsella 
-CoriobacteriaceaeUnclassified -- PrevotellaceaeUnclassified 
-CoriobacteriaceaeUnclassified -- Collinsella 
-Collinsella -- PrevotellaceaeUnclassified
+Coriobacteriaceae_Unclassified -- Prevotellaceae_Unclassified 
+Coriobacteriaceae_Unclassified -- Collinsella 
+Collinsella -- Prevotellaceae_Unclassified
 
-Prevotellaceae-Prevotella 
-Prevotellaceae-unclassified 
-Coriobacteriaceae-unclassified 
-Coriobacteriaceae-Collinsella 
+//Prevotellaceae-Prevotella 
+//Prevotellaceae-_unclassified 
+//Coriobacteriaceae-_unclassified 
+//Coriobacteriaceae-Collinsella 
 
 edge [color=gray0] //pattern 5
 
 Butyricimonas -- Barnesiella 
-Butyricimonas -- PrevotellaceaeUnclassified 
+Butyricimonas -- Prevotellaceae_Unclassified 
 Butyricimonas -- Paraprevotella 
-Barnesiella -- PrevotellaceaeUnclassified 
+Barnesiella -- Prevotellaceae_Unclassified 
 Barnesiella -- Paraprevotella 
-PrevotellaceaeUnclassified -- Paraprevotella 
+Prevotellaceae_Unclassified -- Paraprevotella 
 
 edge [color=yellow] //pattern 6
 
 Anaerostipes -- Dorea 
 Anaerostipes -- Coprococcus 
 Anaerostipes -- Blautia 
-Dorea -- oprococcus 
+Dorea -- Coprococcus 
 Dorea -- Blautia 
 Coprococcus -- Blautia 
 
 edge [color=aquamarine] //pattern 7
 
 Acetanaerobacterium -- Sporobacter 
-Acetanaerobacterium -- PorphyromonadaceaeUnclassified 
+Acetanaerobacterium -- Porphyromonadaceae_Unclassified 
 Acetanaerobacterium -- Barnesiella 
-Sporobacter -- PorphyromonadaceaeUnclassified 
+Sporobacter -- Porphyromonadaceae_Unclassified 
 Sporobacter -- Barnesiella 
-PorphyromonadaceaeUnclassified -- Barnesiella 
+Porphyromonadaceae_Unclassified -- Barnesiella 
 
 edge [color=green] //pattern 8
 
@@ -114,18 +114,18 @@ edge [color=cyan3] //pattern 9
 
 Turicibacter -- Veillonella 
 Turicibacter -- Haemophilus 
-Turicibacter -- PasteurellaceaeUnclassified 
+Turicibacter -- Pasteurellaceae_Unclassified 
 Veillonella -- Haemophilus 
-Veillonella -- PasteurellaceaeUnclassified 
-Haemophilus -- PasteurellaceaeUnclassified 
+Veillonella -- Pasteurellaceae_Unclassified 
+Haemophilus -- Pasteurellaceae_Unclassified 
 
 edge [color=deeppink]//10
 
-Pseudobutyrivibrio -- LachnospiraceaeUnclassified 
+Pseudobutyrivibrio -- Lachnospiraceae_Unclassified 
 Pseudobutyrivibrio -- Anaerotruncus 
 Pseudobutyrivibrio -- Faecalibacterium 
-LachnospiraceaeUnclassified -- Anaerotruncus 
-LachnospiraceaeUnclassified -- Faecalibacterium 
+Lachnospiraceae_Unclassified -- Anaerotruncus 
+Lachnospiraceae_Unclassified -- Faecalibacterium 
 Anaerotruncus -- Faecalibacterium 
 
 

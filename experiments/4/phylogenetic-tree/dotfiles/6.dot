@@ -1,5 +1,5 @@
 digraph G { 
-	LachnospiraceaePseudobutyrivibrio [label="Pseudobutyrivibrio", color="green", style=filled];
+	LachnospiraceaePseudobutyrivibrio [label="Pseudobutyrivibrio", color="#43AC43", style=filled];
 	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
 	LachnospiraceaePseudobutyrivibrio [label="Pseudobutyrivibrio"];
 	ClostridialesLachnospiraceae -> LachnospiraceaePseudobutyrivibrio;
@@ -15,22 +15,22 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaFirmicutes [label="Firmicutes"];
 	Bacteria -> BacteriaFirmicutes;
-	Lachnospiraceaeunclassified [label="unclassified", color="green", style=filled];
+	Lachnospiraceaeunclassified [label="unclassified", color="#43AC43", style=filled];
 	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
 	Lachnospiraceaeunclassified [label="unclassified"];
 	ClostridialesLachnospiraceae -> Lachnospiraceaeunclassified;
-	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="green", style=filled];
+	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeAnaerotruncus [label="Anaerotruncus"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeAnaerotruncus;
 	ClostridiaClostridiales [label="Clostridiales"];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
-	RuminococcaceaeFaecalibacterium [label="Faecalibacterium", color="green", style=filled];
+	RuminococcaceaeFaecalibacterium [label="Faecalibacterium", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeFaecalibacterium [label="Faecalibacterium"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeFaecalibacterium;
-	StreptococcaceaeStreptococcus [label="Streptococcus", color="green", style=filled];
+	StreptococcaceaeStreptococcus [label="Streptococcus", color="#43AC43", style=filled];
 	LactobacillalesStreptococcaceae [label="Streptococcaceae"];
 	StreptococcaceaeStreptococcus [label="Streptococcus"];
 	LactobacillalesStreptococcaceae -> StreptococcaceaeStreptococcus;
@@ -43,7 +43,7 @@ digraph G {
 	BacteriaFirmicutes [label="Firmicutes"];
 	FirmicutesBacilli [label="Bacilli"];
 	BacteriaFirmicutes -> FirmicutesBacilli;
-	BacteroidaceaeBacteroides [label="Bacteroides", color="red", style=filled];
+	BacteroidaceaeBacteroides [label="Bacteroides", color="#C57B7B", style=filled];
 	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
 	BacteroidaceaeBacteroides [label="Bacteroides"];
 	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;

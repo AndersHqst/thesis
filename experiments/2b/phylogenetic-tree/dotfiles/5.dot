@@ -1,5 +1,5 @@
 digraph G { 
-	BacteroidaceaeBacteroides [label="Bacteroides", color="green", style=filled];
+	BacteroidaceaeBacteroides [label="Bacteroides", color="#C57B7B", style=filled];
 	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
 	BacteroidaceaeBacteroides [label="Bacteroides"];
 	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;
@@ -15,7 +15,7 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaBacteroidetes [label="Bacteroidetes"];
 	Bacteria -> BacteriaBacteroidetes;
-	Coriobacteriaceaeunclassified [label="unclassified", color="green", style=filled];
+	Coriobacteriaceaeunclassified [label="unclassified", color="#C57B7B", style=filled];
 	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
 	Coriobacteriaceaeunclassified [label="unclassified"];
 	CoriobacterialesCoriobacteriaceae -> Coriobacteriaceaeunclassified;

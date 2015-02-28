@@ -1,5 +1,5 @@
 digraph G { 
-	Veillonellaceaeunclassified [label="unclassified", color="green", style=filled];
+	Veillonellaceaeunclassified [label="unclassified", color="#C57B7B", style=filled];
 	ClostridialesVeillonellaceae [label="Veillonellaceae"];
 	Veillonellaceaeunclassified [label="unclassified"];
 	ClostridialesVeillonellaceae -> Veillonellaceaeunclassified;
@@ -15,7 +15,7 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaFirmicutes [label="Firmicutes"];
 	Bacteria -> BacteriaFirmicutes;
-	PrevotellaceaePrevotella [label="Prevotella", color="green", style=filled];
+	PrevotellaceaePrevotella [label="Prevotella", color="#C57B7B", style=filled];
 	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
 	PrevotellaceaePrevotella [label="Prevotella"];
 	BacteroidalesPrevotellaceae -> PrevotellaceaePrevotella;
@@ -31,7 +31,7 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaBacteroidetes [label="Bacteroidetes"];
 	Bacteria -> BacteriaBacteroidetes;
-	BacteroidaceaeBacteroides [label="Bacteroides", color="green", style=filled];
+	BacteroidaceaeBacteroides [label="Bacteroides", color="#C57B7B", style=filled];
 	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
 	BacteroidaceaeBacteroides [label="Bacteroides"];
 	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;

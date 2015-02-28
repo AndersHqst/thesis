@@ -1,9 +1,9 @@
 digraph G { 
-	VeillonellaceaePhascolarctobacterium [label="Phascolarctobacterium", color="green", style=filled];
+	VeillonellaceaePhascolarctobacterium [label="Phascolarctobacterium", color="#C57B7B", style=filled];
 	ClostridialesVeillonellaceae [label="Veillonellaceae"];
 	VeillonellaceaePhascolarctobacterium [label="Phascolarctobacterium"];
 	ClostridialesVeillonellaceae -> VeillonellaceaePhascolarctobacterium;
-	VeillonellaceaeDialister [label="Dialister", color="green", style=filled];
+	VeillonellaceaeDialister [label="Dialister", color="#C57B7B", style=filled];
 	ClostridialesVeillonellaceae [label="Veillonellaceae"];
 	VeillonellaceaeDialister [label="Dialister"];
 	ClostridialesVeillonellaceae -> VeillonellaceaeDialister;

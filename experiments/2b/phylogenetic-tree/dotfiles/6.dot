@@ -1,9 +1,9 @@
 digraph G { 
-	AlcaligenaceaeSutterella [label="Sutterella", color="green", style=filled];
+	AlcaligenaceaeSutterella [label="Sutterella", color="#C57B7B", style=filled];
 	BurkholderialesAlcaligenaceae [label="Alcaligenaceae"];
 	AlcaligenaceaeSutterella [label="Sutterella"];
 	BurkholderialesAlcaligenaceae -> AlcaligenaceaeSutterella;
-	AlcaligenaceaeParasutterella [label="Parasutterella", color="green", style=filled];
+	AlcaligenaceaeParasutterella [label="Parasutterella", color="#C57B7B", style=filled];
 	BurkholderialesAlcaligenaceae [label="Alcaligenaceae"];
 	AlcaligenaceaeParasutterella [label="Parasutterella"];
 	BurkholderialesAlcaligenaceae -> AlcaligenaceaeParasutterella;

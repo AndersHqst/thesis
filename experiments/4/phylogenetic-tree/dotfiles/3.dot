@@ -1,5 +1,5 @@
 digraph G { 
-	PrevotellaceaePrevotella [label="Prevotella", color="green", style=filled];
+	PrevotellaceaePrevotella [label="Prevotella", color="#43AC43", style=filled];
 	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
 	PrevotellaceaePrevotella [label="Prevotella"];
 	BacteroidalesPrevotellaceae -> PrevotellaceaePrevotella;
@@ -15,11 +15,11 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaBacteroidetes [label="Bacteroidetes"];
 	Bacteria -> BacteriaBacteroidetes;
-	Prevotellaceaeunclassified [label="unclassified", color="green", style=filled];
+	Prevotellaceaeunclassified [label="unclassified", color="#43AC43", style=filled];
 	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
 	Prevotellaceaeunclassified [label="unclassified"];
 	BacteroidalesPrevotellaceae -> Prevotellaceaeunclassified;
-	Coriobacteriaceaeunclassified [label="unclassified", color="green", style=filled];
+	Coriobacteriaceaeunclassified [label="unclassified", color="#43AC43", style=filled];
 	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
 	Coriobacteriaceaeunclassified [label="unclassified"];
 	CoriobacterialesCoriobacteriaceae -> Coriobacteriaceaeunclassified;
@@ -35,11 +35,11 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaActinobacteria [label="Actinobacteria"];
 	Bacteria -> BacteriaActinobacteria;
-	CoriobacteriaceaeCollinsella [label="Collinsella", color="green", style=filled];
+	CoriobacteriaceaeCollinsella [label="Collinsella", color="#43AC43", style=filled];
 	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
 	CoriobacteriaceaeCollinsella [label="Collinsella"];
 	CoriobacterialesCoriobacteriaceae -> CoriobacteriaceaeCollinsella;
-	BacteroidaceaeBacteroides [label="Bacteroides", color="red", style=filled];
+	BacteroidaceaeBacteroides [label="Bacteroides", color="#C57B7B", style=filled];
 	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
 	BacteroidaceaeBacteroides [label="Bacteroides"];
 	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;
