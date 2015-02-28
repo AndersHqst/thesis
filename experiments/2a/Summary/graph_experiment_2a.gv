@@ -1,0 +1,143 @@
+graph G{        
+
+Clostridium [color="green", style=filled]
+Collinsella [color="green", style=filled]
+CoriobacteriaceaeUnclassified [color="green", style=filled]
+Turicibacter [color="green", style=filled]
+Anaerovorax [color="green", style=filled]
+Anaerostipes [color="green", style=filled]
+Coprococcus [color="green", style=filled]
+Dorea [color="green", style=filled]
+Pseudobutyrivibrio [color="green", style=filled]
+Roseburia [color="green", style=filled]
+LachnospiraceaeUnclassified [color="green", style=filled]
+Haemophilus [color="green", style=filled]
+PasteurellaceaeUnclassified [color="green", style=filled]
+PeptostreptococcaceaeUnclassified [color="green", style=filled]
+Sporacetigenium [color="green", style=filled]
+Barnesiella [color="green", style=filled]
+Butyricimonas [color="green", style=filled]
+PorphyromonadaceaeUnclassified [color="green", style=filled]
+Paraprevotella [color="green", style=filled]
+Prevotella [color="green", style=filled]
+PrevotellaceaeUnclassified [color="green", style=filled]
+Acetanaerobacterium [color="green", style=filled]
+Anaerotruncus [color="green", style=filled]
+Butyricicoccus [color="green", style=filled]
+Faecalibacterium [color="green", style=filled]
+Oscillibacter [color="green", style=filled]
+Ruminococcus [color="green", style=filled]
+Sporobacter [color="green", style=filled]
+RuminococcaceaeUnclassified [color="green", style=filled]
+Anaerotruncus [color="green", style=filled]
+Veillonella [color="green", style=filled]
+Blautia[color="green", style=filled]
+
+edge [color=red] //pattern 1
+
+RuminococcaceaeUnclassified --  Oscillibacter 
+Ruminococcus -- Oscillibacter 
+Sporobacter --  Oscillibacter 
+Ruminococcus -- RuminococcaceaeUnclassified 
+Sporobacter --  RuminococcaceaeUnclassified  
+Sporobacter --  Ruminococcus
+
+edge [color=blue] //pattern 2
+
+Clostridium -- Turicibacter 
+Sporacetigenium -- Turicibacter 
+PeptostreptococcaceaeUnclassified -- Turicibacter 
+Sporacetigenium -- Clostridium 
+PeptostreptococcaceaeUnclassified -- Clostridium   
+PeptostreptococcaceaeUnclassified -- Sporacetigenium  
+
+edge [color=forestgreen] //pattern 3
+
+LachnospiraceaeUnclassified -- Roseburia 
+LachnospiraceaeUnclassified -- Coprococcus 
+LachnospiraceaeUnclassified -- Butyricicoccus 
+Roseburia -- Coprococcus 
+Roseburia -- Butyricicoccus 
+Coprococcus -- Butyricicoccus 
+
+edge [color=darkviolet] //pattern 4
+
+Prevotella -- PrevotellaceaeUnclassified 
+Prevotella -- CoriobacteriaceaeUnclassified 
+Prevotella -- Collinsella 
+CoriobacteriaceaeUnclassified -- PrevotellaceaeUnclassified 
+CoriobacteriaceaeUnclassified -- Collinsella 
+Collinsella -- PrevotellaceaeUnclassified
+
+Prevotellaceae-Prevotella 
+Prevotellaceae-unclassified 
+Coriobacteriaceae-unclassified 
+Coriobacteriaceae-Collinsella 
+
+edge [color=gray0] //pattern 5
+
+Butyricimonas -- Barnesiella 
+Butyricimonas -- PrevotellaceaeUnclassified 
+Butyricimonas -- Paraprevotella 
+Barnesiella -- PrevotellaceaeUnclassified 
+Barnesiella -- Paraprevotella 
+PrevotellaceaeUnclassified -- Paraprevotella 
+
+edge [color=yellow] //pattern 6
+
+Anaerostipes -- Dorea 
+Anaerostipes -- Coprococcus 
+Anaerostipes -- Blautia 
+Dorea -- oprococcus 
+Dorea -- Blautia 
+Coprococcus -- Blautia 
+
+edge [color=aquamarine] //pattern 7
+
+Acetanaerobacterium -- Sporobacter 
+Acetanaerobacterium -- PorphyromonadaceaeUnclassified 
+Acetanaerobacterium -- Barnesiella 
+Sporobacter -- PorphyromonadaceaeUnclassified 
+Sporobacter -- Barnesiella 
+PorphyromonadaceaeUnclassified -- Barnesiella 
+
+edge [color=green] //pattern 8
+
+Oscillibacter -- Anaerotruncus 
+Oscillibacter -- Anaerovorax 
+Oscillibacter -- Collinsella 
+Anaerotruncus -- Anaerovorax 
+Anaerotruncus -- Collinsella 
+Anaerovorax -- Collinsella 
+
+edge [color=cyan3] //pattern 9
+
+Turicibacter -- Veillonella 
+Turicibacter -- Haemophilus 
+Turicibacter -- PasteurellaceaeUnclassified 
+Veillonella -- Haemophilus 
+Veillonella -- PasteurellaceaeUnclassified 
+Haemophilus -- PasteurellaceaeUnclassified 
+
+edge [color=deeppink]//10
+
+Pseudobutyrivibrio -- LachnospiraceaeUnclassified 
+Pseudobutyrivibrio -- Anaerotruncus 
+Pseudobutyrivibrio -- Faecalibacterium 
+LachnospiraceaeUnclassified -- Anaerotruncus 
+LachnospiraceaeUnclassified -- Faecalibacterium 
+Anaerotruncus -- Faecalibacterium 
+
+
+
+//1 aquamarine 
+//2 blue
+//3 cyan3
+//4 red
+//5 green
+//6 forestgreen
+//7 darkviolet
+//8 deeppink
+//9 gray0
+//10 yellow
+}
