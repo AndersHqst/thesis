@@ -1,41 +1,18 @@
 
 from utils.dataset_helpers import *
 
-
-def median_discretization_row(row, non_zero_threshold=False):
+def discretized_dataset(dataset, splitter_method):
     """
-    Discretize a list of numeric values by the median
-    :param row:
-    :param threshold:
+    Discretize row of a dataset with a given discretization method
+    :param dataset: A dataset
+    :param row_method: Discretization method for a rwo, ie abundance vector
     :return:
     """
-    from utils.stats import median
-
-    discrete_row = []
-    threshold = median(row)
-
-    if non_zero_threshold and threshold == 0:
-        for val in sorted(row):
-            if val > 0:
-                threshold = val
-                break
-
-    for val in row:
-        if val <= threshold:
-            discrete_row.append(0)
-        else:
-            discrete_row.append(1)
-
-    return threshold, discrete_row
-
-
-def median_discretization(dataset):
-
     # Get the abundance matrix and discretize it
     abundances = abundance_matrix(dataset).T
     discrete_matrix = []
     for row in abundances:
-        threshold, discrete_row = median_discretization_row(row)
+        splitter, discrete_row = discretize_row(row, splitter_method)
         discrete_matrix.append(discrete_row)
 
     # transpose to dataset orientation
@@ -46,8 +23,27 @@ def median_discretization(dataset):
 
     return discretized_dataset
 
+def discretize_row(row, splitter_method):
+    discrete_row = []
+    splitter = splitter_method(row)
 
-def maxent_discritization_threshold(row):
+    for val in row:
+        if val <= splitter:
+            discrete_row.append(0)
+        else:
+            discrete_row.append(1)
+
+    return splitter, discrete_row
+
+
+
+
+def median_discretization(dataset):
+    from utils.stats import median
+    return discretized_dataset(dataset, median)
+
+
+def maxent_discretization_splitter_dist_threshold(row):
     from math import log
 
     maxent = 999999999999999999
@@ -69,40 +65,49 @@ def maxent_discritization_threshold(row):
     return best_threshold
 
 
-def maxent_discretization_row(row):
+def maxent_discretization_splitter_dist(dataset):
     """
-    Discretize a list of numeric values by the median
-    :param row:
-    :param threshold:
+    Discretization that maximizes the entropy of the sample point
+    distances to the splitter
+    :param dataset:
     :return:
     """
+
+    return discretized_dataset(dataset, maxent_discretization_splitter_dist_threshold)
+
+
+def maxent_discretization_splitter(row):
+    """
+    Return splitter in row that maximizes the entropy of the binary outcomes
+    :param row:
+    :return:
+    """
+    from scipy.stats import entropy
     from utils.stats import median
 
-    discrete_row = []
-    threshold = maxent_discritization_threshold(row)
+    highest_entropy = -1
+    best_splitter = 0
+    l = float(len(row))
 
-    for val in row:
-        if val <= threshold:
-            discrete_row.append(0)
-        else:
-            discrete_row.append(1)
+    for splitter in row:
 
-    return threshold, discrete_row
+        # Get probabilities for the two outcomes w.r.t. the splitter
+        a = len([x for x in row if x <= splitter]) / l
+        b = len([x for x in row if x > splitter]) / l
+        ent = entropy([a, b])
+
+        if ent > highest_entropy:
+            highest_entropy = ent
+            best_splitter = splitter
+
+    return best_splitter
 
 
 def maxent_discretization(dataset):
-
-    # Get the abundance matrix and discretize it
-    abundances = abundance_matrix(dataset).T
-    discrete_matrix = []
-    for row in abundances:
-        threshold, discrete_row = maxent_discretization_row(row)
-        discrete_matrix.append(discrete_row)
-
-    # transpose to dataset orientation
-    discrete_matrix = np.array(discrete_matrix).T
-
-    # Replace the abundance submatrix
-    discretized_dataset = replace_abundance_matrix(dataset, discrete_matrix)
-
-    return discretized_dataset
+    """
+    Binary discretization, which gives the most uniform
+    speration of the bins.
+    :param dataset:
+    :return:
+    """
+    return discretized_dataset(dataset, maxent_discretization_splitter)

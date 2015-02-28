@@ -4,8 +4,13 @@ from preprocessing.discretization import *
 from preprocessing.tree import Tree
 from scipy.stats import pearsonr, spearmanr
 from utils.correlation import phicoeff_lists
+from utils.dataset_helpers import pairwise_remove_highest_values
 
-def plot_clades_relationships(clade_pairs, folder):
+
+
+
+
+def plot_clades_relationships(clade_pairs, folder, remove_highest=0):
 
     ds = get_dataset('Stool')
     ds = compute_relative_values(ds)
@@ -35,14 +40,39 @@ def plot_clades_relationships(clade_pairs, folder):
         abundance_from = tree.abundance_column_in_subtree(from_node)
         abundance_to = tree.abundance_column_in_subtree(to_node)
 
+        x_zeroes = 0
+        y_zeroes = 0
+
+
         # List the in-sample values for each sample
         for index, _row in enumerate(ds[1:]):
             from_abundance = abundance_from[index]
             to_abundance = abundance_to[index]
 
+            if from_abundance == 0.0:
+                x_zeroes += 1
+
+            if to_abundance == 0.0:
+                y_zeroes += 1
+
+            # if from_abundance < 0.01 and to_abundance < 0.01:
             xs.append(from_abundance)
             ys.append(to_abundance)
+            # else:
+            #     xs.append(0.0)
+            #     ys.append(0.0)
 
+        if remove_highest > 0.0:
+            xs, ys = pairwise_remove_highest_values(remove_highest, xs, ys)
+            ys, xs = pairwise_remove_highest_values(remove_highest, ys, xs)
+
+                        # All data was eventyally removed
+            if len(xs) == 0:
+                print 'Warning. lowest values:%f removed all data from caldes:%s-%s' % (remove_highest, from_node.name, to_node.name)
+                continue
+
+        print 'x zeroes: ', x_zeroes
+        print 'y zeroes: ', y_zeroes
         grid(True)
 
         text_x = 0.67
@@ -54,8 +84,8 @@ def plot_clades_relationships(clade_pairs, folder):
         xlabel(from_clade, fontsize=10)
         ylabel(to_clade, fontsize=10)
 
-        disc_x, discrete_xs = median_discretization_row(xs)
-        disc_y, discrete_ys = median_discretization_row(ys)
+        disc_x, discrete_xs = discretize_row(xs, maxent_discretization_splitter)
+        disc_y, discrete_ys = discretize_row(ys, maxent_discretization_splitter)
 
         # plot discretization lines
         a, b = [disc_x, disc_x], [-0.001, max(ys)]
@@ -84,8 +114,8 @@ def plot_clades_relationships(clade_pairs, folder):
         figtext(text_x, 0.64, to_depth, fontsize=10)
 
         # Discretization values
-        median_x = 'median x: %f' % disc_x
-        median_y = 'median y: %f' % disc_y
+        median_x = 'splitter x: %f' % disc_x
+        median_y = 'splitter y: %f' % disc_y
         figtext(text_x, 0.61, median_x, fontsize=10)
         figtext(text_x, 0.58, median_y, fontsize=10)
 

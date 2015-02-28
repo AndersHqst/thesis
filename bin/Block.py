@@ -1,4 +1,4 @@
-from charitems import to_chars
+from utils.charitems import to_chars
 
 class Block(object):
     """Block for itemsets in C"""

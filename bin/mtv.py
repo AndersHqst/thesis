@@ -1,15 +1,15 @@
+from math import log
+from time import time
+
 from settings import *
 import itemsets
 from model import Model
 from heuristic import h
-from utils.timer import *
 from utils.dataset_helpers import dataset_with_negations
 from graph import Graph
 from utils.timer import *
 from utils.counter import *
-from math import log
-from time import time
-import charitems
+
 
 class MTV(object):
 
@@ -274,10 +274,10 @@ class MTV(object):
     def cached_itemset_query(self, X):
         """
         Helper function to cache queries.
-        Note this can only be used from e.g. FindBestItemSet
-        when the model parameters are not altered between cache hits.
-        :param X: Queried itemset
-        :return: Query result
+        Note this must only be used from e.g. FindBestItemSet,
+        where the model parameters are not altered between cache hits.
+        :param X: Itemset
+        :return: Model estimate of X
         """
         timer_start('Cached query')
         estimate = 0.0
@@ -298,7 +298,7 @@ class MTV(object):
         space defined by I.
         Subject to model parameters z, m, s and
         the heuristic function h
-        :return:
+        :return: Best itemset Z
         """
 
         # reset query caches
@@ -320,14 +320,18 @@ class MTV(object):
 
     def validate_negated_pattern(self, X, y):
         """
-        Return true if y unioned with X is a valied itemset
-        under when negated patterns are included.
+        Return true if y unioned with X is a valid itemset
+        when negated attributes are included. The builds on the
+        assumption that only 1 negated attribute can be added to
+        a pattern, which may not be meaningful in all domains.
 
         X|y will not be valid if a negated attribute is already in X
         or if the positive counterpart of y, is already in X
-        :param X:
-        :param y:
-        :return: True if y can be unioned with X
+
+        :param X: Itemset
+        :param y: Itemset to be unioned with X, if allowed when
+        negated attributes are used
+        :return: True, if y can be unioned with X
         """
 
         assert self.add_negated
@@ -356,6 +360,7 @@ class MTV(object):
 
         return True
 
+
     def find_best_itemset_rec(self, X, Y, Z, X_length=0, parent_h=0):
         """
         :param X: itemset
@@ -367,7 +372,6 @@ class MTV(object):
                          this is the fastest way to know its length
         :return: Best itemsets Z
         """
-        # double score_bound = max(heuristic(freq, est_tail_freq), heuristic(est_freq_free, tail_freq))
 
         fr_X = self.fr(X)
         if fr_X < self.s or X in self.C:
@@ -436,6 +440,7 @@ class MTV(object):
 
         return p
 
+
     def U(self):
         """
         Returns U over all models
@@ -448,7 +453,27 @@ class MTV(object):
 
         return U
 
+
+    def u0(self):
+        """
+        Returns u0 over all models
+        :return: u0
+        """
+        u0 = self.singleton_model.u0
+
+        for model in self.graph.model_iterator():
+            u0 *= model.u0
+
+        return u0
+
+
     def update_model_constraints(self, newest_model):
+        """
+        If C_i in some model has grow larger than q,
+        we remove the singletons in the model from
+        the search space
+        :param newest_model:
+        """
         if not (self.q is None):
             # Blacklist model singletons
             if len(newest_model.C) >= self.q:
@@ -457,10 +482,10 @@ class MTV(object):
 
     def validate_best_itemset(self, itemset):
         """
-        Returns true if an itemset is valid to be added to C, or false.
+        Returns True if an itemset can be added to C.
         Singletons or the empty set should not be added to C, but this can happen
-        in cases where e.g. thresholds for support or min itemset size
-        are too strict
+        in cases where e.g. thresholds for support or minimum itemset size
+        are too strict.
         """
         if itemset in self.I:
             print 'X was a singleton! These should not be possible from the heurestic'
@@ -478,10 +503,8 @@ class MTV(object):
 
     def graph_stats(self, components):
         """
-        Record stats when the graph is updated
-        :param components:
-        :param newest_component:
-        :return:
+        Log stats on the graph
+        :param components: Current Graph Components
         """
         self.independent_components.append(len(components))
 

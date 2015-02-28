@@ -9,17 +9,6 @@ def contains(a, b):
     """ True if a contains b """
     return a & b == b
 
-def singletons_of_itemsets(itemsets):
-    singletons = set()
-    for itemset in itemsets:
-        val = itemset
-        pos = 0
-        while val != 0:
-            if val & 1 == 1:
-                singletons.add(2 ** pos)
-            val = val >> 1
-            pos += 1
-    return singletons
 
 def singletons(D):
     """
@@ -125,6 +114,14 @@ def singletons_of_itemset(itemset):
         singletons.add(removed)
 
     timer_stop('Singletons of itemsets')
+    return singletons
+
+
+def singletons_of_itemsets(itemsets):
+    singletons = set()
+    for itemset in itemsets:
+        for singleton in singletons_of_itemset(itemset):
+            singletons.add(singleton)
     return singletons
 
 

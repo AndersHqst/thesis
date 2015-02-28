@@ -11,7 +11,7 @@ from plots.mtv_results import read_run_results
 from plots.mtv_results import plot_run_results
 
 # from plots.bacteria_histogram import plot_bacteria_hist
-# plot_bacteria_hist('../plots/hist/normalized_depth_4/', depth=4)
+# plot_bacteria_hist('../plots/hist/normalized_depth_6/', depth=6)
 # exit()
 
 # plot_run_results('../experiments/4/')
@@ -20,8 +20,7 @@ from plots.mtv_results import plot_run_results
 # exit()
 
 from plots.faust_result_discretized import plot_faust_relationships
-plot_faust_relationships()
-# run()
+# plot_faust_relationships(remove_highest=50)
 # exit()
 
 
@@ -289,7 +288,7 @@ def compare_to_faust():
     print 'Faust results not found: ', [(fr.clade_1, fr.clade_2) for fr in faust_results_copy]
     print 'Not found at genus level: ', genues_in_faust
 
-compare_to_faust()
+# compare_to_faust()
 
 
 
@@ -397,6 +396,8 @@ def plot_clades():
     # clades = [['Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides']]
     # clades = [('Bacteroidaceae|Bacteroides', 'Prevotellaceae|unclassified')]
     # clades = [('Alcaligenaceae|Sutterella', 'Alcaligenaceae|Parasutterella')]
+    clades = [('Veillonellaceae|Phascolarctobacterium', 'Veillonellaceae|Dialister')]
+    clades= [('Alcaligenaceae|Sutterella', 'Alcaligenaceae|Parasutterella')]
 
     plot_clades_relationships(clades, '../experiments/2b/plots/')
 
@@ -449,7 +450,7 @@ def write_tree():
     ds=get_dataset()
     t = Tree(ds)
     xml=t.root.to_xml()
-    with open('tree.xml', 'wb') as fd:
+    with open('../../../Desktop/tree.xml', 'wb') as fd:
        fd.write(xml)
 
 # write_tree()
@@ -480,3 +481,13 @@ def print_appendix_figures(figures=10):
         print '\\end{figure}\n'
 
 # print_appendix_figures(10)
+
+def print_report_clade_lots():
+    from plots.clade_correlation import plot_clades_relationships
+    clades= [('Ruminococcaceae|unclassified', 'Bacteroidaceae|Bacteroides'),
+             ('Ruminococcaceae|unclassified','Bacteroidia|Bacteroidales'),
+             ('Ruminococcaceae|unclassified', 'Rikenellaceae|Alistipes')]
+
+    plot_clades_relationships(clades, '../experiments/4/plots/')
+
+print_report_clade_lots()
