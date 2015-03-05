@@ -86,13 +86,5 @@ def main(argv):
         subprocess.call(["dot", "-Tpng", dot_file, "-o", png_file])
 
 
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
     main(sys.argv[1:])

@@ -1,5 +1,5 @@
 digraph G { 
-	LachnospiraceaeCoprococcus [label="Coprococcus", color="green", style=filled];
+	LachnospiraceaeCoprococcus [label="Coprococcus", color="#C57B7B", style=filled];
 	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
 	LachnospiraceaeCoprococcus [label="Coprococcus"];
 	ClostridialesLachnospiraceae -> LachnospiraceaeCoprococcus;
@@ -15,14 +15,14 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaFirmicutes [label="Firmicutes"];
 	Bacteria -> BacteriaFirmicutes;
-	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="green", style=filled];
+	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="#C57B7B", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeAnaerotruncus [label="Anaerotruncus"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeAnaerotruncus;
 	ClostridiaClostridiales [label="Clostridiales"];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
-	PorphyromonadaceaeOdoribacter [label="Odoribacter", color="green", style=filled];
+	PorphyromonadaceaeOdoribacter [label="Odoribacter", color="#C57B7B", style=filled];
 	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
 	PorphyromonadaceaeOdoribacter [label="Odoribacter"];
 	BacteroidalesPorphyromonadaceae -> PorphyromonadaceaeOdoribacter;
@@ -38,7 +38,7 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaBacteroidetes [label="Bacteroidetes"];
 	Bacteria -> BacteriaBacteroidetes;
-	BacteroidaceaeBacteroides [label="Bacteroides", color="green", style=filled];
+	BacteroidaceaeBacteroides [label="Bacteroides", color="#C57B7B", style=filled];
 	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
 	BacteroidaceaeBacteroides [label="Bacteroides"];
 	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;

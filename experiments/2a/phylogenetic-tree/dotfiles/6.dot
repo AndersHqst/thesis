@@ -1,5 +1,5 @@
 digraph G { 
-	RuminococcaceaeAcetanaerobacterium [label="Acetanaerobacterium", color="green", style=filled];
+	RuminococcaceaeAcetanaerobacterium [label="Acetanaerobacterium", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeAcetanaerobacterium [label="Acetanaerobacterium"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeAcetanaerobacterium;
@@ -15,11 +15,11 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaFirmicutes [label="Firmicutes"];
 	Bacteria -> BacteriaFirmicutes;
-	RuminococcaceaeSporobacter [label="Sporobacter", color="green", style=filled];
+	RuminococcaceaeSporobacter [label="Sporobacter", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeSporobacter [label="Sporobacter"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeSporobacter;
-	Porphyromonadaceaeunclassified [label="unclassified", color="green", style=filled];
+	Porphyromonadaceaeunclassified [label="unclassified", color="#43AC43", style=filled];
 	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
 	Porphyromonadaceaeunclassified [label="unclassified"];
 	BacteroidalesPorphyromonadaceae -> Porphyromonadaceaeunclassified;
@@ -35,7 +35,7 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaBacteroidetes [label="Bacteroidetes"];
 	Bacteria -> BacteriaBacteroidetes;
-	PorphyromonadaceaeBarnesiella [label="Barnesiella", color="green", style=filled];
+	PorphyromonadaceaeBarnesiella [label="Barnesiella", color="#43AC43", style=filled];
 	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
 	PorphyromonadaceaeBarnesiella [label="Barnesiella"];
 	BacteroidalesPorphyromonadaceae -> PorphyromonadaceaeBarnesiella;

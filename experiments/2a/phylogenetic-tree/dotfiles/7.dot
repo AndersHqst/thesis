@@ -1,5 +1,5 @@
 digraph G { 
-	RuminococcaceaeOscillibacter [label="Oscillibacter", color="green", style=filled];
+	RuminococcaceaeOscillibacter [label="Oscillibacter", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeOscillibacter [label="Oscillibacter"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeOscillibacter;
@@ -15,18 +15,18 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaFirmicutes [label="Firmicutes"];
 	Bacteria -> BacteriaFirmicutes;
-	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="green", style=filled];
+	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeAnaerotruncus [label="Anaerotruncus"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeAnaerotruncus;
-	Incertae_Sedis_XIIIAnaerovorax [label="Anaerovorax", color="green", style=filled];
+	Incertae_Sedis_XIIIAnaerovorax [label="Anaerovorax", color="#43AC43", style=filled];
 	ClostridialesIncertae_Sedis_XIII [label="Incertae_Sedis_XIII"];
 	Incertae_Sedis_XIIIAnaerovorax [label="Anaerovorax"];
 	ClostridialesIncertae_Sedis_XIII -> Incertae_Sedis_XIIIAnaerovorax;
 	ClostridiaClostridiales [label="Clostridiales"];
 	ClostridialesIncertae_Sedis_XIII [label="Incertae_Sedis_XIII"];
 	ClostridiaClostridiales -> ClostridialesIncertae_Sedis_XIII;
-	CoriobacteriaceaeCollinsella [label="Collinsella", color="green", style=filled];
+	CoriobacteriaceaeCollinsella [label="Collinsella", color="#43AC43", style=filled];
 	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
 	CoriobacteriaceaeCollinsella [label="Collinsella"];
 	CoriobacterialesCoriobacteriaceae -> CoriobacteriaceaeCollinsella;

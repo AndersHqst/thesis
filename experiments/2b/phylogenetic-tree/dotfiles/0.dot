@@ -1,5 +1,5 @@
 digraph G { 
-	Ruminococcaceaeunclassified [label="unclassified", color="green", style=filled];
+	Ruminococcaceaeunclassified [label="unclassified", color="#C57B7B", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	Ruminococcaceaeunclassified [label="unclassified"];
 	ClostridialesRuminococcaceae -> Ruminococcaceaeunclassified;
@@ -15,7 +15,7 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaFirmicutes [label="Firmicutes"];
 	Bacteria -> BacteriaFirmicutes;
-	BacteroidaceaeBacteroides [label="Bacteroides", color="green", style=filled];
+	BacteroidaceaeBacteroides [label="Bacteroides", color="#C57B7B", style=filled];
 	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
 	BacteroidaceaeBacteroides [label="Bacteroides"];
 	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;

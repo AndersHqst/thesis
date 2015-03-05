@@ -1,5 +1,5 @@
 digraph G { 
-	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="green", style=filled];
+	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeAnaerotruncus [label="Anaerotruncus"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeAnaerotruncus;
@@ -15,22 +15,22 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaFirmicutes [label="Firmicutes"];
 	Bacteria -> BacteriaFirmicutes;
-	Ruminococcaceaeunclassified [label="unclassified", color="green", style=filled];
+	Ruminococcaceaeunclassified [label="unclassified", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	Ruminococcaceaeunclassified [label="unclassified"];
 	ClostridialesRuminococcaceae -> Ruminococcaceaeunclassified;
-	Incertae_Sedis_XIIIunclassified [label="unclassified", color="green", style=filled];
+	Incertae_Sedis_XIIIunclassified [label="unclassified", color="#43AC43", style=filled];
 	ClostridialesIncertae_Sedis_XIII [label="Incertae_Sedis_XIII"];
 	Incertae_Sedis_XIIIunclassified [label="unclassified"];
 	ClostridialesIncertae_Sedis_XIII -> Incertae_Sedis_XIIIunclassified;
 	ClostridiaClostridiales [label="Clostridiales"];
 	ClostridialesIncertae_Sedis_XIII [label="Incertae_Sedis_XIII"];
 	ClostridiaClostridiales -> ClostridialesIncertae_Sedis_XIII;
-	Incertae_Sedis_XIIIAnaerovorax [label="Anaerovorax", color="green", style=filled];
+	Incertae_Sedis_XIIIAnaerovorax [label="Anaerovorax", color="#43AC43", style=filled];
 	ClostridialesIncertae_Sedis_XIII [label="Incertae_Sedis_XIII"];
 	Incertae_Sedis_XIIIAnaerovorax [label="Anaerovorax"];
 	ClostridialesIncertae_Sedis_XIII -> Incertae_Sedis_XIIIAnaerovorax;
-	VerrucomicrobiaceaeAkkermansia [label="Akkermansia", color="green", style=filled];
+	VerrucomicrobiaceaeAkkermansia [label="Akkermansia", color="#43AC43", style=filled];
 	VerrucomicrobialesVerrucomicrobiaceae [label="Verrucomicrobiaceae"];
 	VerrucomicrobiaceaeAkkermansia [label="Akkermansia"];
 	VerrucomicrobialesVerrucomicrobiaceae -> VerrucomicrobiaceaeAkkermansia;
@@ -46,7 +46,7 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaVerrucomicrobia [label="Verrucomicrobia"];
 	Bacteria -> BacteriaVerrucomicrobia;
-	BacteroidaceaeBacteroides [label="Bacteroides", color="red", style=filled];
+	BacteroidaceaeBacteroides [label="Bacteroides", color="#C57B7B", style=filled];
 	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
 	BacteroidaceaeBacteroides [label="Bacteroides"];
 	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;

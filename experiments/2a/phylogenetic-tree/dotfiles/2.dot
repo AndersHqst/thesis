@@ -1,20 +1,20 @@
 digraph G { 
-	Lachnospiraceaeunclassified [label="unclassified", color="green", style=filled];
+	Lachnospiraceaeunclassified [label="unclassified", color="#43AC43", style=filled];
 	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
 	Lachnospiraceaeunclassified [label="unclassified"];
 	ClostridialesLachnospiraceae -> Lachnospiraceaeunclassified;
 	ClostridiaClostridiales [label="Clostridiales"];
 	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
 	ClostridiaClostridiales -> ClostridialesLachnospiraceae;
-	LachnospiraceaeRoseburia [label="Roseburia", color="green", style=filled];
+	LachnospiraceaeRoseburia [label="Roseburia", color="#43AC43", style=filled];
 	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
 	LachnospiraceaeRoseburia [label="Roseburia"];
 	ClostridialesLachnospiraceae -> LachnospiraceaeRoseburia;
-	LachnospiraceaeCoprococcus [label="Coprococcus", color="green", style=filled];
+	LachnospiraceaeCoprococcus [label="Coprococcus", color="#43AC43", style=filled];
 	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
 	LachnospiraceaeCoprococcus [label="Coprococcus"];
 	ClostridialesLachnospiraceae -> LachnospiraceaeCoprococcus;
-	RuminococcaceaeButyricicoccus [label="Butyricicoccus", color="green", style=filled];
+	RuminococcaceaeButyricicoccus [label="Butyricicoccus", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeButyricicoccus [label="Butyricicoccus"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeButyricicoccus;

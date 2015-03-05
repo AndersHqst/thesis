@@ -5,6 +5,8 @@ Class and specialized functions to build and work with a bacteria family tree.
 import numpy as np
 from utils.dataset_helpers import abundance_matrix
 
+NODE_GREEN_COLOR = '#43AC43'
+NODE_RED_COLOR = '#C57B7B'
 class Node(object):
     def __init__(self, tree):
         super(Node, self).__init__()
@@ -58,9 +60,9 @@ class Node(object):
 
     def digraph_to_ancestor(self, ancestor, co_excluded=[]):
 
-        color = 'green'
+        color = NODE_GREEN_COLOR
         if self.name in co_excluded:
-            color = 'red'
+            color = NODE_RED_COLOR
 
         # Node names are not unique so use the label to set the node text
         unique_node_name = self.name.replace("|","").replace('/','')
@@ -541,6 +543,91 @@ class Tree(object):
         self.clear_node_tags()
 
         return digraph
+
+
+    def simple_node_name(self, clade):
+        chunks = clade.split('|')
+        name = ''
+        if chunks[-1] == 'unclassified':
+            name = '_'.join(chunks)
+        else:
+            name = chunks[-1]
+        return name
+
+
+    def dot_graph_for_summary(self, summary):
+        """
+        Specialized method to produce a graph
+        file for the dot program in graphviz.
+
+        Pass in a summary as jagged list of tuples.
+        Tuples contain a list of the items in a pattern,
+        and a list of co-excluded items
+        Each pattern will be assigned a unique color,
+        and all nodes the same color.
+
+        :param Summary: Summary [[a,b,c], [c,d], ...]
+        :return: A Graph string in the dot syntax
+        """
+        from itertools import combinations
+        import random
+
+        base_colors = ['#800000', '#ff0000', '#ffA500', '#ffff00', '#808000', '#800080', '#ff00ff', '#00ff00', '#008000', '#000080', '#0000ff', '#00ffff', '#008080', '#000000', '#c0c0c0']
+
+        # Create set of all unique names
+        # we have been provided.
+
+        graph = 'graph G { \n'
+
+        for index, (pattern, co_excluded) in enumerate(summary):
+
+            graph += '\n'
+            graph += '//Pattern: %i\n' % index
+
+            for item in pattern:
+                name = self.simple_node_name(item)
+
+                node_color = NODE_GREEN_COLOR
+                if item in co_excluded:
+                    node_color = NODE_RED_COLOR
+
+                graph += '%s [color="%s", style=filled]\n' % (name, node_color)
+
+            edge_color = ''
+            if len(base_colors) > 0:
+                edge_color = base_colors.pop()
+            else:
+                r = lambda: random.randint(0,255)
+                edge_color = ('#%02X%02X%02X' % (r(),r(),r()))
+            graph += 'edge [color=\"%s\", penwidth=3, label="%d"]\n' % (edge_color, index+1)
+            graph += self.simple_node_name(pattern[0])
+            for item in pattern[1:]:
+                graph += ' -- %s' % self.simple_node_name(item)
+
+
+        #
+        # for index, pattern in enumerate(clean_summary):
+        #     graph += '\n'
+        #     graph += '//Pattern: %i\n' % index
+        #
+        #     # Color the edge, use a random color if out of
+        #     # base colors
+        #     hex_color = ''
+        #     if len(base_colors) > 0:
+        #         hex_color = base_colors.pop()
+        #     else:
+        #         r = lambda: random.randint(0,255)
+        #         hex_color = ('#%02X%02X%02X' % (r(),r(),r()))
+        #     graph += 'edge [color=\"%s\", penwidth=3]\n' % hex_color
+        #     graph += pattern[0]
+        #     for item in pattern[1:]:
+        #         graph += ' -- %s' % item
+        #     # for comb in combinations(pattern, 2):
+        #     #     graph += '%s -- %s\n' % (comb[0], comb[1])
+
+        graph += '}'
+
+        return graph
 
 
 def test_tree():

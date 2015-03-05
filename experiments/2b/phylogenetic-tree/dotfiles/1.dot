@@ -1,5 +1,5 @@
 digraph G { 
-	RuminococcaceaeSubdoligranulum [label="Subdoligranulum", color="green", style=filled];
+	RuminococcaceaeSubdoligranulum [label="Subdoligranulum", color="#C57B7B", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeSubdoligranulum [label="Subdoligranulum"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeSubdoligranulum;
@@ -15,7 +15,7 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaFirmicutes [label="Firmicutes"];
 	Bacteria -> BacteriaFirmicutes;
-	Prevotellaceaeunclassified [label="unclassified", color="green", style=filled];
+	Prevotellaceaeunclassified [label="unclassified", color="#C57B7B", style=filled];
 	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
 	Prevotellaceaeunclassified [label="unclassified"];
 	BacteroidalesPrevotellaceae -> Prevotellaceaeunclassified;
@@ -31,7 +31,7 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaBacteroidetes [label="Bacteroidetes"];
 	Bacteria -> BacteriaBacteroidetes;
-	BacteroidaceaeBacteroides [label="Bacteroides", color="green", style=filled];
+	BacteroidaceaeBacteroides [label="Bacteroides", color="#C57B7B", style=filled];
 	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
 	BacteroidaceaeBacteroides [label="Bacteroides"];
 	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;

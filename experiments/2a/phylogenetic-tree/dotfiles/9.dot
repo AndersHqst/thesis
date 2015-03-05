@@ -1,23 +1,23 @@
 digraph G { 
-	LachnospiraceaePseudobutyrivibrio [label="Pseudobutyrivibrio", color="green", style=filled];
+	LachnospiraceaePseudobutyrivibrio [label="Pseudobutyrivibrio", color="#43AC43", style=filled];
 	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
 	LachnospiraceaePseudobutyrivibrio [label="Pseudobutyrivibrio"];
 	ClostridialesLachnospiraceae -> LachnospiraceaePseudobutyrivibrio;
 	ClostridiaClostridiales [label="Clostridiales"];
 	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
 	ClostridiaClostridiales -> ClostridialesLachnospiraceae;
-	Lachnospiraceaeunclassified [label="unclassified", color="green", style=filled];
+	Lachnospiraceaeunclassified [label="unclassified", color="#43AC43", style=filled];
 	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
 	Lachnospiraceaeunclassified [label="unclassified"];
 	ClostridialesLachnospiraceae -> Lachnospiraceaeunclassified;
-	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="green", style=filled];
+	RuminococcaceaeAnaerotruncus [label="Anaerotruncus", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeAnaerotruncus [label="Anaerotruncus"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeAnaerotruncus;
 	ClostridiaClostridiales [label="Clostridiales"];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
-	RuminococcaceaeFaecalibacterium [label="Faecalibacterium", color="green", style=filled];
+	RuminococcaceaeFaecalibacterium [label="Faecalibacterium", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeFaecalibacterium [label="Faecalibacterium"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeFaecalibacterium;

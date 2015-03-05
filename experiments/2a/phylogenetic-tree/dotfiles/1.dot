@@ -1,5 +1,5 @@
 digraph G { 
-	ErysipelotrichaceaeTuricibacter [label="Turicibacter", color="green", style=filled];
+	ErysipelotrichaceaeTuricibacter [label="Turicibacter", color="#43AC43", style=filled];
 	ErysipelotrichalesErysipelotrichaceae [label="Erysipelotrichaceae"];
 	ErysipelotrichaceaeTuricibacter [label="Turicibacter"];
 	ErysipelotrichalesErysipelotrichaceae -> ErysipelotrichaceaeTuricibacter;
@@ -12,7 +12,7 @@ digraph G {
 	BacteriaFirmicutes [label="Firmicutes"];
 	FirmicutesErysipelotrichi [label="Erysipelotrichi"];
 	BacteriaFirmicutes -> FirmicutesErysipelotrichi;
-	ClostridiaceaeClostridium [label="Clostridium", color="green", style=filled];
+	ClostridiaceaeClostridium [label="Clostridium", color="#43AC43", style=filled];
 	ClostridialesClostridiaceae [label="Clostridiaceae"];
 	ClostridiaceaeClostridium [label="Clostridium"];
 	ClostridialesClostridiaceae -> ClostridiaceaeClostridium;
@@ -25,14 +25,14 @@ digraph G {
 	BacteriaFirmicutes [label="Firmicutes"];
 	FirmicutesClostridia [label="Clostridia"];
 	BacteriaFirmicutes -> FirmicutesClostridia;
-	PeptostreptococcaceaeSporacetigenium [label="Sporacetigenium", color="green", style=filled];
+	PeptostreptococcaceaeSporacetigenium [label="Sporacetigenium", color="#43AC43", style=filled];
 	ClostridialesPeptostreptococcaceae [label="Peptostreptococcaceae"];
 	PeptostreptococcaceaeSporacetigenium [label="Sporacetigenium"];
 	ClostridialesPeptostreptococcaceae -> PeptostreptococcaceaeSporacetigenium;
 	ClostridiaClostridiales [label="Clostridiales"];
 	ClostridialesPeptostreptococcaceae [label="Peptostreptococcaceae"];
 	ClostridiaClostridiales -> ClostridialesPeptostreptococcaceae;
-	Peptostreptococcaceaeunclassified [label="unclassified", color="green", style=filled];
+	Peptostreptococcaceaeunclassified [label="unclassified", color="#43AC43", style=filled];
 	ClostridialesPeptostreptococcaceae [label="Peptostreptococcaceae"];
 	Peptostreptococcaceaeunclassified [label="unclassified"];
 	ClostridialesPeptostreptococcaceae -> Peptostreptococcaceaeunclassified;

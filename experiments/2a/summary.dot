@@ -1,0 +1,72 @@
+graph G { 
+
+//Pattern: 0
+Oscillibacter [color="#43AC43", style=filled]
+Ruminococcaceae_unclassified [color="#43AC43", style=filled]
+Ruminococcus [color="#43AC43", style=filled]
+Sporobacter [color="#43AC43", style=filled]
+edge [color="#c0c0c0", penwidth=3, label="1"]
+Oscillibacter -- Ruminococcaceae_unclassified -- Ruminococcus -- Sporobacter
+//Pattern: 1
+Turicibacter [color="#43AC43", style=filled]
+Clostridium [color="#43AC43", style=filled]
+Sporacetigenium [color="#43AC43", style=filled]
+Peptostreptococcaceae_unclassified [color="#43AC43", style=filled]
+edge [color="#000000", penwidth=3, label="2"]
+Turicibacter -- Clostridium -- Sporacetigenium -- Peptostreptococcaceae_unclassified
+//Pattern: 2
+Lachnospiraceae_unclassified [color="#43AC43", style=filled]
+Roseburia [color="#43AC43", style=filled]
+Coprococcus [color="#43AC43", style=filled]
+Butyricicoccus [color="#43AC43", style=filled]
+edge [color="#008080", penwidth=3, label="3"]
+Lachnospiraceae_unclassified -- Roseburia -- Coprococcus -- Butyricicoccus
+//Pattern: 3
+Prevotella [color="#43AC43", style=filled]
+Prevotellaceae_unclassified [color="#43AC43", style=filled]
+Coriobacteriaceae_unclassified [color="#43AC43", style=filled]
+Collinsella [color="#43AC43", style=filled]
+edge [color="#00ffff", penwidth=3, label="4"]
+Prevotella -- Prevotellaceae_unclassified -- Coriobacteriaceae_unclassified -- Collinsella
+//Pattern: 4
+Butyricimonas [color="#43AC43", style=filled]
+Barnesiella [color="#43AC43", style=filled]
+Prevotellaceae_unclassified [color="#43AC43", style=filled]
+Paraprevotella [color="#43AC43", style=filled]
+edge [color="#0000ff", penwidth=3, label="5"]
+Butyricimonas -- Barnesiella -- Prevotellaceae_unclassified -- Paraprevotella
+//Pattern: 5
+Anaerostipes [color="#43AC43", style=filled]
+Dorea [color="#43AC43", style=filled]
+Coprococcus [color="#43AC43", style=filled]
+Blautia [color="#43AC43", style=filled]
+edge [color="#000080", penwidth=3, label="6"]
+Anaerostipes -- Dorea -- Coprococcus -- Blautia
+//Pattern: 6
+Acetanaerobacterium [color="#43AC43", style=filled]
+Sporobacter [color="#43AC43", style=filled]
+Porphyromonadaceae_unclassified [color="#43AC43", style=filled]
+Barnesiella [color="#43AC43", style=filled]
+edge [color="#008000", penwidth=3, label="7"]
+Acetanaerobacterium -- Sporobacter -- Porphyromonadaceae_unclassified -- Barnesiella
+//Pattern: 7
+Oscillibacter [color="#43AC43", style=filled]
+Anaerotruncus [color="#43AC43", style=filled]
+Anaerovorax [color="#43AC43", style=filled]
+Collinsella [color="#43AC43", style=filled]
+edge [color="#00ff00", penwidth=3, label="8"]
+Oscillibacter -- Anaerotruncus -- Anaerovorax -- Collinsella
+//Pattern: 8
+Turicibacter [color="#43AC43", style=filled]
+Veillonella [color="#43AC43", style=filled]
+Haemophilus [color="#43AC43", style=filled]
+Pasteurellaceae_unclassified [color="#43AC43", style=filled]
+edge [color="#ff00ff", penwidth=3, label="9"]
+Turicibacter -- Veillonella -- Haemophilus -- Pasteurellaceae_unclassified
+//Pattern: 9
+Pseudobutyrivibrio [color="#43AC43", style=filled]
+Lachnospiraceae_unclassified [color="#43AC43", style=filled]
+Anaerotruncus [color="#43AC43", style=filled]
+Faecalibacterium [color="#43AC43", style=filled]
+edge [color="#800080", penwidth=3, label="10"]
+Pseudobutyrivibrio -- Lachnospiraceae_unclassified -- Anaerotruncus -- Faecalibacterium}
