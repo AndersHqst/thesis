@@ -1,7 +1,7 @@
-import numpy as np
 import os
 
 def pairwise_remove_highest_values(amount, values, pair_list, remove_zero_pairs=False):
+
     """
     Removes highest percentage of some values
     and removes to corresponding indeces in a paired list
@@ -35,6 +35,7 @@ def pairwise_remove_highest_values(amount, values, pair_list, remove_zero_pairs=
     return list_a, list_b
 
 def abundance_matrix(matrix):
+    import numpy as np
     """ Return the submatrix of abundances"""
     # From row 1, from column 2
     try:
@@ -45,6 +46,7 @@ def abundance_matrix(matrix):
 
 
 def replace_abundance_matrix(dataset, replacement):
+    import numpy as np
     """
     Replace the abundance matrix of a dataset
     :param dataset: Dataset
