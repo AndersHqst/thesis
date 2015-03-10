@@ -1,0 +1,24 @@
+digraph G { 
+	RuminococcaceaePapillibacter [label="Papillibacter", color="#43AC43", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaePapillibacter [label="Papillibacter"];
+	ClostridialesRuminococcaceae -> RuminococcaceaePapillibacter;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	Clostridiaceaeunclassified [label="unclassified", color="#43AC43", style=filled];
+	ClostridialesClostridiaceae [label="Clostridiaceae"];
+	Clostridiaceaeunclassified [label="unclassified"];
+	ClostridialesClostridiaceae -> Clostridiaceaeunclassified;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesClostridiaceae [label="Clostridiaceae"];
+	ClostridiaClostridiales -> ClostridialesClostridiaceae;
+	Peptococcaceaeunclassified [label="unclassified", color="#43AC43", style=filled];
+	ClostridialesPeptococcaceae [label="Peptococcaceae"];
+	Peptococcaceaeunclassified [label="unclassified"];
+	ClostridialesPeptococcaceae -> Peptococcaceaeunclassified;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesPeptococcaceae [label="Peptococcaceae"];
+	ClostridiaClostridiales -> ClostridialesPeptococcaceae;
+
+ }

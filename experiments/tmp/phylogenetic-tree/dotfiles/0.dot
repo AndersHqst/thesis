@@ -1,15 +1,29 @@
 digraph G { 
-	RuminococcaceaeOscillibacter [label="Oscillibacter", color="green", style=filled];
+	RuminococcaceaeOscillibacter [label="Oscillibacter", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeOscillibacter [label="Oscillibacter"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeOscillibacter;
-	Ruminococcaceaeunclassified [label="unclassified", color="green", style=filled];
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	Ruminococcaceaeunclassified [label="unclassified", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	Ruminococcaceaeunclassified [label="unclassified"];
 	ClostridialesRuminococcaceae -> Ruminococcaceaeunclassified;
-	RuminococcaceaeSporobacter [label="Sporobacter", color="green", style=filled];
+	RuminococcaceaeRuminococcus [label="Ruminococcus", color="#43AC43", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeRuminococcus [label="Ruminococcus"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeRuminococcus;
+	RuminococcaceaeSporobacter [label="Sporobacter", color="#43AC43", style=filled];
 	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
 	RuminococcaceaeSporobacter [label="Sporobacter"];
 	ClostridialesRuminococcaceae -> RuminococcaceaeSporobacter;
+	Incertae_Sedis_XIIIAnaerovorax [label="Anaerovorax", color="#43AC43", style=filled];
+	ClostridialesIncertae_Sedis_XIII [label="Incertae_Sedis_XIII"];
+	Incertae_Sedis_XIIIAnaerovorax [label="Anaerovorax"];
+	ClostridialesIncertae_Sedis_XIII -> Incertae_Sedis_XIIIAnaerovorax;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesIncertae_Sedis_XIII [label="Incertae_Sedis_XIII"];
+	ClostridiaClostridiales -> ClostridialesIncertae_Sedis_XIII;
 
  }

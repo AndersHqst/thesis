@@ -1,0 +1,36 @@
+digraph G { 
+	ErysipelotrichaceaeCoprobacillus [label="Coprobacillus", color="#43AC43", style=filled];
+	ErysipelotrichalesErysipelotrichaceae [label="Erysipelotrichaceae"];
+	ErysipelotrichaceaeCoprobacillus [label="Coprobacillus"];
+	ErysipelotrichalesErysipelotrichaceae -> ErysipelotrichaceaeCoprobacillus;
+	ErysipelotrichiErysipelotrichales [label="Erysipelotrichales"];
+	ErysipelotrichalesErysipelotrichaceae [label="Erysipelotrichaceae"];
+	ErysipelotrichiErysipelotrichales -> ErysipelotrichalesErysipelotrichaceae;
+	FirmicutesErysipelotrichi [label="Erysipelotrichi"];
+	ErysipelotrichiErysipelotrichales [label="Erysipelotrichales"];
+	FirmicutesErysipelotrichi -> ErysipelotrichiErysipelotrichales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesErysipelotrichi [label="Erysipelotrichi"];
+	BacteriaFirmicutes -> FirmicutesErysipelotrichi;
+	RuminococcaceaeButyricicoccus [label="Butyricicoccus", color="#43AC43", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeButyricicoccus [label="Butyricicoccus"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeButyricicoccus;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Incertae_Sedis_XIVBlautia [label="Blautia", color="#43AC43", style=filled];
+	ClostridialesIncertae_Sedis_XIV [label="Incertae_Sedis_XIV"];
+	Incertae_Sedis_XIVBlautia [label="Blautia"];
+	ClostridialesIncertae_Sedis_XIV -> Incertae_Sedis_XIVBlautia;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesIncertae_Sedis_XIV [label="Incertae_Sedis_XIV"];
+	ClostridiaClostridiales -> ClostridialesIncertae_Sedis_XIV;
+
+ }

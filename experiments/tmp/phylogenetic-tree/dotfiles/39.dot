@@ -1,0 +1,39 @@
+digraph G { 
+	VeillonellaceaeAcidaminococcus [label="Acidaminococcus", color="#43AC43", style=filled];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	VeillonellaceaeAcidaminococcus [label="Acidaminococcus"];
+	ClostridialesVeillonellaceae -> VeillonellaceaeAcidaminococcus;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	ClostridiaClostridiales -> ClostridialesVeillonellaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	AlcaligenaceaeSutterella [label="Sutterella", color="#43AC43", style=filled];
+	BurkholderialesAlcaligenaceae [label="Alcaligenaceae"];
+	AlcaligenaceaeSutterella [label="Sutterella"];
+	BurkholderialesAlcaligenaceae -> AlcaligenaceaeSutterella;
+	BetaproteobacteriaBurkholderiales [label="Burkholderiales"];
+	BurkholderialesAlcaligenaceae [label="Alcaligenaceae"];
+	BetaproteobacteriaBurkholderiales -> BurkholderialesAlcaligenaceae;
+	ProteobacteriaBetaproteobacteria [label="Betaproteobacteria"];
+	BetaproteobacteriaBurkholderiales [label="Burkholderiales"];
+	ProteobacteriaBetaproteobacteria -> BetaproteobacteriaBurkholderiales;
+	BacteriaProteobacteria [label="Proteobacteria"];
+	ProteobacteriaBetaproteobacteria [label="Betaproteobacteria"];
+	BacteriaProteobacteria -> ProteobacteriaBetaproteobacteria;
+	Bacteria [label="Bacteria"];
+	BacteriaProteobacteria [label="Proteobacteria"];
+	Bacteria -> BacteriaProteobacteria;
+	Alcaligenaceaeunclassified [label="unclassified", color="#43AC43", style=filled];
+	BurkholderialesAlcaligenaceae [label="Alcaligenaceae"];
+	Alcaligenaceaeunclassified [label="unclassified"];
+	BurkholderialesAlcaligenaceae -> Alcaligenaceaeunclassified;
+
+ }

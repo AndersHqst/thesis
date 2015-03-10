@@ -1,0 +1,122 @@
+graph G { 
+
+
+	//Pattern: 0
+	Oscillibacter
+	Ruminococcaceae_unclassified
+	Ruminococcus
+	Sporobacter
+	Anaerovorax
+	edge [color="#c0c0c0", penwidth=3, label="1", fontcolor="#43AC43"]
+	Oscillibacter -- Ruminococcaceae_unclassified -- Ruminococcus -- Sporobacter -- Anaerovorax
+
+	//Pattern: 1
+	Lachnospiraceae_unclassified
+	Dorea
+	Roseburia
+	Coprococcus
+	Blautia
+	edge [color="#000000", penwidth=3, label="2", fontcolor="#43AC43"]
+	Lachnospiraceae_unclassified -- Dorea -- Roseburia -- Coprococcus -- Blautia
+
+	//Pattern: 2
+	Oscillibacter
+	Butyricimonas
+	Porphyromonadaceae_unclassified
+	Barnesiella
+	Rikenellaceae_unclassified
+	edge [color="#008080", penwidth=3, label="3", fontcolor="#43AC43"]
+	Oscillibacter -- Butyricimonas -- Porphyromonadaceae_unclassified -- Barnesiella -- Rikenellaceae_unclassified
+
+	//Pattern: 3
+	Coprococcus
+	Acetivibrio
+	Faecalibacterium
+	Subdoligranulum
+	Sporobacter
+	edge [color="#00ffff", penwidth=3, label="4", fontcolor="#43AC43"]
+	Coprococcus -- Acetivibrio -- Faecalibacterium -- Subdoligranulum -- Sporobacter
+
+	//Pattern: 4
+	Coprobacillus
+	Anaerostipes
+	Coprococcus
+	Butyricicoccus
+	Blautia
+	edge [color="#0000ff", penwidth=3, label="5", fontcolor="#43AC43"]
+	Coprobacillus -- Anaerostipes -- Coprococcus -- Butyricicoccus -- Blautia
+
+	//Pattern: 5
+	Oscillibacter
+	Anaerotruncus
+	Ruminococcaceae_unclassified
+	Streptococcus
+	Collinsella
+	edge [color="#000080", penwidth=3, label="6", fontcolor="#43AC43"]
+	Oscillibacter -- Anaerotruncus -- Ruminococcaceae_unclassified -- Streptococcus -- Collinsella
+
+	//Pattern: 6
+	Anaerotruncus
+	Anaerovorax
+	Rikenellaceae_unclassified
+	Alistipes
+	Akkermansia
+	edge [color="#008000", penwidth=3, label="7", fontcolor="#43AC43"]
+	Anaerotruncus -- Anaerovorax -- Rikenellaceae_unclassified -- Alistipes -- Akkermansia
+
+	//Pattern: 7
+	Phascolarctobacterium
+	Dialister
+	edge [color="#00ff00", penwidth=3, label="8", fontcolor="red"]
+	Phascolarctobacterium -- Dialister
+
+	//Pattern: 8
+	Veillonellaceae_unclassified
+	Prevotella
+	Bacteroides
+	edge [color="#ff00ff", penwidth=3, label="9", fontcolor="red"]
+	Veillonellaceae_unclassified -- Prevotella -- Bacteroides
+
+	//Pattern: 9
+	Sutterella
+	Parasutterella
+	edge [color="#800080", penwidth=3, label="10", fontcolor="red"]
+	Sutterella -- Parasutterella
+
+	//Pattern: 10
+	Veillonellaceae_unclassified
+	Dialister
+	Parabacteroides
+	Bacteroides
+	edge [color="#808000", penwidth=3, label="11", fontcolor="#43AC43"]
+	Veillonellaceae_unclassified -- Dialister -- Parabacteroides -- Bacteroides
+
+	//Pattern: 11
+	Eubacterium
+	Veillonellaceae_unclassified
+	Sutterella
+	Odoribacter
+	Prevotella
+	edge [color="#ffff00", penwidth=3, label="12", fontcolor="#43AC43"]
+	Eubacterium -- Veillonellaceae_unclassified -- Sutterella -- Odoribacter -- Prevotella
+
+	//Pattern: 12
+	Veillonella
+	Phascolarctobacterium
+	Odoribacter
+	Bacteroides
+	edge [color="#ffA500", penwidth=3, label="13", fontcolor="#43AC43"]
+	Veillonella -- Phascolarctobacterium -- Odoribacter -- Bacteroides
+
+	//Pattern: 13
+	Holdemania
+	Phascolarctobacterium
+	Veillonellaceae_unclassified
+	edge [color="#ff0000", penwidth=3, label="14", fontcolor="#43AC43"]
+	Holdemania -- Phascolarctobacterium -- Veillonellaceae_unclassified
+
+	//Pattern: 14
+	Erysipelotrichaceae_unclassified
+	Sporacetigenium
+	edge [color="#800000", penwidth=3, label="15", fontcolor="#43AC43"]
+	Erysipelotrichaceae_unclassified -- Sporacetigenium}

@@ -1,0 +1,42 @@
+digraph G { 
+	RuminococcaceaeHydrogenoanaerobacterium [label="Hydrogenoanaerobacterium", color="#43AC43", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeHydrogenoanaerobacterium [label="Hydrogenoanaerobacterium"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeHydrogenoanaerobacterium;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	Incertae_Sedis_XIIIunclassified [label="unclassified", color="#43AC43", style=filled];
+	ClostridialesIncertae_Sedis_XIII [label="Incertae_Sedis_XIII"];
+	Incertae_Sedis_XIIIunclassified [label="unclassified"];
+	ClostridialesIncertae_Sedis_XIII -> Incertae_Sedis_XIIIunclassified;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesIncertae_Sedis_XIII [label="Incertae_Sedis_XIII"];
+	ClostridiaClostridiales -> ClostridialesIncertae_Sedis_XIII;
+	Coriobacteriaceaeunclassified [label="unclassified", color="#43AC43", style=filled];
+	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
+	Coriobacteriaceaeunclassified [label="unclassified"];
+	CoriobacterialesCoriobacteriaceae -> Coriobacteriaceaeunclassified;
+	ActinobacteriaCoriobacteriales [label="Coriobacteriales"];
+	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
+	ActinobacteriaCoriobacteriales -> CoriobacterialesCoriobacteriaceae;
+	ActinobacteriaActinobacteria [label="Actinobacteria"];
+	ActinobacteriaCoriobacteriales [label="Coriobacteriales"];
+	ActinobacteriaActinobacteria -> ActinobacteriaCoriobacteriales;
+	BacteriaActinobacteria [label="Actinobacteria"];
+	ActinobacteriaActinobacteria [label="Actinobacteria"];
+	BacteriaActinobacteria -> ActinobacteriaActinobacteria;
+	Bacteria [label="Bacteria"];
+	BacteriaActinobacteria [label="Actinobacteria"];
+	Bacteria -> BacteriaActinobacteria;
+
+ }

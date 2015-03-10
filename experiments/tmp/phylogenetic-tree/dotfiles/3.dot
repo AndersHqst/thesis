@@ -1,15 +1,29 @@
 digraph G { 
-	PorphyromonadaceaeButyricimonas [label="Butyricimonas", color="green", style=filled];
-	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
-	PorphyromonadaceaeButyricimonas [label="Butyricimonas"];
-	BacteroidalesPorphyromonadaceae -> PorphyromonadaceaeButyricimonas;
-	Porphyromonadaceaeunclassified [label="unclassified", color="green", style=filled];
-	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
-	Porphyromonadaceaeunclassified [label="unclassified"];
-	BacteroidalesPorphyromonadaceae -> Porphyromonadaceaeunclassified;
-	PorphyromonadaceaeBarnesiella [label="Barnesiella", color="green", style=filled];
-	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
-	PorphyromonadaceaeBarnesiella [label="Barnesiella"];
-	BacteroidalesPorphyromonadaceae -> PorphyromonadaceaeBarnesiella;
+	LachnospiraceaeCoprococcus [label="Coprococcus", color="#43AC43", style=filled];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	LachnospiraceaeCoprococcus [label="Coprococcus"];
+	ClostridialesLachnospiraceae -> LachnospiraceaeCoprococcus;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesLachnospiraceae [label="Lachnospiraceae"];
+	ClostridiaClostridiales -> ClostridialesLachnospiraceae;
+	RuminococcaceaeAcetivibrio [label="Acetivibrio", color="#43AC43", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeAcetivibrio [label="Acetivibrio"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeAcetivibrio;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	RuminococcaceaeFaecalibacterium [label="Faecalibacterium", color="#43AC43", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeFaecalibacterium [label="Faecalibacterium"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeFaecalibacterium;
+	RuminococcaceaeSubdoligranulum [label="Subdoligranulum", color="#43AC43", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeSubdoligranulum [label="Subdoligranulum"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeSubdoligranulum;
+	RuminococcaceaeSporobacter [label="Sporobacter", color="#43AC43", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeSporobacter [label="Sporobacter"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeSporobacter;
 
  }

@@ -16,8 +16,8 @@ from plots.mtv_results import plot_run_results
 
 # plot_run_results('../experiments/4/')
 # plot_run_results('../experiments/2a/')
-# plot_run_results('../experiments/2b/')
-# exit()
+plot_run_results('../experiments/tmp/')
+exit()
 
 from plots.faust_result_discretized import plot_faust_relationships
 # plot_faust_relationships(remove_highest=50)

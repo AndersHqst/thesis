@@ -1,11 +1,11 @@
 digraph G { 
-	Ruminococcaceaeunclassified [label="unclassified", color="green", style=filled];
-	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
-	Ruminococcaceaeunclassified [label="unclassified"];
-	ClostridialesRuminococcaceae -> Ruminococcaceaeunclassified;
+	Veillonellaceaeunclassified [label="unclassified", color="#C57B7B", style=filled];
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	Veillonellaceaeunclassified [label="unclassified"];
+	ClostridialesVeillonellaceae -> Veillonellaceaeunclassified;
 	ClostridiaClostridiales [label="Clostridiales"];
-	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
-	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	ClostridialesVeillonellaceae [label="Veillonellaceae"];
+	ClostridiaClostridiales -> ClostridialesVeillonellaceae;
 	FirmicutesClostridia [label="Clostridia"];
 	ClostridiaClostridiales [label="Clostridiales"];
 	FirmicutesClostridia -> ClostridiaClostridiales;
@@ -15,13 +15,13 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaFirmicutes [label="Firmicutes"];
 	Bacteria -> BacteriaFirmicutes;
-	PorphyromonadaceaeButyricimonas [label="Butyricimonas", color="green", style=filled];
-	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
-	PorphyromonadaceaeButyricimonas [label="Butyricimonas"];
-	BacteroidalesPorphyromonadaceae -> PorphyromonadaceaeButyricimonas;
+	PrevotellaceaePrevotella [label="Prevotella", color="#C57B7B", style=filled];
+	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
+	PrevotellaceaePrevotella [label="Prevotella"];
+	BacteroidalesPrevotellaceae -> PrevotellaceaePrevotella;
 	BacteroidiaBacteroidales [label="Bacteroidales"];
-	BacteroidalesPorphyromonadaceae [label="Porphyromonadaceae"];
-	BacteroidiaBacteroidales -> BacteroidalesPorphyromonadaceae;
+	BacteroidalesPrevotellaceae [label="Prevotellaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesPrevotellaceae;
 	BacteroidetesBacteroidia [label="Bacteroidia"];
 	BacteroidiaBacteroidales [label="Bacteroidales"];
 	BacteroidetesBacteroidia -> BacteroidiaBacteroidales;
@@ -31,12 +31,12 @@ digraph G {
 	Bacteria [label="Bacteria"];
 	BacteriaBacteroidetes [label="Bacteroidetes"];
 	Bacteria -> BacteriaBacteroidetes;
-	Rikenellaceaeunclassified [label="unclassified", color="green", style=filled];
-	BacteroidalesRikenellaceae [label="Rikenellaceae"];
-	Rikenellaceaeunclassified [label="unclassified"];
-	BacteroidalesRikenellaceae -> Rikenellaceaeunclassified;
+	BacteroidaceaeBacteroides [label="Bacteroides", color="#C57B7B", style=filled];
+	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
+	BacteroidaceaeBacteroides [label="Bacteroides"];
+	BacteroidalesBacteroidaceae -> BacteroidaceaeBacteroides;
 	BacteroidiaBacteroidales [label="Bacteroidales"];
-	BacteroidalesRikenellaceae [label="Rikenellaceae"];
-	BacteroidiaBacteroidales -> BacteroidalesRikenellaceae;
+	BacteroidalesBacteroidaceae [label="Bacteroidaceae"];
+	BacteroidiaBacteroidales -> BacteroidalesBacteroidaceae;
 
  }

@@ -1,0 +1,39 @@
+digraph G { 
+	RuminococcaceaeEthanoligenens [label="Ethanoligenens", color="#43AC43", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeEthanoligenens [label="Ethanoligenens"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeEthanoligenens;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	CoriobacteriaceaeAsaccharobacter [label="Asaccharobacter", color="#43AC43", style=filled];
+	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
+	CoriobacteriaceaeAsaccharobacter [label="Asaccharobacter"];
+	CoriobacterialesCoriobacteriaceae -> CoriobacteriaceaeAsaccharobacter;
+	ActinobacteriaCoriobacteriales [label="Coriobacteriales"];
+	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
+	ActinobacteriaCoriobacteriales -> CoriobacterialesCoriobacteriaceae;
+	ActinobacteriaActinobacteria [label="Actinobacteria"];
+	ActinobacteriaCoriobacteriales [label="Coriobacteriales"];
+	ActinobacteriaActinobacteria -> ActinobacteriaCoriobacteriales;
+	BacteriaActinobacteria [label="Actinobacteria"];
+	ActinobacteriaActinobacteria [label="Actinobacteria"];
+	BacteriaActinobacteria -> ActinobacteriaActinobacteria;
+	Bacteria [label="Bacteria"];
+	BacteriaActinobacteria [label="Actinobacteria"];
+	Bacteria -> BacteriaActinobacteria;
+	CoriobacteriaceaeEggerthella [label="Eggerthella", color="#43AC43", style=filled];
+	CoriobacterialesCoriobacteriaceae [label="Coriobacteriaceae"];
+	CoriobacteriaceaeEggerthella [label="Eggerthella"];
+	CoriobacterialesCoriobacteriaceae -> CoriobacteriaceaeEggerthella;
+
+ }

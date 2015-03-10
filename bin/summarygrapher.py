@@ -9,6 +9,7 @@ import itemsets
 from preprocessing.tree import Tree
 import subprocess
 from preprocessing import parser
+from utils.dataset_helpers import is_co_exclusion
 
 dir = os.path.dirname(__file__)
 
@@ -42,33 +43,6 @@ def parse_argv(argv):
         print_help()
 
     return os.path.join(dir, o), os.path.join(dir, d)
-
-
-
-def is_co_exclusion(output_folder, pattern_index):
-    """
-    Returns true if a patterns is a co-exclusion pattern
-    due to a U<1
-
-    This is not pretty, but currently the only way we can get this info
-    from the output files from MTV. A better way would be
-    to have a computer-readable file output from MTV with the
-    U values. Here we strip it from the
-    human-readable summary file
-    :param output_folder: Output folder from MTV
-    :param pattern_index: Pattern index, 0-indexed
-    :return: True if co-exclusion pattern
-    """
-
-    prev_line = ''
-    for line in open(os.path.join(output_folder, 'summary.txt'), 'rw'):
-        if len(line) > 0 and len(prev_line) > 0:
-            if line[0] == 'U' and int(prev_line[0]) == pattern_index:
-                u = float(line.replace('U', '').replace('=', ''))
-                return u < 1
-        prev_line = line
-
-    return False
 
 
 

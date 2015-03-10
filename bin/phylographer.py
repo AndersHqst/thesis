@@ -10,6 +10,7 @@ import itemsets
 from preprocessing.tree import Tree
 import subprocess
 from preprocessing import parser
+from utils.dataset_helpers import is_co_exclusion
 
 dir = os.path.dirname(__file__)
 
@@ -72,10 +73,12 @@ def main(argv):
         # Append extra set of headeres for negated values
         clade_names = itemsets.to_index_list(itemset, list(headers) + list(headers))
         co_ex = itemset >> len(headers)
-        co_excluded_clade = ''
+        co_excluded_clades = ''
         if co_ex != 0:
-            co_excluded_clade = itemsets.to_index_list(co_ex, list(headers) + list(headers))
-        di_graph = tree.dot_graph_for_clades(clade_names, co_excluded_clade)
+            co_excluded_clades = itemsets.to_index_list(co_ex, list(headers) + list(headers))
+        if is_co_exclusion(o, index):
+            co_excluded_clades = itemsets.to_index_list(itemset, list(headers) + list(headers))
+        di_graph = tree.dot_graph_for_clades(clade_names, co_excluded_clades)
 
         dot_file = os.path.join(dot_file_folder, str(index)) + '.dot'
         with open(dot_file, 'wb') as fd:

@@ -1,0 +1,48 @@
+digraph G { 
+	ErysipelotrichaceaeHoldemania [label="Holdemania", color="#43AC43", style=filled];
+	ErysipelotrichalesErysipelotrichaceae [label="Erysipelotrichaceae"];
+	ErysipelotrichaceaeHoldemania [label="Holdemania"];
+	ErysipelotrichalesErysipelotrichaceae -> ErysipelotrichaceaeHoldemania;
+	ErysipelotrichiErysipelotrichales [label="Erysipelotrichales"];
+	ErysipelotrichalesErysipelotrichaceae [label="Erysipelotrichaceae"];
+	ErysipelotrichiErysipelotrichales -> ErysipelotrichalesErysipelotrichaceae;
+	FirmicutesErysipelotrichi [label="Erysipelotrichi"];
+	ErysipelotrichiErysipelotrichales [label="Erysipelotrichales"];
+	FirmicutesErysipelotrichi -> ErysipelotrichiErysipelotrichales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesErysipelotrichi [label="Erysipelotrichi"];
+	BacteriaFirmicutes -> FirmicutesErysipelotrichi;
+	Bacteria [label="Bacteria"];
+	BacteriaFirmicutes [label="Firmicutes"];
+	Bacteria -> BacteriaFirmicutes;
+	RuminococcaceaeAcetivibrio [label="Acetivibrio", color="#43AC43", style=filled];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	RuminococcaceaeAcetivibrio [label="Acetivibrio"];
+	ClostridialesRuminococcaceae -> RuminococcaceaeAcetivibrio;
+	ClostridiaClostridiales [label="Clostridiales"];
+	ClostridialesRuminococcaceae [label="Ruminococcaceae"];
+	ClostridiaClostridiales -> ClostridialesRuminococcaceae;
+	FirmicutesClostridia [label="Clostridia"];
+	ClostridiaClostridiales [label="Clostridiales"];
+	FirmicutesClostridia -> ClostridiaClostridiales;
+	BacteriaFirmicutes [label="Firmicutes"];
+	FirmicutesClostridia [label="Clostridia"];
+	BacteriaFirmicutes -> FirmicutesClostridia;
+	BifidobacteriaceaeBifidobacterium [label="Bifidobacterium", color="#43AC43", style=filled];
+	BifidobacterialesBifidobacteriaceae [label="Bifidobacteriaceae"];
+	BifidobacteriaceaeBifidobacterium [label="Bifidobacterium"];
+	BifidobacterialesBifidobacteriaceae -> BifidobacteriaceaeBifidobacterium;
+	ActinobacteriaBifidobacteriales [label="Bifidobacteriales"];
+	BifidobacterialesBifidobacteriaceae [label="Bifidobacteriaceae"];
+	ActinobacteriaBifidobacteriales -> BifidobacterialesBifidobacteriaceae;
+	ActinobacteriaActinobacteria [label="Actinobacteria"];
+	ActinobacteriaBifidobacteriales [label="Bifidobacteriales"];
+	ActinobacteriaActinobacteria -> ActinobacteriaBifidobacteriales;
+	BacteriaActinobacteria [label="Actinobacteria"];
+	ActinobacteriaActinobacteria [label="Actinobacteria"];
+	BacteriaActinobacteria -> ActinobacteriaActinobacteria;
+	Bacteria [label="Bacteria"];
+	BacteriaActinobacteria [label="Actinobacteria"];
+	Bacteria -> BacteriaActinobacteria;
+
+ }

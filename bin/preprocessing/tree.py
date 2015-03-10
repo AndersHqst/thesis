@@ -552,6 +552,7 @@ class Tree(object):
             name = '_'.join(chunks)
         else:
             name = chunks[-1]
+        name = name.replace('/', '_or_')
         return name
 
 
@@ -582,7 +583,7 @@ class Tree(object):
         for index, (pattern, co_excluded) in enumerate(summary):
 
             graph += '\n'
-            graph += '//Pattern: %i\n' % index
+            graph += '\n\t//Pattern: %i\n' % index
 
             for item in pattern:
                 name = self.simple_node_name(item)
@@ -591,7 +592,16 @@ class Tree(object):
                 if item in co_excluded:
                     node_color = NODE_RED_COLOR
 
-                graph += '%s [color="%s", style=filled]\n' % (name, node_color)
+                # graph += '\t%s [color="%s", style=filled]\n' % (name, node_color)
+                graph += '\t%s\n' % name
+
+            # Check if this is a co-exclusion pattern
+            is_cooccurrence_pattern = False
+            for item in pattern:
+                if not item in co_excluded:
+                    is_cooccurrence_pattern = True
+                    break
+
 
             edge_color = ''
             if len(base_colors) > 0:
@@ -599,12 +609,19 @@ class Tree(object):
             else:
                 r = lambda: random.randint(0,255)
                 edge_color = ('#%02X%02X%02X' % (r(),r(),r()))
-            graph += 'edge [color=\"%s\", penwidth=3, label="%d"]\n' % (edge_color, index+1)
-            graph += self.simple_node_name(pattern[0])
+
+            label_color = NODE_GREEN_COLOR
+            if not is_cooccurrence_pattern:
+                label_color = 'red'
+
+            graph += '\tedge [color=\"%s\", penwidth=3, label="%d", fontcolor=\"%s\"]\n' % (edge_color, index+1, label_color)
+            graph += '\t' + self.simple_node_name(pattern[0])
             for item in pattern[1:]:
                 graph += ' -- %s' % self.simple_node_name(item)
 
 
+        #
+        # Use this code to construct complete subgraphs
         #
         # for index, pattern in enumerate(clean_summary):
         #     graph += '\n'
