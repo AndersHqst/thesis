@@ -16,8 +16,8 @@ from plots.mtv_results import plot_run_results
 
 # plot_run_results('../experiments/4/')
 # plot_run_results('../experiments/2a/')
-plot_run_results('../experiments/tmp/')
-exit()
+# plot_run_results('../experiments/tmp/')
+# exit()
 
 from plots.faust_result_discretized import plot_faust_relationships
 # plot_faust_relationships(remove_highest=50)
@@ -447,13 +447,13 @@ def format_stats(summary_file):
 def write_tree():
     from preprocessing.tree import Tree
     from preprocessing.parser import get_dataset
-    ds=get_dataset()
+    ds = get_dataset()
     t = Tree(ds)
-    xml=t.root.to_xml()
-    with open('../../../Desktop/tree.xml', 'wb') as fd:
+    xml = t.root.to_xml()
+    with open('../../../dev/thesis/data/tree.xml', 'wb') as fd:
        fd.write(xml)
 
-# write_tree()
+write_tree()
 
 # from preprocessing.tree import Tree
 #
@@ -490,4 +490,4 @@ def print_report_clade_lots():
 
     plot_clades_relationships(clades, '../experiments/4/plots/')
 
-print_report_clade_lots()
+# print_report_clade_lots()

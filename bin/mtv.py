@@ -128,7 +128,7 @@ class MTV(object):
             self.loop_times.append(time()-start)
 
             if self.v:
-                print 'Found itemset (%.2f secs): %s, score: %f, models: %d, Ci: %s, searched-nodes: %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X), self.BIC_scores[X], self.independent_components[-1], self.summary_sizes[-1], self.search_space[-1])
+                print 'Found itemset (%.2f secs): %s, BIC-score: %f, model-sizes: %s, searched-nodes: %d' % (timer_stopwatch_time('run'), itemsets.to_index_list(X), self.BIC_scores[X], self.summary_sizes[-1], self.search_space[-1])
 
 
     def query(self, y):

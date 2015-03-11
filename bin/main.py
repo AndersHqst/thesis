@@ -35,15 +35,15 @@ def print_help(s, z, a):
     print '-c Input file with seed for the summary.'
     print '-q Put a constraint on the maximum model size. Defaults (recommended) is to be unset'
     print '-v verbose'
-    print '-z Suggest best top z itemsets, will slow down computation, default %d' % z
-    print '-a Print a association and disassociation rules, default %d' % a
+    # print '-z Suggest best top z itemsets, will slow down computation, default %d' % z
+    print '-a Print association and disassociation rules, default %d' % a
     print '--add-negated Mine co-exclusion patterns by adding a negated attribute set. These will always be many to one. Will double the sample space'
-    print '--greedy Use a greedy heurestic. Will prune large parts of the search space. May give suboptimal results'
+    print '--greedy Use a greedy heuristic. Will prune large parts of the search space. May give suboptimal results'
     print '--debug print debug and performance info'
     print '-H headers file. mtv.py will convert attribute name to header names'
     print ''
     print 'Ex:'
-    print './mtv.py -f "../data/example.dat" -k 5 -s 0.2'
+    print './main.py -f "../data/example.dat" -k 5 -s 0.2'
 
 def parse_argv(argv):
 

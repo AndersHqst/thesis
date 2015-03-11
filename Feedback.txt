@@ -1,0 +1,71 @@
+Feedback:
+    Just say Mani - Write the supervisors on the first slide
+    Always use Metabolismecenter
+    Maybe not have prob stmt explicitly
+        Or on 2nd slide
+    Missing MTV Maximum InformatiVe
+    Define maxent
+    BIC-score up/down, 
+    U values, what do they mean.
+
+    Ask for questions afterwards
+    Ask Rasmus about about abstraction level
+
+    Motivation:
+        1. Too general. Rephrase to more concrete to finding patterns,
+        and how studying and comparing their structure in healthy/unhealthy people. Help us understanding human health. - One-liner
+        2. MTV say some more here. 
+        Better: Apply and evaluate MTV in practice
+
+    MTV - itemset mining:
+        Consider simpler examle of dataset without binary transactions
+        Introduce 'summary', and be explicit about what surprising itemsets are. Use, "itemsets that describe the data"
+        What is support
+
+    MTV - algorithm
+        Make it more clear what MTV actually is and does
+        Algorithm more explicitly as bullets.
+        Define maxent and surprising.
+        Maybe an example with a dataset, showing what could be found by MTV.
+            ex color-code one pattern.
+            ex show dist. -> what pattern is surprising -> model update
+                show changed dist.
+        Consider somethong more visually appealing
+
+        Why mention the Lagrangian? We could prabably leave it out and 
+        talk a bit more about IterativeScaling
+
+    HMP:
+        US mostly.
+        Just mention that the data is structed in as a tree.
+        Say that it is ordered hierarchical
+            Give a 'silly' example of what the hierarchy is
+            Use an example of humans
+        Statistics on the dataset
+        Introduce Faust et al.
+            And we are comparing with their results - this is how we evaluate.
+
+    Discretization:
+        Start with showing the actual data from Faust et al. in excel.
+            Show this earlier, we want to apply it to this thing.
+        Be explicit about the relative abundances.
+            If converted to percentages it could become self-explanatory.
+            Remove 'weird' values on axis. -.0.5, 1.2 etc
+            Make it not-pixelated, and visually appealing
+
+
+    Demo:
+        No reason to explicitly overgo the arguments. Simply explain the effect of the command running MTV.
+
+    Results:
+        Better explanation of what we see in the last Faust result.
+        Increase edge thikness.
+        Define the color patterns at forehand.
+        Better colors.
+        Edge labels are hard to see - larger font maybe.
+        Use the same summary indeces everywhere.
+        Explain the experiment setup for the last results.
+
+
+
+
