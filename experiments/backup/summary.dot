@@ -7,7 +7,7 @@ graph G {
 	Ruminococcus
 	Sporobacter
 	Anaerovorax
-	edge [color="#c0c0c0", penwidth=3, label="1", fontcolor="#43AC43"]
+	edge [color="#c0c0c0", penwidth=3, label="0", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Oscillibacter -- Ruminococcaceae_unclassified -- Ruminococcus -- Sporobacter -- Anaerovorax
 
 	//Pattern: 1
@@ -16,7 +16,7 @@ graph G {
 	Roseburia
 	Coprococcus
 	Blautia
-	edge [color="#000000", penwidth=3, label="2", fontcolor="#43AC43"]
+	edge [color="#000000", penwidth=3, label="1", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Lachnospiraceae_unclassified -- Dorea -- Roseburia -- Coprococcus -- Blautia
 
 	//Pattern: 2
@@ -25,7 +25,7 @@ graph G {
 	Porphyromonadaceae_unclassified
 	Barnesiella
 	Rikenellaceae_unclassified
-	edge [color="#008080", penwidth=3, label="3", fontcolor="#43AC43"]
+	edge [color="#008080", penwidth=3, label="2", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Oscillibacter -- Butyricimonas -- Porphyromonadaceae_unclassified -- Barnesiella -- Rikenellaceae_unclassified
 
 	//Pattern: 3
@@ -34,7 +34,7 @@ graph G {
 	Faecalibacterium
 	Subdoligranulum
 	Sporobacter
-	edge [color="#00ffff", penwidth=3, label="4", fontcolor="#43AC43"]
+	edge [color="#00ffff", penwidth=3, label="3", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Coprococcus -- Acetivibrio -- Faecalibacterium -- Subdoligranulum -- Sporobacter
 
 	//Pattern: 4
@@ -43,7 +43,7 @@ graph G {
 	Coprococcus
 	Butyricicoccus
 	Blautia
-	edge [color="#0000ff", penwidth=3, label="5", fontcolor="#43AC43"]
+	edge [color="#0000ff", penwidth=3, label="4", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Coprobacillus -- Anaerostipes -- Coprococcus -- Butyricicoccus -- Blautia
 
 	//Pattern: 5
@@ -52,7 +52,7 @@ graph G {
 	Ruminococcaceae_unclassified
 	Streptococcus
 	Collinsella
-	edge [color="#000080", penwidth=3, label="6", fontcolor="#43AC43"]
+	edge [color="#000080", penwidth=3, label="5", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Oscillibacter -- Anaerotruncus -- Ruminococcaceae_unclassified -- Streptococcus -- Collinsella
 
 	//Pattern: 6
@@ -61,26 +61,26 @@ graph G {
 	Rikenellaceae_unclassified
 	Alistipes
 	Akkermansia
-	edge [color="#008000", penwidth=3, label="7", fontcolor="#43AC43"]
+	edge [color="#008000", penwidth=3, label="6", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Anaerotruncus -- Anaerovorax -- Rikenellaceae_unclassified -- Alistipes -- Akkermansia
 
 	//Pattern: 7
 	Phascolarctobacterium
 	Dialister
-	edge [color="#00ff00", penwidth=3, label="8", fontcolor="red"]
+	edge [color="#00ff00", penwidth=3, label="7", fontcolor="red" fontname="Helvetica bold" fontsize=20]
 	Phascolarctobacterium -- Dialister
 
 	//Pattern: 8
 	Veillonellaceae_unclassified
 	Prevotella
 	Bacteroides
-	edge [color="#ff00ff", penwidth=3, label="9", fontcolor="red"]
+	edge [color="#ff00ff", penwidth=3, label="8", fontcolor="red" fontname="Helvetica bold" fontsize=20]
 	Veillonellaceae_unclassified -- Prevotella -- Bacteroides
 
 	//Pattern: 9
 	Sutterella
 	Parasutterella
-	edge [color="#800080", penwidth=3, label="10", fontcolor="red"]
+	edge [color="#800080", penwidth=3, label="9", fontcolor="red" fontname="Helvetica bold" fontsize=20]
 	Sutterella -- Parasutterella
 
 	//Pattern: 10
@@ -88,7 +88,7 @@ graph G {
 	Dialister
 	Parabacteroides
 	Bacteroides
-	edge [color="#808000", penwidth=3, label="11", fontcolor="#43AC43"]
+	edge [color="#808000", penwidth=3, label="10", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Veillonellaceae_unclassified -- Dialister -- Parabacteroides -- Bacteroides
 
 	//Pattern: 11
@@ -97,7 +97,7 @@ graph G {
 	Sutterella
 	Odoribacter
 	Prevotella
-	edge [color="#ffff00", penwidth=3, label="12", fontcolor="#43AC43"]
+	edge [color="#ffff00", penwidth=3, label="11", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Eubacterium -- Veillonellaceae_unclassified -- Sutterella -- Odoribacter -- Prevotella
 
 	//Pattern: 12
@@ -105,18 +105,18 @@ graph G {
 	Phascolarctobacterium
 	Odoribacter
 	Bacteroides
-	edge [color="#ffA500", penwidth=3, label="13", fontcolor="#43AC43"]
+	edge [color="#ffA500", penwidth=3, label="12", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Veillonella -- Phascolarctobacterium -- Odoribacter -- Bacteroides
 
 	//Pattern: 13
 	Holdemania
 	Phascolarctobacterium
 	Veillonellaceae_unclassified
-	edge [color="#ff0000", penwidth=3, label="14", fontcolor="#43AC43"]
+	edge [color="#ff0000", penwidth=3, label="13", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Holdemania -- Phascolarctobacterium -- Veillonellaceae_unclassified
 
 	//Pattern: 14
 	Erysipelotrichaceae_unclassified
 	Sporacetigenium
-	edge [color="#800000", penwidth=3, label="15", fontcolor="#43AC43"]
+	edge [color="#800000", penwidth=3, label="14", fontcolor="#43AC43" fontname="Helvetica bold" fontsize=20]
 	Erysipelotrichaceae_unclassified -- Sporacetigenium}

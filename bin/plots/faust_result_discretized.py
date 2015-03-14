@@ -155,7 +155,7 @@ def plot_faust_relationships(relative_values=True, remove_highest=0):
 
 
         # Save the figure to file
-        file_name = '../../plots/plots/stool_normalized_clade/' +str(faust_result.id) + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
+        file_name = '../../plots/plots/stool_normalized_maxent_faust_results/' +str(faust_result.id) + from_clade + '---' + to_clade + '_' + str(faust_result.direction)
         file_name = os.path.join(dir, file_name)
         savefig(file_name)
         close()

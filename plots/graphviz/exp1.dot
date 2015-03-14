@@ -1,13 +1,15 @@
-graph G {        
+digraph G {        
         //size ="10,10";
-        ancestors [shape=box, style=dotted]; // MOre nodes here, but keep it short
-        edge [color="#C57B7B"]; // Mark the Faust correlation relation with red
-        ancestors -- Bacteroidales;
+        // More nodes here, but keep it short
+        ancestors [shape=box, style=dotted]; 
+        // Mark the Faust correlation relation with red
+        edge [color="red", penwidth=5, label="Faust", fontname="Helvetica bold", fontsize=20];
+        ancestors -> Bacteroidales;
         // so is this [style=bold,label="100 times"];
-        ancestors -- Clostridiales;
-        Clostridiales -- Ruminococcaceae;
-        Ruminococcaceae -- unclassified;
-        edge [color=black];
+        ancestors -> Clostridiales;
+        Clostridiales -> Ruminococcaceae;
+        Ruminococcaceae -> unclassified;
+        edge [color=black, penwidth=1, label="", fontsize=14];
 
         // Mark the MTV pattern green
         Alistipes [color="#43AC43", style=filled]
@@ -20,18 +22,18 @@ graph G {
         Subdoligranulum [color="#43AC43", style=filled];
         PorphyromonadaceaeUnclassified [label="unclassified", color="#43AC43", style=filled];
         RikenellaceaeUnclassified [label="unclassified", color="#43AC43", style=filled];
-        Ruminococcaceae -- Oscillibacter;
-        Ruminococcaceae -- Subdoligranulum;
-        Bacteroidales -- Bacteroidaceae;
-        Bacteroidales -- Porphyromonadaceae
-        Porphyromonadaceae -- Barnesiella; 
-        Porphyromonadaceae -- Butyricimonas;
-        Porphyromonadaceae -- PorphyromonadaceaeUnclassified;
-        Bacteroidales -- Rikenellaceae;        
-        Rikenellaceae -- RikenellaceaeUnclassified;
-        Rikenellaceae -- Alistipes;
+        Ruminococcaceae -> Oscillibacter;
+        Ruminococcaceae -> Subdoligranulum;
+        Bacteroidales -> Bacteroidaceae;
+        Bacteroidales -> Porphyromonadaceae
+        Porphyromonadaceae -> Barnesiella; 
+        Porphyromonadaceae -> Butyricimonas;
+        Porphyromonadaceae -> PorphyromonadaceaeUnclassified;
+        Bacteroidales -> Rikenellaceae;        
+        Rikenellaceae -> RikenellaceaeUnclassified;
+        Rikenellaceae -> Alistipes;
         Bacteroides [color="#C57B7B", style=filled];
-        Bacteroidaceae -- Bacteroides;
+        Bacteroidaceae -> Bacteroides;
 
         //make_string [label="make a\nstring"];
         node [shape=box,style=filled,color="blue"];

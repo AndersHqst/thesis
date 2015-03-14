@@ -614,7 +614,7 @@ class Tree(object):
             if not is_cooccurrence_pattern:
                 label_color = 'red'
 
-            graph += '\tedge [color=\"%s\", penwidth=3, label="%d", fontcolor=\"%s\"]\n' % (edge_color, index+1, label_color)
+            graph += '\tedge [color=\"%s\", penwidth=3, label="%d", fontcolor=\"%s\", fontname=\"Helvetica bold\", fontsize=20]\n' % (edge_color, index, label_color)
             graph += '\t' + self.simple_node_name(pattern[0])
             for item in pattern[1:]:
                 graph += ' -- %s' % self.simple_node_name(item)
