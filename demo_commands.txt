@@ -1,0 +1,6 @@
+./main.py -f ../experiments/1/Stool_maxent_discretized_nodes_depth_6_040.dat -s 0.0 -m 5 -q 7 -v -o ../experiments/tmp/ -H ../experiments/1/Stool_maxent_discretized_nodes_depth_6_040.headers
+
+./phylographer.py -o ../experiments/tmp/ -d ../experiments/1/Stool_maxent_discretized_nodes_depth_6_040.pickle
+
+./summarygrapher.py -o ../experiments/tmp/ -d ../experiments/1/Stool_maxent_discretized_nodes_depth_6_040.pickle 
+
