@@ -16,12 +16,12 @@ from plots.mtv_results import plot_run_results
 
 # plot_run_results('../experiments/4/')
 # plot_run_results('../experiments/2a/')
-plot_run_results('../experiments/backup/')
-exit()
-
-from plots.faust_result_discretized import plot_faust_relationships
-plot_faust_relationships()
-exit()
+# plot_run_results('../experiments/backup/')
+# exit()
+#
+# from plots.faust_result_discretized import plot_faust_relationships
+# plot_faust_relationships()
+# exit()
 
 
 def write_dataset_to_experiment(file_name, ds):

@@ -1,59 +1,69 @@
 graph G { 
 
-//Pattern: 0
-Ruminococcaceae_unclassified [color="#C57B7B", style=filled]
-Bacteroides [color="#C57B7B", style=filled]
-edge [color="#c0c0c0", penwidth=3, label="1"]
-Ruminococcaceae_unclassified -- Bacteroides
-//Pattern: 1
-Subdoligranulum [color="#C57B7B", style=filled]
-Prevotellaceae_unclassified [color="#C57B7B", style=filled]
-Bacteroides [color="#C57B7B", style=filled]
-edge [color="#000000", penwidth=3, label="2"]
-Subdoligranulum -- Prevotellaceae_unclassified -- Bacteroides
-//Pattern: 2
-Phascolarctobacterium [color="#C57B7B", style=filled]
-Dialister [color="#C57B7B", style=filled]
-edge [color="#008080", penwidth=3, label="3"]
-Phascolarctobacterium -- Dialister
-//Pattern: 3
-Veillonellaceae_unclassified [color="#C57B7B", style=filled]
-Prevotella [color="#C57B7B", style=filled]
-Bacteroides [color="#C57B7B", style=filled]
-edge [color="#00ffff", penwidth=3, label="4"]
-Veillonellaceae_unclassified -- Prevotella -- Bacteroides
-//Pattern: 4
-Coprococcus [color="#C57B7B", style=filled]
-Anaerotruncus [color="#C57B7B", style=filled]
-Odoribacter [color="#C57B7B", style=filled]
-Bacteroides [color="#C57B7B", style=filled]
-edge [color="#0000ff", penwidth=3, label="5"]
-Coprococcus -- Anaerotruncus -- Odoribacter -- Bacteroides
-//Pattern: 5
-Bacteroides [color="#C57B7B", style=filled]
-Coriobacteriaceae_unclassified [color="#C57B7B", style=filled]
-edge [color="#000080", penwidth=3, label="6"]
-Bacteroides -- Coriobacteriaceae_unclassified
-//Pattern: 6
-Sutterella [color="#C57B7B", style=filled]
-Parasutterella [color="#C57B7B", style=filled]
-edge [color="#008000", penwidth=3, label="7"]
-Sutterella -- Parasutterella
-//Pattern: 7
-Fusobacterium [color="#C57B7B", style=filled]
-Sporobacter [color="#C57B7B", style=filled]
-Bacteroides [color="#C57B7B", style=filled]
-edge [color="#00ff00", penwidth=3, label="8"]
-Fusobacterium -- Sporobacter -- Bacteroides
-//Pattern: 8
-Acetanaerobacterium [color="#C57B7B", style=filled]
-Bacteroides [color="#C57B7B", style=filled]
-edge [color="#ff00ff", penwidth=3, label="9"]
-Acetanaerobacterium -- Bacteroides
-//Pattern: 9
-Anaerostipes [color="#C57B7B", style=filled]
-Oscillibacter [color="#C57B7B", style=filled]
-Acidaminococcus [color="#C57B7B", style=filled]
-Dialister [color="#C57B7B", style=filled]
-edge [color="#800080", penwidth=3, label="10"]
-Anaerostipes -- Oscillibacter -- Acidaminococcus -- Dialister}
+
+	//Pattern: 0
+	Ruminococcaceae_unclassified
+	Bacteroides
+	edge [color="#c0c0c0", penwidth=3, label="0", fontcolor="red", fontname="Helvetica bold", fontsize=24]
+	Ruminococcaceae_unclassified -- Bacteroides
+
+	//Pattern: 1
+	Subdoligranulum
+	Prevotellaceae_unclassified
+	Bacteroides
+	edge [color="#000000", penwidth=3, label="1", fontcolor="red", fontname="Helvetica bold", fontsize=24]
+	Subdoligranulum -- Prevotellaceae_unclassified -- Bacteroides
+
+	//Pattern: 2
+	Phascolarctobacterium
+	Dialister
+	edge [color="#008080", penwidth=3, label="2", fontcolor="red", fontname="Helvetica bold", fontsize=24]
+	Phascolarctobacterium -- Dialister
+
+	//Pattern: 3
+	Veillonellaceae_unclassified
+	Prevotella
+	Bacteroides
+	edge [color="#00ffff", penwidth=3, label="3", fontcolor="red", fontname="Helvetica bold", fontsize=24]
+	Veillonellaceae_unclassified -- Prevotella -- Bacteroides
+
+	//Pattern: 4
+	Coprococcus
+	Anaerotruncus
+	Odoribacter
+	Bacteroides
+	edge [color="#0000ff", penwidth=3, label="4", fontcolor="red", fontname="Helvetica bold", fontsize=24]
+	Coprococcus -- Anaerotruncus -- Odoribacter -- Bacteroides
+
+	//Pattern: 5
+	Bacteroides
+	Coriobacteriaceae_unclassified
+	edge [color="#000080", penwidth=3, label="5", fontcolor="red", fontname="Helvetica bold", fontsize=24]
+	Bacteroides -- Coriobacteriaceae_unclassified
+
+	//Pattern: 6
+	Sutterella
+	Parasutterella
+	edge [color="#008000", penwidth=3, label="6", fontcolor="red", fontname="Helvetica bold", fontsize=24]
+	Sutterella -- Parasutterella
+
+	//Pattern: 7
+	Fusobacterium
+	Sporobacter
+	Bacteroides
+	edge [color="#00ff00", penwidth=3, label="7", fontcolor="red", fontname="Helvetica bold", fontsize=24]
+	Fusobacterium -- Sporobacter -- Bacteroides
+
+	//Pattern: 8
+	Acetanaerobacterium
+	Bacteroides
+	edge [color="#ff00ff", penwidth=3, label="8", fontcolor="red", fontname="Helvetica bold", fontsize=24]
+	Acetanaerobacterium -- Bacteroides
+
+	//Pattern: 9
+	Anaerostipes
+	Oscillibacter
+	Acidaminococcus
+	Dialister
+	edge [color="#800080", penwidth=3, label="9", fontcolor="red", fontname="Helvetica bold", fontsize=24]
+	Anaerostipes -- Oscillibacter -- Acidaminococcus -- Dialister}

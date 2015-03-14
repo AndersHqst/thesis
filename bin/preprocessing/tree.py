@@ -585,22 +585,24 @@ class Tree(object):
             graph += '\n'
             graph += '\n\t//Pattern: %i\n' % index
 
-            for item in pattern:
-                name = self.simple_node_name(item)
-
-                node_color = NODE_GREEN_COLOR
-                if item in co_excluded:
-                    node_color = NODE_RED_COLOR
-
-                # graph += '\t%s [color="%s", style=filled]\n' % (name, node_color)
-                graph += '\t%s\n' % name
-
             # Check if this is a co-exclusion pattern
             is_cooccurrence_pattern = False
             for item in pattern:
                 if not item in co_excluded:
                     is_cooccurrence_pattern = True
                     break
+
+            for item in pattern:
+                name = self.simple_node_name(item)
+
+                node_color = 'white'
+                if item in co_excluded and is_cooccurrence_pattern:
+                    node_color = NODE_RED_COLOR
+                    graph += '\t%s [color="%s", style=filled]\n' % (name, node_color)
+                else:
+                    graph += '\t%s\n' % name
+
+
 
 
             edge_color = ''
@@ -614,7 +616,7 @@ class Tree(object):
             if not is_cooccurrence_pattern:
                 label_color = 'red'
 
-            graph += '\tedge [color=\"%s\", penwidth=3, label="%d", fontcolor=\"%s\", fontname=\"Helvetica bold\", fontsize=20]\n' % (edge_color, index, label_color)
+            graph += '\tedge [color=\"%s\", penwidth=3, label="%d", fontcolor=\"%s\", fontname=\"Helvetica bold\", fontsize=24]\n' % (edge_color, index, label_color)
             graph += '\t' + self.simple_node_name(pattern[0])
             for item in pattern[1:]:
                 graph += ' -- %s' % self.simple_node_name(item)
