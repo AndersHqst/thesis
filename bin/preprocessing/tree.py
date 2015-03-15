@@ -603,8 +603,6 @@ class Tree(object):
                     graph += '\t%s\n' % name
 
 
-
-
             edge_color = ''
             if len(base_colors) > 0:
                 edge_color = base_colors.pop()

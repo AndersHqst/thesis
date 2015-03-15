@@ -8,6 +8,8 @@ def discretized_dataset(dataset, splitter_method):
     :param row_method: Discretization method for a rwo, ie abundance vector
     :return:
     """
+    import numpy as np
+
     # Get the abundance matrix and discretize it
     abundances = abundance_matrix(dataset).T
     discrete_matrix = []
@@ -23,6 +25,7 @@ def discretized_dataset(dataset, splitter_method):
 
     return discretized_dataset
 
+
 def discretize_row(row, splitter_method):
     discrete_row = []
     splitter = splitter_method(row)
@@ -34,8 +37,6 @@ def discretize_row(row, splitter_method):
             discrete_row.append(1)
 
     return splitter, discrete_row
-
-
 
 
 def median_discretization(dataset):
