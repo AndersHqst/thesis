@@ -78,6 +78,7 @@ def save_sample(bodysite='Stool'):
 def get_dataset(bodysite='Stool'):
     """
     Read the daset from file
+    :rtype : object
     :param file_name:
     :return:
     """
@@ -93,3 +94,7 @@ def get_dataset(bodysite='Stool'):
         new_row = np.array(id_cols + abundances)
         matrix = np.vstack([matrix, new_row])
     return data_cleaning(matrix)
+
+
+get_dataset(bodysite = 'Tongue_dorsum')
+print dir

@@ -51,6 +51,7 @@ def write_dataset_to_experiment(file_name, ds):
     with open(file_name + '.pickle', 'wb') as fd:
         pickle.dump(ds, fd)
 
+write_dataset_to_experiment('../experiments/1/Stool_maxent_discretized_all_nodes_020', ds)
 
 def run_discretization_all_nodes():
     """
@@ -110,9 +111,9 @@ def run_discretization_faust_nodes_and_leafs():
     ds = discrete_dataset_cleaning(ds)
     print 'Attributes after cleaning: ', len(ds[0][2:])
 
-    write_dataset_to_experiment('../experiments/5/Stool_maxent_discretized_faust_nodes_and_leafs', ds)
+    write_dataset_to_experiment('../experiments/1/Stool_maxent_discretized_faust_nodes_and_leafs', ds)
 
-# run_discretization_faust_nodes_and_leafs()
+#run_discretization_faust_nodes_and_leafs()
 
 def run_discretization_for_tree_depth(depth):
     """
@@ -145,10 +146,10 @@ def run_discretization_for_tree_depth(depth):
     ds = discrete_dataset_cleaning(ds, 0.10)
     print 'Attributes after cleaning: ', len(ds[0][2:])
 
-    write_dataset_to_experiment('../experiments/4/Stool_maxent_discretized_nodes_depth_6_010', ds)
+    write_dataset_to_experiment('../experiments/4/Stool_maxent_discretized_nodes_depth_6_010_prøve', ds)
 
 
-# run_discretization_for_tree_depth(6)
+run_discretization_for_tree_depth(6)
 
 def load_model():
     from mtv import MTV

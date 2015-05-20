@@ -373,11 +373,10 @@ class MTV(object):
         :return: Best itemsets Z
         """
 
-        fr_X = self.fr(X)
-        if fr_X < self.s or X in self.C:
-            return Z
-
         p_X = self.cached_itemset_query(X)
+        fr_X = self.fr(X)
+        if fr_X < self.s or p_X < self.s or X in self.C :
+            return Z
 
         h_X = h(fr_X, p_X)
 
